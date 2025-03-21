@@ -16,20 +16,31 @@ import { filter, Subscription } from 'rxjs';
 export class LoginPage implements OnInit, OnDestroy {
   @ViewChild('modal', { static: false }) modal!: IonModal;
 
-  form: FormGroup;
+  form!: FormGroup;
   subscriptions = new Subscription();
 
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly router: Router
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    
+    this.subscribeRouterEvents();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  setupForm(): void {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     })
   }
 
-  ngOnInit(): void {
+  subscribeRouterEvents(): void {
     const routerSub = this.router.events
     .pipe(filter(event => event instanceof NavigationStart))
     .subscribe(() => {
@@ -38,10 +49,6 @@ export class LoginPage implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.add(routerSub);
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   onSubmit(): void {
