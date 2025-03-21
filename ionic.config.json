@@ -1,0 +1,7 @@
+{
+  "name": "Tu Hora Fit",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

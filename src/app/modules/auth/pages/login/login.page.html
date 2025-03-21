@@ -1,0 +1,44 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ion-list lines="full">
+      <ion-item>
+        <ion-input
+          label="Correo electrónico"
+          labelPlacement="floating"
+          formControlName="email"
+          type="email"
+          autocomplete="email"
+          placeholder="Ingresa tu correo"
+        ></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+        <p class="ion-padding-start">Correo inválido</p>
+      </ion-text>
+
+      <ion-item>
+        <ion-input
+          label="Contraseña"
+          labelPlacement="floating"
+          formControlName="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Ingresa tu contraseña"
+        ></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+        <p class="ion-padding-start">Contraseña requerida</p>
+      </ion-text>
+
+      <ion-item>
+        <ion-input label="Floating label" labelPlacement="floating" placeholder="Enter text"></ion-input>
+      </ion-item>
+
+    </ion-list>
+
+    <div class="ion-padding-top">
+      <ion-button color="green" expand="block" type="submit" [disabled]="form.invalid">
+        Iniciar sesión
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
