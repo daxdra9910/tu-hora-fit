@@ -29,11 +29,16 @@ ion-content.login {
 }
 
 .register-text {
-    margin-top: 1rem;
+    color: #fff;
 }
 
 .register-link {
     font-weight: bold;
     text-decoration: underline;
-    color: var(--ion-color-light);
+    color: currentColor;
+}
+
+.forgot-password {
+    text-decoration: underline;  
+    color: var(--ion-color-dark);
 }

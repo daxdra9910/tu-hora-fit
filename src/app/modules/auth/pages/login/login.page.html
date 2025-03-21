@@ -7,15 +7,11 @@
         <ion-button color="green" id="open-modal" expand="block">
           Iniciar
         </ion-button>
-        <div class="ion-text-center register-text">
-          <ion-text color="light">
+        <div class="ion-text-center ion-padding-top register-text">
             ¿No tienes una cuenta? <a routerLink="/auth/register" class="register-link">Registrate</a>
-          </ion-text>
         </div>
       </div>
   </main>
-
-
 
   <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.3" [breakpoints]="[0, 0.3, 0.6, 1]">
     <ng-template>
@@ -43,6 +39,9 @@
             <ion-button color="green" expand="block" type="submit" [disabled]="form.invalid">
               Iniciar sesión
             </ion-button>
+          </div>
+          <div class="ion-text-center ion-padding-top">
+              <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
           </div>
         </form>
       </ion-content>
