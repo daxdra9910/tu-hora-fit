@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { IonButton, IonContent, IonInput, IonItem, IonList, IonModal, IonImg, IonText } from '@ionic/angular/standalone';
 
 @Component({
@@ -8,7 +9,7 @@ import { IonButton, IonContent, IonInput, IonItem, IonList, IonModal, IonImg, Io
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonInput, IonContent, IonList, IonItem, IonText, IonModal, IonButton, IonImg, CommonModule, ReactiveFormsModule]
+  imports: [IonInput, IonContent, IonList, IonItem, IonText, IonModal, IonButton, IonImg, CommonModule, ReactiveFormsModule, RouterModule]
 })
 export class LoginPage {
 
