@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonList, IonItem, IonText, IonButton, IonInput } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonInput, IonItem, IonList, IonModal, IonImg, IonText } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonInput, IonContent, IonList, IonItem, IonText, IonButton, CommonModule, ReactiveFormsModule]
+  imports: [IonInput, IonContent, IonList, IonItem, IonText, IonModal, IonButton, IonImg, CommonModule, ReactiveFormsModule]
 })
-export class LoginPage  {
+export class LoginPage {
 
   form: FormGroup;
 
@@ -22,7 +22,7 @@ export class LoginPage  {
   }
 
   onSubmit(): void {
-    if(this.form.valid) {
+    if (this.form.valid) {
       // TODO: Logica para hacer login.
       console.log('Login: ', this.form.value);
     } else {

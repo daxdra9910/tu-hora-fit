@@ -1,44 +1,52 @@
-<ion-content [fullscreen]="true" class="ion-padding">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ion-list lines="full">
-      <ion-item>
-        <ion-input
-          label="Correo electrónico"
-          labelPlacement="floating"
-          formControlName="email"
-          type="email"
-          autocomplete="email"
-          placeholder="Ingresa tu correo"
-        ></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-        <p class="ion-padding-start">Correo inválido</p>
-      </ion-text>
+<ion-content [fullscreen]="true" class="ion-padding login">
+  <div class="login-overlay"></div>
 
-      <ion-item>
-        <ion-input
-          label="Contraseña"
-          labelPlacement="floating"
-          formControlName="password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Ingresa tu contraseña"
-        ></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
-        <p class="ion-padding-start">Contraseña requerida</p>
-      </ion-text>
+  <main class="login-container">
+      <ion-img src="assets/images/TuHoraFitLogoWhite.svg" alt="Imagen de fondo pantalla inicial"></ion-img>
+      <div>
+        <ion-button color="green" id="open-modal" expand="block">
+          Iniciar
+        </ion-button>
+        <div class="ion-text-center register-text">
+          <ion-text color="light">
+            ¿No tienes una cuenta? <a href="#" class="register-link">Registrate</a>
+          </ion-text>
+        </div>
+      </div>
+  </main>
 
-      <ion-item>
-        <ion-input label="Floating label" labelPlacement="floating" placeholder="Enter text"></ion-input>
-      </ion-item>
 
-    </ion-list>
 
-    <div class="ion-padding-top">
-      <ion-button color="green" expand="block" type="submit" [disabled]="form.invalid">
-        Iniciar sesión
-      </ion-button>
-    </div>
-  </form>
+  <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.3" [breakpoints]="[0, 0.3, 0.6, 1]">
+    <ng-template>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <ion-list lines="full">
+            <ion-item>
+              <ion-input label="Correo electrónico" labelPlacement="floating" formControlName="email" type="email"
+                autocomplete="email" placeholder="Ingresa tu correo"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+              <small class="ion-padding-start">Correo inválido</small>
+            </ion-text>
+
+            <ion-item>
+              <ion-input label="Contraseña" labelPlacement="floating" formControlName="password" type="password"
+                autocomplete="current-password" placeholder="Ingresa tu contraseña"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+              <small class="ion-padding-start">Contraseña requerida</small>
+            </ion-text>
+          </ion-list>
+
+          <div class="ion-padding-top">
+            <ion-button color="green" expand="block" type="submit" [disabled]="form.invalid">
+              Iniciar sesión
+            </ion-button>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>
