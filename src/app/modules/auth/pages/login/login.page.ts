@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NavigationStart, Router, RouterModule } from '@angular/router';
 import { IonButton, IonContent, IonInput, IonItem, IonList, IonModal, IonImg, IonText } from '@ionic/angular/standalone';
 import { filter, Subscription } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
+import { UtilsService } from 'src/app/modules/core/services/utils.service';
 
 
 @Component({
@@ -21,11 +23,13 @@ export class LoginPage implements OnInit, OnDestroy {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly utilsService: UtilsService
   ) {}
 
   ngOnInit(): void {
-    
+    this.setupForm();
     this.subscribeRouterEvents();
   }
 
@@ -51,10 +55,21 @@ export class LoginPage implements OnInit, OnDestroy {
     this.subscriptions.add(routerSub);
   }
 
-  onSubmit(): void {
+  async onSubmit() {
     if (this.form.valid) {
-      // TODO: Logica para hacer login.
-      console.log('Login: ', this.form.value);
+      const loading = await this.utilsService.loading();
+      await loading.present();
+      
+      this.authService.singIn(this.form.value['email'], this.form.value['password'])
+      .then(user => console.log(user))
+      .catch(error => this.utilsService.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'green',
+        position: 'middle',
+        icon: 'alert-circle-outline'
+      }))
+      .finally(() => loading.dismiss());  
     } else {
       this.form.markAllAsTouched();
     }
