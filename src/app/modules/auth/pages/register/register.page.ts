@@ -49,19 +49,15 @@ export class RegisterPage implements OnInit {
       this.authService.singUp(this.form.value['email'], this.form.value['password'])
         .then(async response => {
           await this.setUserInfo(response.user.uid)
-          console.log(response.user.getIdToken());
-          // this.utilsService.saveInLocalStorage('token', )
         })
         .catch((error) => this.utilsService.presentToast({
           message: error.message,
           duration: 2500,
-          color: 'green',
+          color: 'danger',
           position: 'middle',
           icon: 'alert-circle-outline'
         }))
         .finally(() => loading.dismiss());
-
-      console.log('Registro: ', this.form.value);
     } else {
       this.form.markAllAsTouched();
     }
@@ -72,14 +68,14 @@ export class RegisterPage implements OnInit {
     delete this.form.value.password;
     delete this.form.value.confirmPassword;
 
-    this.firebaseService.setDocument(path, this.form.value)
+    this.firebaseService.setDocument(path, {...this.form.value, role: "user"})
       .then(async res => {
         { await this.authService.updateUser(this.form.value.name) };
       })
       .catch((error) => this.utilsService.presentToast({
         message: error.message,
         duration: 2500,
-        color: 'green',
+        color: 'danger',
         position: 'middle',
         icon: 'alert-circle-outline'
       }))
