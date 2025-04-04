@@ -10,10 +10,15 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { addIcons } from 'ionicons';
 
-import {alertCircleOutline} from 'ionicons/icons'
+import {alertCircleOutline, calendarOutline, homeOutline, idCardOutline, menuOutline, personOutline} from 'ionicons/icons'
 
 addIcons({
-  'alert-circle-outline': alertCircleOutline
+  'alert-circle-outline': alertCircleOutline,
+  'person-outline': personOutline,
+  'menu-outline': menuOutline,
+  'home-outline': homeOutline,
+  'calendar-outline': calendarOutline,
+  'id-card-outline': idCardOutline
 })
 
 bootstrapApplication(AppComponent, {
