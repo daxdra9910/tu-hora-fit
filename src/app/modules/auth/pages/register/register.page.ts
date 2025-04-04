@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonImg, IonItem, IonList, IonText, IonInput } from '@ionic/angular/standalone';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonImg, IonItem, IonList, IonText, IonInput, NavController } from '@ionic/angular/standalone';
 import { matchPasswordsValidator } from '../../utils/match-password-validator';
 import { AuthService } from '../../services/auth.service';
 import { UtilsService } from 'src/app/modules/core/services/utils.service';
@@ -15,14 +15,13 @@ import { FirebaseService } from 'src/app/modules/core/services/firebase.service'
   imports: [IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonImg, IonList, IonItem, IonText, IonButton, IonInput, CommonModule, ReactiveFormsModule]
 })
 export class RegisterPage implements OnInit {
-  form!: FormGroup
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly utilsService = inject(UtilsService);
+  private readonly firebaseService = inject(FirebaseService);
+  private readonly navCtrl = inject(NavController);
 
-  constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService,
-    private readonly utilsService: UtilsService,
-    private readonly firebaseService: FirebaseService,
-  ) { }
+  form!: FormGroup
 
   ngOnInit() {
     this.setupForm();
@@ -49,6 +48,7 @@ export class RegisterPage implements OnInit {
       this.authService.singUp(this.form.value['email'], this.form.value['password'])
         .then(async response => {
           await this.setUserInfo(response.user.uid)
+          this.navCtrl.navigateForward('/home');
         })
         .catch((error) => this.utilsService.presentToast({
           message: error.message,
