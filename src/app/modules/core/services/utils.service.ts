@@ -21,16 +21,4 @@ export class UtilsService {
     const toast = await this.toastCtrl.create(opts);
     toast.present();
   }
-
-  routerLink(url: string) {
-    return this.router.navigateByUrl(url);
-  }
-
-  saveInLocalStorage(key: string, value: string) {
-    return localStorage.setItem(key, value);
-  }
-
-  getFromLocalStorage(key: string) {
-    return localStorage.getItem(key);
-  }
 }
