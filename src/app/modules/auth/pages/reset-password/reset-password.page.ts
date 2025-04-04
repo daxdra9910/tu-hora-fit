@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   IonButton,
@@ -11,9 +11,12 @@ import {
   IonItem,
   IonList,
   IonText,
-  IonInput
+  IonInput,
+  NavController
 } from '@ionic/angular/standalone';
 import { matchPasswordsValidator } from '../../utils/match-password-validator';
+import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -36,12 +39,19 @@ import { matchPasswordsValidator } from '../../utils/match-password-validator';
   ]
 })
 export class ResetPasswordPage implements OnInit {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly authService = inject(AuthService);
+  private readonly navCtrl = inject(NavController);
+  
   form!: FormGroup;
-
-  constructor(private readonly formBuilder: FormBuilder) {}
+  oobCode = "";
 
   ngOnInit(): void {
     this.setupForm();
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.oobCode = params['oobCode'];
+    })
   }
 
   setupForm(): void {
@@ -58,8 +68,8 @@ export class ResetPasswordPage implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      console.log('Nueva contraseña: ', this.form.value.password);
-      // Aquí iría la lógica para enviar la nueva contraseña
+      this.authService.resetPassword(this.oobCode, this.form.value.password)
+      .then(() => this.navCtrl.navigateBack('/auth/login'))
     } else {
       this.form.markAllAsTouched();
     }
