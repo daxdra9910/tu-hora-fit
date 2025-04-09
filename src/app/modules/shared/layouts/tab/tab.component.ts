@@ -1,26 +1,39 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonRouterOutlet, MenuController, NavController } from '@ionic/angular/standalone';
-import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import {Component, inject} from '@angular/core';
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonMenu,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+  IonTitle,
+  IonToolbar,
+  MenuController,
+  NavController
+} from '@ionic/angular/standalone';
+import {AuthService} from 'src/app/modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.scss'],
-  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton, IonRouterOutlet,],
+  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton],
 })
 export class TabComponent {
   private readonly menuCtrl = inject(MenuController);
   private readonly authService = inject(AuthService);
   private readonly navCtrl = inject(NavController);
 
-  onLogout(){
-    this.authService.logout().then(() => {
-      this.menuCtrl.close('optionsMenu');
-      this.navCtrl.navigateBack('/auth/login');
+  onLogout() {
+    this.authService.logout().then(async () => {
+      await this.menuCtrl.close('optionsMenu');
+      await this.navCtrl.navigateBack('/auth/login');
     });
   }
 
-  openOptionsMenu() {
-    this.menuCtrl.open('optionsMenu');
+  async openOptionsMenu() {
+    await this.menuCtrl.open('optionsMenu');
   }
 }
