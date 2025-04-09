@@ -4,8 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonImg, IonItem, IonList, IonText, IonInput, NavController } from '@ionic/angular/standalone';
 import { matchPasswordsValidator } from '../../utils/match-password-validator';
 import { AuthService } from '../../services/auth.service';
-import { UtilsService } from 'src/app/modules/core/services/utils.service';
-import { FirebaseService } from 'src/app/modules/core/services/firebase.service';
+import { UtilsService } from 'src/app/modules/shared/services/utils.service';
+import {UserModel} from "../../../shared/models/user.model";
+import {RoleEnum} from "../../../shared/enums/role.enum";
+import {StateEnum} from "../../../shared/enums/state.enum";
+import {UserService} from "../../../core/services/user.service";
 
 @Component({
   selector: 'app-register',
@@ -18,8 +21,8 @@ export class RegisterPage implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly utilsService = inject(UtilsService);
-  private readonly firebaseService = inject(FirebaseService);
   private readonly navCtrl = inject(NavController);
+  private readonly userService = inject(UserService);
 
   form!: FormGroup
 
@@ -41,43 +44,48 @@ export class RegisterPage implements OnInit {
   }
 
   async onSubmit() {
-    if (this.form.valid) {
-      const loading = await this.utilsService.loading();
-      await loading.present();
+    if (this.form.invalid) return;
 
-      this.authService.singUp(this.form.value['email'], this.form.value['password'])
-        .then(async response => {
-          await this.setUserInfo(response.user.uid)
-          this.navCtrl.navigateForward('/home');
-        })
-        .catch((error) => this.utilsService.presentToast({
-          message: error.message,
-          duration: 2500,
-          color: 'danger',
-          position: 'middle',
-          icon: 'alert-circle-outline'
-        }))
-        .finally(() => loading.dismiss());
-    } else {
-      this.form.markAllAsTouched();
-    }
-  }
+    const { name, email, phone, birthdate, password } = this.form.value;
 
-  async setUserInfo(uid: string) {
-    const path = `users/${uid}`;
-    delete this.form.value.password;
-    delete this.form.value.confirmPassword;
+    const loading = await this.utilsService.loading()
+    await loading.present();
 
-    this.firebaseService.setDocument(path, {...this.form.value, role: "user"})
-      .then(async res => {
-        { await this.authService.updateUser(this.form.value.name) };
+    this.authService.singUp(email, password)
+      .then(async cred => {
+        const firebaseUser = cred.user;
+        await this.authService.updateUser(name);
+        return firebaseUser;
       })
-      .catch((error) => this.utilsService.presentToast({
+      .then((firebaseUser) => {
+        const newUser: UserModel = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email!,
+          displayName: name,
+          phoneNumber: phone,
+          photoURL: firebaseUser.photoURL || '',
+          birthdate,
+          role: RoleEnum.CLIENT,
+          state: StateEnum.ACTIVE,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: firebaseUser.uid,
+          updatedBy: firebaseUser.uid
+        };
+
+        return this.userService.createUser(newUser);
+      })
+      .then(() => {
+        this.navCtrl.navigateForward(['/home']);
+      })
+      .catch(error => this.utilsService.presentToast({
         message: error.message,
         duration: 2500,
         color: 'danger',
-        position: 'middle',
+        position: 'bottom',
         icon: 'alert-circle-outline'
       }))
+      .finally(async() => await loading.dismiss())
+    ;
   }
 }

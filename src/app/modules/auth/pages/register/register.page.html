@@ -1,9 +1,7 @@
-<main class="register ion-padding-top">
-
+<main>
   <div class="header-image">
     <ion-img src="assets/images/TuHoraFitLogoWhite.svg" alt="Imagen de fondo pantalla inicial"></ion-img>
   </div>
-
   <ion-card>
     <ion-card-header>
       <ion-card-title class="ion-text-center">Regístrate</ion-card-title>
@@ -11,18 +9,18 @@
 
     <ion-card-content [scrollTop]="true">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <ion-list lines="full">
+        <ion-list lines="none">
           <ion-item>
             <ion-input label="Nombre" labelPlacement="floating" formControlName="name" type="text"
-              autocomplete="name" placeholder="Ingresa tu nombre"></ion-input>
+                       autocomplete="name" placeholder="Ingresa tu nombre"></ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
-          
+
           <ion-item>
             <ion-input label="Correo electrónico" labelPlacement="floating" formControlName="email" type="email"
-              autocomplete="email" placeholder="Ingresa tu correo"></ion-input>
+                       autocomplete="email" placeholder="Ingresa tu correo"></ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
             <small class="ion-padding-start">Correo inválido</small>
@@ -30,7 +28,7 @@
 
           <ion-item>
             <ion-input label="Teléfono" labelPlacement="floating" formControlName="phone" type="number"
-              autocomplete="phone" placeholder="Ingresa tu teléfono"></ion-input>
+                       autocomplete="phone" placeholder="Ingresa tu teléfono"></ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid">
             <small class="ion-padding-start">Teléfono requerido</small>
@@ -38,7 +36,7 @@
 
           <ion-item>
             <ion-input label="Fecha de nacimiento" labelPlacement="floating" formControlName="birthdate" type="date"
-              autocomplete="birthday" placeholder="Ingresa tu fecha de nacimiento"></ion-input>
+                       autocomplete="birthday" placeholder="Ingresa tu fecha de nacimiento"></ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('birthday')?.touched && form.get('birthday')?.invalid">
             <small class="ion-padding-start">Fecha de nacimiento requerida</small>
@@ -46,26 +44,26 @@
 
           <ion-item>
             <ion-input label="Contraseña" labelPlacement="floating" formControlName="password" type="password"
-              autocomplete="current-password" placeholder="Ingresa tu contraseña"></ion-input>
+                       autocomplete="current-password" placeholder="Ingresa tu contraseña"></ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
             <small class="ion-padding-start">Contraseña requerida</small>
           </ion-text>
 
           <ion-item>
-            <ion-input label="Confirmar contraseña" labelPlacement="floating" formControlName="confirmPassword" type="password"
-              autocomplete="current-password" placeholder="Confirma tu contraseña"></ion-input>
+            <ion-input label="Confirmar contraseña" labelPlacement="floating" formControlName="confirmPassword"
+                       type="password"
+                       autocomplete="current-password" placeholder="Confirma tu contraseña"></ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('confirmPassword')?.touched && form.get('confirmPassword')?.invalid">
             <small class="ion-padding-start">Contraseñas no coinciden</small>
           </ion-text>
         </ion-list>
 
-        <div class="ion-padding-top">
-          <ion-button color="primary" expand="block" type="submit" [disabled]="form.invalid">
-            Registrar
-          </ion-button>
-        </div>
+
+        <ion-button color="primary" expand="block" type="submit" [disabled]="form.invalid">
+          Registrar
+        </ion-button>
       </form>
     </ion-card-content>
   </ion-card>
