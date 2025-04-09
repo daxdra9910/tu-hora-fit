@@ -1,7 +1,7 @@
 ion-content {
     --background: url('/assets/images/background.jpg') no-repeat center center / cover;
     position: relative;
-    
+
 
     &::part(scroll) {
         overflow: hidden !important;
