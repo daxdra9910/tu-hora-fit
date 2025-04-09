@@ -10,7 +10,16 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { addIcons } from 'ionicons';
 
-import {alertCircleOutline, calendarOutline, homeOutline, idCardOutline, menuOutline, personOutline} from 'ionicons/icons'
+import {
+  addOutline,
+  alertCircleOutline,
+  calendarOutline,
+  chevronBackOutline, eyeOutline,
+  homeOutline,
+  idCardOutline,
+  menuOutline, pencilOutline,
+  personOutline, trashOutline
+} from 'ionicons/icons'
 
 addIcons({
   'alert-circle-outline': alertCircleOutline,
@@ -18,13 +27,17 @@ addIcons({
   'menu-outline': menuOutline,
   'home-outline': homeOutline,
   'calendar-outline': calendarOutline,
-  'id-card-outline': idCardOutline
+  'id-card-outline': idCardOutline,
+  'add-outline': addOutline,
+  'eye-outline': eyeOutline,
+  'pencil-outline': pencilOutline,
+  'trash-outline': trashOutline
 })
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+    provideIonicAngular({mode: 'md'}),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
