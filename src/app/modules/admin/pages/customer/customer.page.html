@@ -4,29 +4,47 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-searchbar
-    placeholder="Buscar cliente"
-    [debounce]="1000"
-  ></ion-searchbar>
   <ion-button expand="full" class="ion-align-items-center">
     <ion-icon icon="add-outline" class="ion-margin-end"></ion-icon>
     Agregar cliente
   </ion-button>
-  @if (users.length > 0) {
+  <ion-searchbar
+    placeholder="Buscar cliente"
+    (ionChange)="handleInput($event)"
+  ></ion-searchbar>
+  @if (users) {
     <ion-list class="ion-margin-top">
       @for (user of users; track user.uid) {
         <ion-item-sliding>
-          <ion-item lines="none">
+          <ion-item lines="full">
             <ion-avatar slot="start">
-              <ion-img src="https://placehold.co/500x500" [alt]="'Avatar de ' + user.displayName"></ion-img>
+              <ion-img
+                [src]="user.photoURL || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'"
+                [alt]="'Avatar de ' + user.displayName">
+              </ion-img>
             </ion-avatar>
-            <ion-label>
-              {{ user.displayName }}
-            </ion-label>
+
+            <ion-grid class="ion-no-padding">
+              <ion-row class="ion-align-items-center">
+                <ion-col>
+                  <ion-text>
+                    <h3 class="ion-no-margin">{{ user.displayName }}</h3>
+                  </ion-text>
+                  <ion-text color="medium">
+                    <p class="ion-no-margin">{{ user.email }}</p>
+                  </ion-text>
+                </ion-col>
+                <ion-col size="auto" class="ion-text-end">
+                  <ion-chip [color]="user.state === activeState ? 'success' : 'danger'">
+                    {{ user.state | state }}
+                  </ion-chip>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-item>
 
           <ion-item-options>
-            <ion-item-option color="secondary" >
+            <ion-item-option color="secondary">
               <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
             </ion-item-option>
             <ion-item-option color="warning">
