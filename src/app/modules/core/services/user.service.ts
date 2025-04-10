@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {collection, doc, Firestore, getDocs, setDoc} from "@angular/fire/firestore";
+import {collection, doc, endAt, Firestore, getDocs, orderBy, query, setDoc, startAt} from "@angular/fire/firestore";
 import {UserModel} from "../../shared/models/user.model";
 import {COLLECTIONS} from "../../shared/constants/firebase.constant";
 
@@ -24,5 +24,44 @@ export class UserService {
         uid: doc.id
       } as UserModel;
     });
+  }
+
+  async searchUsers(search: string): Promise<UserModel[]> {
+    if (!search.trim()) {
+      return this.getAllUsers();
+    }
+
+    const usersRef = collection(this.firestore, COLLECTIONS.USERS);
+
+    const displayNameQuery = query(
+      usersRef,
+      orderBy('displayName'),
+      startAt(search),
+      endAt(search + '\uf8ff')
+    );
+
+    const emailQuery = query(
+      usersRef,
+      orderBy('email'),
+      startAt(search),
+      endAt(search + '\uf8ff')
+    );
+
+    const [displayNameSnapshot, emailSnapshot] = await Promise.all([
+      getDocs(displayNameQuery),
+      getDocs(emailQuery)
+    ]);
+
+    const allDocs = [...displayNameSnapshot.docs, ...emailSnapshot.docs];
+
+    const uniqueUsersMap = new Map<string, UserModel>();
+    allDocs.forEach(doc => {
+      uniqueUsersMap.set(doc.id, {
+        ...doc.data(),
+        uid: doc.id
+      } as UserModel);
+    });
+
+    return Array.from(uniqueUsersMap.values());
   }
 }
