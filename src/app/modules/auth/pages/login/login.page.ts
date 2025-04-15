@@ -56,9 +56,9 @@ export class LoginPage implements OnInit, OnDestroy {
   subscribeRouterEvents(): void {
     const routerSub = this.router.events
       .pipe(filter(event => event instanceof NavigationStart))
-      .subscribe(() => {
+      .subscribe(async () => {
         if (this.modal) {
-          this.modal.dismiss();
+          await this.modal.dismiss();
         }
       });
     this.subscriptions.add(routerSub);
@@ -75,7 +75,7 @@ export class LoginPage implements OnInit, OnDestroy {
           message: error.message,
           duration: 2500,
           color: 'danger',
-          position: 'middle',
+          position: 'bottom',
           icon: 'alert-circle-outline'
         }))
         .finally(() => loading.dismiss());
