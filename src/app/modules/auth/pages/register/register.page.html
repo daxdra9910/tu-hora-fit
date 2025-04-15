@@ -36,9 +36,9 @@
 
           <ion-item>
             <ion-input label="Fecha de nacimiento" labelPlacement="floating" formControlName="birthdate" type="date"
-                       autocomplete="birthday" placeholder="Ingresa tu fecha de nacimiento"></ion-input>
+                       autocomplete="birthdate" placeholder="Ingresa tu fecha de nacimiento"></ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="form.get('birthday')?.touched && form.get('birthday')?.invalid">
+          <ion-text color="danger" *ngIf="form.get('birthdate')?.touched && form.get('birthdate')?.invalid">
             <small class="ion-padding-start">Fecha de nacimiento requerida</small>
           </ion-text>
 
