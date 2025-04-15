@@ -1,5 +1,16 @@
 import {inject, Injectable} from '@angular/core';
-import {collection, doc, endAt, Firestore, getDocs, orderBy, query, setDoc, startAt} from "@angular/fire/firestore";
+import {
+  collection,
+  doc,
+  endAt,
+  Firestore,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  startAt,
+  updateDoc
+} from "@angular/fire/firestore";
 import {UserModel} from "../../shared/models/user.model";
 import {COLLECTIONS} from "../../shared/constants/firebase.constant";
 
@@ -63,5 +74,12 @@ export class UserService {
     });
 
     return Array.from(uniqueUsersMap.values());
+  }
+
+  async updateUser(user: UserModel): Promise<void> {
+    const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);
+    const { uid, ...userData } = user; // quitamos el uid para no guardarlo dos veces
+
+    await updateDoc(userRef, userData);
   }
 }
