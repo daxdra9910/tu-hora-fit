@@ -1,14 +1,14 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { inject } from '@angular/core';
-import { AuthService } from '../../auth/services/auth.service';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { from, map, switchMap, take } from 'rxjs';
-import { COLLECTIONS } from '../../shared/constants/firebase.constant';
-import { UserModel } from '../../shared/models/user.model';
-import { RoleEnum } from '../../shared/enums/role.enum';
+import {CanActivateFn, Router} from '@angular/router';
+import {inject} from '@angular/core';
+import {AuthService} from '../../auth/services/auth.service';
+import {doc, Firestore, getDoc} from '@angular/fire/firestore';
+import {from, map, switchMap, take} from 'rxjs';
+import {COLLECTIONS} from '../../shared/constants/firebase.constant';
+import {UserModel} from '../../shared/models/user.model';
+import {RoleEnum} from '../../shared/enums/role.enum';
 
-export function roleGuard(allowedRoles: RoleEnum[]): CanActivateFn {
-  return (route, state) => {
+export const roleGuard: (roles: RoleEnum[]) => CanActivateFn = (allowedRoles) => {
+  return () => {
     const authService = inject(AuthService);
     const router = inject(Router);
     const firestore = inject(Firestore);
@@ -35,4 +35,4 @@ export function roleGuard(allowedRoles: RoleEnum[]): CanActivateFn {
       })
     );
   };
-}
+};
