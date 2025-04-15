@@ -4,7 +4,7 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonMenu,
+  IonMenu, IonNavLink,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -14,12 +14,13 @@ import {
   NavController
 } from '@ionic/angular/standalone';
 import {AuthService} from 'src/app/modules/auth/services/auth.service';
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.scss'],
-  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton],
+  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton, IonNavLink, RouterLink],
 })
 export class TabComponent {
   private readonly menuCtrl = inject(MenuController);

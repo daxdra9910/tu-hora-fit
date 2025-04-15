@@ -5,6 +5,9 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
+    <ion-nav-link [routerLink]="['/admin/customers']" router-direction="forward">
+      Administrar clientes
+    </ion-nav-link>
     <ion-button expand="block" (click)="onLogout()">
       Salir de la aplicación
     </ion-button>
