@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {
-  collection,
+  collection, deleteDoc,
   doc,
   endAt,
   Firestore,
@@ -82,4 +82,10 @@ export class UserService {
 
     await updateDoc(userRef, userData);
   }
+
+  async deleteUser(user: UserModel): Promise<void> {
+    const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);
+    await deleteDoc(userRef);
+  }
+
 }
