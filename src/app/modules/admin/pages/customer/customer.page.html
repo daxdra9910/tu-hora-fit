@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-title>Clientes</ion-title>
     <ion-buttons slot="end">
-    <ion-button>
+    <ion-button (click)="openCreate()">
       <ion-icon icon="add-outline" slot="icon-only">
       </ion-icon>
     </ion-button>
@@ -50,7 +50,7 @@
             <ion-item-option color="warning">
               <ion-icon name="pencil-outline" slot="icon-only" (click)="openEdit(user)"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger">
+            <ion-item-option color="danger" (click)="openDelete(user)">
               <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
             </ion-item-option>
           </ion-item-options>
@@ -58,9 +58,18 @@
       }
     </ion-list>
   }
+  <app-create-user
+    [isOpen]="isCreating"
+    (isOpenChange)="closeCreate()"
+  ></app-create-user>
   <app-modify-user
     [isOpen]="isEditing"
     [user]="selectedUser"
     (isOpenChange)="closeEdit()"
   ></app-modify-user>
+  <app-delete-user
+    [isOpen]="isDeleting"
+    [user]="selectedUser"
+    (isOpenChange)="closeDelete()"
+  ></app-delete-user>
 </ion-content>
