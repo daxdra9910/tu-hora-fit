@@ -50,7 +50,7 @@ import {UtilsService} from "../../../shared/services/utils.service";
 export class ModifyUserComponent implements OnInit, OnChanges {
   @Input() isOpen: boolean = false;
   @Input() user: UserModel | null = null;
-  @Output() isOpenChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() isOpenChange = new EventEmitter<void>();
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly userService = inject(UserService);
