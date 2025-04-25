@@ -1,9 +1,12 @@
+import { StateEnum } from "../enums/state.enum";
 import { AuditModel } from "./audit.model";
 
 export interface PlanModel extends AuditModel {
   id: string;
   name: string;
-  description: string;
+  duration: number;
   price: number;
-  duration: number; // in months
+  description: string
+  state: StateEnum;
+
 }
