@@ -12,13 +12,13 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      <form [formGroup]="planForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <ion-list lines="none">
           <!-- Nombre -->
           <ion-item>
             <ion-input label="Nombre" labelPlacement="floating" formControlName="name" type="text" placeholder="Nombre del plan"></ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="planForm.get('name')?.touched && planForm.get('name')?.invalid">
+          <ion-text color="danger" *ngIf="formGroup.get('name')?.touched && formGroup.get('name')?.invalid">
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
 
@@ -26,7 +26,7 @@
           <ion-item>
             <ion-input label="Duración (días)" labelPlacement="floating" formControlName="duration" type="number" placeholder="Ej: 30"></ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="planForm.get('duration')?.touched && planForm.get('duration')?.invalid">
+          <ion-text color="danger" *ngIf="formGroup.get('duration')?.touched && formGroup.get('duration')?.invalid">
             <small class="ion-padding-start">Duración requerida</small>
           </ion-text>
 
@@ -34,7 +34,7 @@
           <ion-item>
             <ion-input label="Precio" labelPlacement="floating" formControlName="price" type="number" placeholder="Ej: 50000"></ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="planForm.get('price')?.touched && planForm.get('price')?.invalid">
+          <ion-text color="danger" *ngIf="formGroup.get('price')?.touched && formGroup.get('price')?.invalid">
             <small class="ion-padding-start">Precio requerido</small>
           </ion-text>
 
@@ -42,7 +42,7 @@
           <ion-item>
             <ion-input label="Descripción" labelPlacement="floating" formControlName="description" type="text" placeholder="Descripción del plan"></ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="planForm.get('description')?.touched && planForm.get('description')?.invalid">
+          <ion-text color="danger" *ngIf="formGroup.get('description')?.touched && formGroup.get('description')?.invalid">
             <small class="ion-padding-start">Descripción requerida</small>
           </ion-text>
 
@@ -53,12 +53,12 @@
               <ion-select-option [value]="StateEnum.INACTIVE">Inactivo</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-text color="danger" *ngIf="planForm.get('state')?.touched && planForm.get('state')?.invalid">
+          <ion-text color="danger" *ngIf="formGroup.get('state')?.touched && formGroup.get('state')?.invalid">
             <small class="ion-padding-start">Estado requerido</small>
           </ion-text>
         </ion-list>
 
-        <ion-button expand="block" type="submit" color="primary" [disabled]="planForm.invalid">
+        <ion-button expand="block" type="submit" color="primary" [disabled]="formGroup.invalid">
           Guardar
         </ion-button>
       </form>
