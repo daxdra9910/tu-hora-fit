@@ -1,39 +1,45 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {Component, inject, OnInit, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 import {
+  IonButton,
+  IonButtons,
+  IonChip,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
+  IonIcon,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonList,
+  IonRow,
+  IonSearchbar,
+  IonText,
   IonTitle,
   IonToolbar,
-  IonItemSliding,
-  IonSearchbar,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonRow,
-  IonCol,
-  IonText,
-  IonGrid,
-  IonList,
-  IonItemOptions,
-  IonItemOption,
-  IonItem,
-  SearchbarInputEventDetail, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonChip, IonAvatar, IonLabel } from '@ionic/angular/standalone';
-import { IonSearchbarCustomEvent } from '@ionic/core';
+  SearchbarInputEventDetail
+} from '@ionic/angular/standalone';
+import {IonSearchbarCustomEvent} from '@ionic/core';
 
-import { CreatePlanComponent } from '../../components/create-plan/create-plan.component';
-import { ModifyPlanComponent } from '../../components/modify-plan/modify-plan.component';
-import { DeletePlanComponent } from '../../components/delete-plan/delete-plan.component';
+import {CreatePlanComponent} from '../../components/create-plan/create-plan.component';
+import {ModifyPlanComponent} from '../../components/modify-plan/modify-plan.component';
+import {DeletePlanComponent} from '../../components/delete-plan/delete-plan.component';
+import {PlanModel} from "../../../shared/models/plan.model";
+import {StateEnum} from "../../../shared/enums/state.enum";
+import {StatePipe} from "../../../shared/pipes/state.pipe";
+import {PlansService} from "../../../core/services/plans.service";
+import {UtilsService} from "../../../shared/services/utils.service";
 
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.page.html',
   styleUrls: ['./plans.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonAvatar, IonChip, IonCardContent, IonCardTitle, IonCardHeader, IonCard,
-    CommonModule,
+  imports: [IonChip, CommonModule,
     FormsModule,
     IonContent,
     IonHeader,
@@ -44,58 +50,56 @@ import { DeletePlanComponent } from '../../components/delete-plan/delete-plan.co
     IonButtons,
     IonButton,
     IonIcon,
-    IonRow,
-    IonCol,
     IonText,
-    IonGrid,
     IonList,
     IonItemOptions,
     IonItemOption,
     IonItem,
     CreatePlanComponent,
     ModifyPlanComponent,
-    DeletePlanComponent
+    DeletePlanComponent, IonCol, IonGrid, IonRow, StatePipe
   ]
 })
 export class PlansPage implements OnInit {
+  private readonly plansService = inject(PlansService);
+  private readonly utilsService = inject(UtilsService);
+
   @ViewChild('planList') planList!: IonList;
 
-  plans = [
-    {
-      id: '1',
-      name: 'Plan Básico',
-      duration: 30,
-      price: 50000,
-      description: 'Acceso al gimnasio por 30 días',
-      state: 'active'
-    },
-    {
-      id: '2',
-      name: 'Plan Premium',
-      duration: 90,
-      price: 120000,
-      description: 'Acceso completo por 3 meses',
-      state: 'inactive'
-    }
-  ];
-
-
-  filteredPlans = [...this.plans];
-  selectedPlan: any = null;
+  plans: PlanModel[] = [];
+  selectedPlan: PlanModel | null = null;
 
   isCreating = false;
   isEditing = false;
   isDeleting = false;
 
-  constructor() {}
+  aciveState = StateEnum.ACTIVE;
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.getPlans();
+  }
 
-  handleInput(event: IonSearchbarCustomEvent<SearchbarInputEventDetail>) {
-    const value = event.detail.value?.toLowerCase() || '';
-    this.filteredPlans = this.plans.filter(plan =>
-      plan.name.toLowerCase().includes(value)
-    );
+  async getPlans(name: string = '') {
+    const loading = await this.utilsService.loading();
+    await loading.present();
+    this.plansService.searchPlans(name)
+      .then(plans => this.plans = plans)
+      .catch(async (error) => {
+        await this.utilsService.presentToast({
+          message: error.message,
+          duration: 2500,
+          color: 'danger',
+          position: 'bottom',
+          icon: 'alert-circle-outline'
+        });
+      })
+      .finally(() => loading.dismiss());
+  }
+
+  handleInput(event: Event) {
+    const target = event.target as HTMLIonSearchbarElement;
+    const query = target.value;
+    this.getPlans(query);
   }
 
   openCreate() {
@@ -104,9 +108,10 @@ export class PlansPage implements OnInit {
 
   closeCreate() {
     this.isCreating = false;
+    this.getPlans();
   }
 
-  openEdit(plan: any) {
+  openEdit(plan: PlanModel) {
     this.planList?.closeSlidingItems().then(() => {
       this.selectedPlan = plan;
       this.isEditing = true;
@@ -116,9 +121,10 @@ export class PlansPage implements OnInit {
   closeEdit() {
     this.isEditing = false;
     this.selectedPlan = null;
+    this.getPlans();
   }
 
-  openDelete(plan: any) {
+  openDelete(plan: PlanModel) {
     this.planList?.closeSlidingItems().then(() => {
       this.selectedPlan = plan;
       this.isDeleting = true;
@@ -128,5 +134,6 @@ export class PlansPage implements OnInit {
   closeDelete() {
     this.isDeleting = false;
     this.selectedPlan = null;
+    this.getPlans();
   }
 }

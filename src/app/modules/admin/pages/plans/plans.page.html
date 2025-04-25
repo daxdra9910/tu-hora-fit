@@ -17,22 +17,31 @@
     animated="true">
   </ion-searchbar>
 
-  @if (filteredPlans.length > 0) {
+  @if (plans.length > 0) {
     <ion-list #planList>
-      @for (plan of filteredPlans; track plan.id) {
+      @for (plan of plans; track plan.id) {
         <ion-item-sliding>
           <ion-item lines="full">
-            <ion-label>
-              <h3>{{ plan.name }}</h3>
-              <p>{{ plan.duration }} días • ${{ plan.price }}</p>
-              <p>{{ plan.description }}</p>
-            </ion-label>
-
-            <ion-chip
-              slot="end"
-              [color]="plan.state === 'active' ? 'success' : 'danger'">
-              {{ plan.state === 'active' ? 'Activo' : 'Inactivo' }}
-            </ion-chip>
+            <ion-grid class="ion-no-padding">
+              <ion-row class="ion-align-items-center">
+                <ion-col>
+                  <ion-text>
+                    <h3 class="ion-no-margin">{{ plan.name }}</h3>
+                  </ion-text>
+                  <ion-text color="medium">
+                    <p class="ion-no-margin">{{ plan.duration }} días • {{ plan.price | currency}}</p>
+                  </ion-text>
+                  <ion-text color="medium">
+                    <p class="ion-no-margin">{{ plan.description }}</p>
+                  </ion-text>
+                </ion-col>
+                <ion-col size="auto" class="ion-text-end">
+                  <ion-chip [color]="plan.state === aciveState ? 'success' : 'danger'">
+                    {{ plan.state | state }}
+                  </ion-chip>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-item>
 
           <ion-item-options side="end">
