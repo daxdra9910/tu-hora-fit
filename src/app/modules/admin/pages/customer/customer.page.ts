@@ -2,7 +2,6 @@ import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {
-  IonAlert,
   IonAvatar,
   IonButton,
   IonButtons,
@@ -37,7 +36,7 @@ import {CreateUserComponent} from "../../components/create-user/create-user.comp
   templateUrl: './customer.page.html',
   styleUrls: ['./customer.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, IonButton, CommonModule, FormsModule, IonIcon, IonList, IonItemSliding, IonItem, IonAvatar, IonImg, IonItemOptions, IonItemOption, IonText, IonGrid, IonRow, IonCol, IonChip, StatePipe, IonButtons, ModifyUserComponent, IonAlert, DeleteUserComponent, CreateUserComponent]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, IonButton, CommonModule, FormsModule, IonIcon, IonList, IonItemSliding, IonItem, IonAvatar, IonImg, IonItemOptions, IonItemOption, IonText, IonGrid, IonRow, IonCol, IonChip, StatePipe, IonButtons, ModifyUserComponent, DeleteUserComponent, CreateUserComponent]
 })
 export class CustomerPage implements OnInit {
   private readonly userService = inject(UserService);
