@@ -50,9 +50,6 @@ import { UtilsService } from '../../../shared/services/utils.service';
     IonItemOptions,
     IonItemOption,
     IonItem,
-    IonCol,
-    IonGrid,
-    IonRow,
     CreateInventoryComponent,
     ModifyInventoryComponent,
     DeleteInventoryComponent
