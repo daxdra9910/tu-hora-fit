@@ -19,8 +19,7 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
-  SearchbarInputEventDetail, IonAvatar, IonLabel } from '@ionic/angular/standalone';
-import { IonSearchbarCustomEvent } from '@ionic/core';
+  IonAvatar, IonLabel } from '@ionic/angular/standalone';
 
 import { CreateInventoryComponent } from '../../components/create-inventory/create-inventory.component';
 import { ModifyInventoryComponent } from '../../components/modify-inventory/modify-inventory.component';
