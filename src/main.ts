@@ -10,6 +10,8 @@ import {routes} from './app/app.routes';
 import {AppComponent} from './app/app.component';
 import {environment} from './environments/environment';
 import {addIcons} from 'ionicons';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+
 
 import {
   addOutline,
@@ -49,6 +51,7 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage())
   ],
 });

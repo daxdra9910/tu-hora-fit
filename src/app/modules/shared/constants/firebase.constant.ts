@@ -3,5 +3,6 @@ export const COLLECTIONS = {
   MEMBERSHIPS: 'memberships',
   TRAINERS: 'trainers',
   PLANS: 'plans',
-  INVENTORIES: 'inventories'
+  INVENTORIES: 'inventories',
+  CLASSES: 'classes'
 }
