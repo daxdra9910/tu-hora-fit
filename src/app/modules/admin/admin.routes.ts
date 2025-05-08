@@ -12,6 +12,10 @@ const routes: Routes = [
   {
     path: 'inventory',
     loadComponent: () => import('./pages/inventory/inventory.page').then(m => m.InventoryPage)
+  },
+  {
+    path: 'class-page',
+    loadComponent: () => import('./pages/class-page/class-page.page').then(m => m.ClassPage) // ✅ Aquí el cambio
   }
 ];
 
