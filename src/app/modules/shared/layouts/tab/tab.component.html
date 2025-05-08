@@ -1,21 +1,20 @@
-<ion-menu side="end" menuId="optionsMenu" contentId="tabs-content">
+ <ion-menu side="end" menuId="optionsMenu" contentId="tabs-content">
   <ion-header>
     <ion-toolbar>
       <ion-title>Menú</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
+    <ion-nav-link [routerLink]="['/admin/customers']" router-direction="forward">
+      Administrar clientes
+    </ion-nav-link>
     <ion-button expand="block" (click)="onLogout()">
       Salir de la aplicación
     </ion-button>
   </ion-content>
 </ion-menu>
 
-<ion-tabs>
-  <div class="ion-page" id="tabs-content">
-    <ion-router-outlet></ion-router-outlet>
-  </div>
-
+<ion-tabs id="tabs-content">
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="users">
       <ion-icon name="person-outline"></ion-icon>

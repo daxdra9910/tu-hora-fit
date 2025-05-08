@@ -1,5 +1,7 @@
-import { Routes } from '@angular/router';
-import { antiAuthGuard, authGuard } from './modules/core/guards/auth.guard';
+import {Routes} from '@angular/router';
+import {antiAuthGuard, authGuard} from './modules/core/guards/auth.guard';
+import {roleGuard} from "./modules/core/guards/role.guard";
+import {RoleEnum} from "./modules/shared/enums/role.enum";
 
 export const routes: Routes = [
   {
@@ -9,13 +11,18 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./modules/core/layouts/tab/tab.component').then(m => m.TabComponent),
+    loadComponent: () => import('./modules/shared/layouts/tab/tab.component').then((m) => m.TabComponent),
     children: [
       {
         path: 'home',
         canActivate: [authGuard],
-        loadChildren: () => import('./modules/home/home.routes').then( m => m.default)
+        loadChildren: () => import('./modules/home/home.routes').then((m) => m.default)
       },
+      {
+        path: 'admin',
+        canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
+        loadChildren: () => import('./modules/admin/admin.routes').then((m) => m.default)
+      }
     ]
   },
   {

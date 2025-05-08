@@ -14,7 +14,7 @@
   <ng-template>
     <ion-content class="ion-padding">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <ion-list lines="full">
+        <ion-list lines="none">
           <ion-item>
             <ion-input label="Correo electrónico" labelPlacement="floating" formControlName="email" type="email"
               autocomplete="email" placeholder="Ingresa tu correo"></ion-input>
@@ -25,7 +25,8 @@
 
           <ion-item>
             <ion-input label="Contraseña" labelPlacement="floating" formControlName="password" type="password"
-              autocomplete="current-password" placeholder="Ingresa tu contraseña"></ion-input>
+              autocomplete="current-password" placeholder="Ingresa tu contraseña">
+              </ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
             <small class="ion-padding-start">Contraseña requerida</small>

@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItem, IonInput, IonButton, IonImg, NavController } from '@ionic/angular/standalone';
+import { IonText, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItem, IonInput, IonButton, IonImg, NavController } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth.service';
-import { UtilsService } from 'src/app/modules/core/services/utils.service';
+import { UtilsService } from 'src/app/modules/shared/services/utils.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,7 +14,7 @@ import { UtilsService } from 'src/app/modules/core/services/utils.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IonContent,
+    IonText,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -31,7 +31,7 @@ export class ForgotPasswordPage implements OnInit {
   private readonly navCtrl = inject(NavController);
   private readonly authService = inject(AuthService);
   private readonly utilsService = inject(UtilsService);
-  
+
   form: FormGroup;
 
   ngOnInit() {

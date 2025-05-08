@@ -1,23 +1,31 @@
-import { inject, Injectable } from '@angular/core';
-import { Auth, authState, confirmPasswordReset, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateProfile, User } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import {inject, Injectable} from '@angular/core';
+import {
+  Auth,
+  authState,
+  confirmPasswordReset,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  User
+} from '@angular/fire/auth';
+import {Observable} from 'rxjs';
+import {UserModel} from "../../shared/models/user.model";
+import {Firestore} from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  user$: Observable<User | null>;
   private readonly auth = inject(Auth);
-
-  constructor() {
-    this.user$ = authState(this.auth);
-  }
+  private readonly firestore = inject(Firestore);
 
   singIn(email: string, password: string) {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
-  
+
   singUp(email: string, password: string) {
     return createUserWithEmailAndPassword(this.auth, email, password);
   }
@@ -34,11 +42,11 @@ export class AuthService {
     return confirmPasswordReset(this.auth, oobCode, newPassword);
   }
 
-  getUser(): User | null {
-    return this.auth.currentUser;
+  get authState$(): Observable<User | null> {
+    return authState(this.auth);
   }
 
   updateUser(displayName: string) {
-    return updateProfile(this.auth.currentUser, { displayName })
+    return updateProfile(this.auth.currentUser, {displayName})
   }
 }

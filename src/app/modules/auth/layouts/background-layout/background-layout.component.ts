@@ -1,18 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { IonContent } from "@ionic/angular/standalone";
+import {Component} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {IonContent, IonRouterOutlet} from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-background-layout',
   templateUrl: './background-layout.component.html',
   styleUrls: ['./background-layout.component.scss'],
   standalone: true,
-  imports: [IonContent, RouterModule]
+  imports: [IonContent, RouterModule, IonRouterOutlet]
 })
-export class BackgroundLayoutComponent  implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {}
-
+export class BackgroundLayoutComponent {
 }

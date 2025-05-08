@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Planes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreate()">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar
+    placeholder="Buscar plan"
+    [debounce]="300"
+    (ionInput)="handleInput($event)"
+    animated="true">
+  </ion-searchbar>
+
+  @if (plans.length > 0) {
+    <ion-list #planList>
+      @for (plan of plans; track plan.id) {
+        <ion-item-sliding>
+          <ion-item lines="full">
+            <ion-grid class="ion-no-padding">
+              <ion-row class="ion-align-items-center">
+                <ion-col>
+                  <ion-text>
+                    <h3 class="ion-no-margin">{{ plan.name }}</h3>
+                  </ion-text>
+                  <ion-text color="medium">
+                    <p class="ion-no-margin">{{ plan.duration }} días • {{ plan.price | currency}}</p>
+                  </ion-text>
+                  <ion-text color="medium">
+                    <p class="ion-no-margin">{{ plan.description }}</p>
+                  </ion-text>
+                </ion-col>
+                <ion-col size="auto" class="ion-text-end">
+                  <ion-chip [color]="plan.state === aciveState ? 'success' : 'danger'">
+                    {{ plan.state | state }}
+                  </ion-chip>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+
+          <ion-item-options side="end">
+            <ion-item-option color="warning" (click)="openEdit(plan)">
+              <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="openDelete(plan)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  } @else {
+    <ion-text class="ion-text-center ion-margin-top" color="medium">
+      <p>No hay planes registrados.</p>
+    </ion-text>
+  }
+
+  <!-- Modales -->
+  <app-create-plan
+    [isOpen]="isCreating"
+    (isOpenChange)="closeCreate()">
+  </app-create-plan>
+
+  <app-modify-plan
+    [isOpen]="isEditing"
+    [plan]="selectedPlan"
+    (isOpenChange)="closeEdit()">
+  </app-modify-plan>
+
+  <app-delete-plan
+    [isOpen]="isDeleting"
+    [plan]="selectedPlan"
+    (isOpenChange)="closeDelete()">
+  </app-delete-plan>
+</ion-content>
