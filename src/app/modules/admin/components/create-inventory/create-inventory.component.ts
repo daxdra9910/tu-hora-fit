@@ -16,14 +16,14 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
-  IonLabel
-} from '@ionic/angular/standalone';
+  IonLabel, IonAvatar } from '@ionic/angular/standalone';
 import { Inventory } from '../../../shared/models/inventory.model';
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-create-inventory',
   standalone: true,
-  imports: [
+  imports: [IonAvatar,
     IonLabel,
     CommonModule,
     ReactiveFormsModule,
@@ -47,6 +47,7 @@ export class CreateInventoryComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly inventoryService = inject(InventoryService);
   private readonly utilsService = inject(UtilsService);
+  private readonly storage = inject(Storage);
 
   @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<void>();
@@ -70,13 +71,17 @@ export class CreateInventoryComponent implements OnInit {
     this.isOpenChange.emit();
   }
 
+  previewURL: string | null = null;
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
       this.selectedFileError = false;
+      this.previewURL = URL.createObjectURL(this.selectedFile); // 👈 para mostrar la imagen
     }
   }
+
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid || !this.selectedFile) {
@@ -87,35 +92,45 @@ export class CreateInventoryComponent implements OnInit {
       return;
     }
 
-    const inventoryData: Inventory = {
-      ...this.form.value,
-      photoURL: '', // 🔵 más adelante, cuando subamos la imagen a Firebase
-      createdAt: new Date()
-    };
-
     const loading = await this.utilsService.loading();
+    loading.message = 'Guardando inventario...';
     await loading.present();
 
-    this.inventoryService.createInventory(inventoryData)
-      .then(async () => {
-        await this.utilsService.presentToast({
-          message: 'Inventario creado correctamente (sin imagen subida aún)',
-          duration: 2500,
-          position: 'bottom',
-          color: 'success',
-          icon: 'checkmark-circle'
-        });
-        this.toggleOpen();
-      })
-      .catch(async (error) => {
-        await this.utilsService.presentToast({
-          message: error.message,
-          duration: 2500,
-          color: 'danger',
-          position: 'bottom',
-          icon: 'alert-circle-outline'
-        });
-      })
-      .finally(() => loading.dismiss());
+    try {
+      const path = `inventory-images/${Date.now()}-${this.selectedFile.name}`;
+      const storageRef = ref(this.storage, path);
+      await uploadBytes(storageRef, this.selectedFile);
+      const photoURL = await getDownloadURL(storageRef);
+
+      const inventoryData: Inventory = {
+        ...this.form.value,
+        photoURL,
+        createdAt: new Date()
+      };
+
+      await this.inventoryService.createInventory(inventoryData);
+
+      await this.utilsService.presentToast({
+        message: 'Inventario creado correctamente',
+        duration: 2500,
+        position: 'bottom',
+        color: 'success',
+        icon: 'checkmark-circle'
+      });
+
+      this.toggleOpen();
+      this.form.reset();
+      this.setupForm();
+    } catch (error: any) {
+      await this.utilsService.presentToast({
+        message: error.message || 'Error al crear inventario',
+        duration: 2500,
+        color: 'danger',
+        position: 'bottom',
+        icon: 'alert-circle-outline'
+      });
+    } finally {
+      loading.dismiss();
+    }
   }
 }
