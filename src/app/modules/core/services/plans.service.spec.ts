@@ -1,13 +1,23 @@
 import { TestBed } from '@angular/core/testing';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 
-import { PlansService } from './plans.service';
+import { environment } from '../../../../environments/environment';
+import { ClassService } from './class.service';
 
-describe('PlansService', () => {
-  let service: PlansService;
+describe('ClassService', () => {
+  let service: ClassService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(PlansService);
+    TestBed.configureTestingModule({
+      providers: [ClassService],
+      imports: [
+        provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+        provideFirestore(() => getFirestore())
+      ]
+    });
+
+    service = TestBed.inject(ClassService);
   });
 
   it('should be created', () => {
