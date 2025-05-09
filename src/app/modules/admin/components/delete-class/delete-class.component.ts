@@ -1,14 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonModal,
-  IonTitle,
-  IonToolbar
-} from '@ionic/angular/standalone';
+import { IonAlert } from '@ionic/angular/standalone';
 
 import { ClassService } from '../../../core/services/class.service';
 import { UtilsService } from '../../../shared/services/utils.service';
@@ -17,15 +9,8 @@ import { ClassModel } from '../../../shared/models/class.model';
 @Component({
   selector: 'app-delete-class',
   standalone: true,
-  imports: [
-    CommonModule,
-    IonModal,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonContent
+  imports: [IonAlert, 
+    CommonModule
   ],
   templateUrl: './delete-class.component.html',
   styleUrls: ['./delete-class.component.scss']
@@ -38,6 +23,19 @@ export class DeleteClassComponent {
   @Output() isOpenChange = new EventEmitter<void>();
 
   @Input() classData: ClassModel | null = null;
+
+  alertButtons = [
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      handler: () => {}
+    },
+    {
+      text: 'Aceptar',
+      role: 'confirm',
+      handler: async () => await this.confirmDelete()
+    }
+  ];
 
   toggleOpen(): void {
     this.isOpenChange.emit();
@@ -70,5 +68,9 @@ export class DeleteClassComponent {
         });
       })
       .finally(() => loading.dismiss());
+  }
+
+  get message(): string {
+    return `¿Está seguro de que desea eliminar la clase ${this.classData?.name}?`;
   }
 }
