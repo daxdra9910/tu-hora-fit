@@ -27,11 +27,11 @@ export class DeleteInventoryComponent {
   @Input() inventory: Inventory | null = null;
 
 
-    alertButtons = [
+  alertButtons = [
     {
       text: 'Cancelar',
       role: 'cancel',
-      handler: () => {}
+      handler: () => { }
     },
     {
       text: 'Aceptar',
@@ -73,8 +73,8 @@ export class DeleteInventoryComponent {
       .finally(() => loading.dismiss());
   }
 
-   get message (): string {
-    if(this.inventory) {
+  get message(): string {
+    if (this.inventory) {
       return `¿Estás seguro que desea eliminar el equipo ${this.inventory.name}?`;
     }
     return '';
