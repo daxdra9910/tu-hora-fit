@@ -11,15 +11,13 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content class="ion-padding">
       <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <ion-list lines="none">
-          <!-- Nombre -->
           <ion-item>
             <ion-input label="Nombre" labelPlacement="floating" formControlName="name" type="text"></ion-input>
           </ion-item>
 
-          <!-- Instructor (convertido a ion-select) -->
           <ion-item>
             <ion-select
               label="Instructor"
@@ -33,29 +31,31 @@
             </ion-select>
           </ion-item>
 
-          <!-- Capacidad -->
           <ion-item>
             <ion-input label="Capacidad" labelPlacement="floating" formControlName="capacity" type="number" min="1"></ion-input>
           </ion-item>
 
-          <!-- Duración -->
           <ion-item>
             <ion-input label="Duración" labelPlacement="floating" formControlName="duration" type="text" readonly></ion-input>
           </ion-item>
 
-          <!-- Hora de inicio -->
           <ion-item>
             <ion-input label="Hora de inicio" labelPlacement="floating" formControlName="startTime" type="time"></ion-input>
           </ion-item>
 
-          <!-- Hora de fin -->
           <ion-item>
             <ion-input label="Hora de fin" labelPlacement="floating" formControlName="endTime" type="time"></ion-input>
           </ion-item>
 
-          <!-- Imagen (URL) -->
-          <ion-item>
-            <ion-input label="Imagen (URL)" labelPlacement="floating" formControlName="imageURL" type="text"></ion-input>
+          <ion-item lines="none">
+            <ion-label>Imagen</ion-label>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" style="margin-left: 1rem;" />
+          </ion-item>
+
+          <ion-item *ngIf="formGroup.get('imageURL')?.value || selectedFile">
+            <ion-avatar slot="start">
+              <img [src]="selectedFile ? imagePreview : formGroup.get('imageURL')?.value" alt="Vista previa" style="object-fit: cover;" />
+            </ion-avatar>
           </ion-item>
         </ion-list>
 
