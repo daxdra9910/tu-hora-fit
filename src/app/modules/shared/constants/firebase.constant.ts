@@ -4,5 +4,6 @@ export const COLLECTIONS = {
   TRAINERS: 'trainers',
   PLANS: 'plans',
   INVENTORIES: 'inventories',
-  CLASSES: 'classes'
+  CLASSES: 'classes',
+  EMPLOYEES: 'employees'
 }
