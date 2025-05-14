@@ -15,8 +15,15 @@ const routes: Routes = [
   },
   {
     path: 'classes',
-    loadComponent: () => import('./pages/class-page/class-page.page').then(m => m.ClassPage) // ✅ Aquí el cambio
-  }
+    loadComponent: () => import('./pages/class-page/class-page.page').then(m => m.ClassPage)
+  },
+  {
+  {
+    path: 'employees',
+    loadComponent: () => import('./pages/employees/employees.page').then( m => m.EmployeesPage)
+  },
+
+
 ];
 
 export default routes;
