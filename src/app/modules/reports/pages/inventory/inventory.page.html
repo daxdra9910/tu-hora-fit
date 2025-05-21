@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Reporte de Inventario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list *ngIf="inventories.length > 0">
+    <ion-item *ngFor="let item of inventories">
+      <ion-label>
+        <h2>{{ item.name }}</h2>
+        <p>Cantidad: {{ item.quantity }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-text *ngIf="inventories.length === 0" color="medium">
+    <p class="ion-text-center">No hay elementos en el inventario.</p>
+  </ion-text>
+
+  <ion-button
+    expand="block"
+    color="primary"
+    (click)="exportToPDF()"
+    class="export-button ion-margin-top"
+  >
+    <ion-icon slot="start" name="document-outline"></ion-icon>
+    EXPORTAR A PDF
+  </ion-button>
+</ion-content>
