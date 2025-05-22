@@ -7,3 +7,8 @@ export const COLLECTIONS = {
   CLASSES: 'classes',
   EMPLOYEES: 'employees'
 }
+
+export const STORAGE = {
+  IMAGES: 'images',
+  FILES: 'files'
+}

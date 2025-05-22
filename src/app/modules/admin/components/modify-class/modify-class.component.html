@@ -19,32 +19,7 @@
           </ion-item>
 
           <ion-item>
-            <ion-select
-              label="Instructor"
-              labelPlacement="floating"
-              formControlName="instructor"
-              placeholder="Selecciona un instructor"
-              interface="popover">
-              <ion-select-option *ngFor="let instructor of instructors" [value]="instructor.uid">
-                {{ instructor.displayName }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-
-          <ion-item>
-            <ion-input label="Capacidad" labelPlacement="floating" formControlName="capacity" type="number" min="1"></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-input label="Duración" labelPlacement="floating" formControlName="duration" type="text" readonly></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-input label="Hora de inicio" labelPlacement="floating" formControlName="startTime" type="time"></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-input label="Hora de fin" labelPlacement="floating" formControlName="endTime" type="time"></ion-input>
+            <ion-input label="Descripción" labelPlacement="floating" formControlName="description" type="text"></ion-input>
           </ion-item>
 
           <ion-item lines="none">
@@ -52,9 +27,9 @@
             <input type="file" (change)="onFileSelected($event)" accept="image/*" style="margin-left: 1rem;" />
           </ion-item>
 
-          <ion-item *ngIf="formGroup.get('imageURL')?.value || selectedFile">
+          <ion-item lines="none">
             <ion-avatar slot="start">
-              <img [src]="selectedFile ? imagePreview : formGroup.get('imageURL')?.value" alt="Vista previa" style="object-fit: cover;" />
+              <img [src]="imagePreview" alt="Vista previa" style="object-fit: cover;" />
             </ion-avatar>
           </ion-item>
         </ion-list>

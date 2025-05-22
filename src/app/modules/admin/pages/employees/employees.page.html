@@ -19,7 +19,7 @@
 
   <ng-container *ngIf="employees.length > 0; else noEmployees">
     <ion-list>
-      <ion-item-sliding *ngFor="let emp of employees; trackBy: trackById">
+      <ion-item-sliding *ngFor="let emp of employees">
         <ion-item lines="full">
           <ion-avatar slot="start">
             <img [src]="emp.imageURL || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'" alt="Empleado" />

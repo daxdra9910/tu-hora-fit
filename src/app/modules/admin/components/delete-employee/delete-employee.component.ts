@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { IonAlert } from '@ionic/angular/standalone';
 
-import { UtilsService } from '../../../shared/services/utils.service';
-import { EmployeeModel } from '../../../shared/models/employed.model';
 import { EmployeeService } from '../../../core/services/employee.service';
+import { EmployeeModelWithIdAndImage } from '../../../shared/models/employed.model';
+import { UtilsService } from '../../../shared/services/utils.service';
 
 @Component({
   selector: 'app-delete-employee',
@@ -23,7 +23,7 @@ export class DeleteEmployeeComponent {
   @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<void>();
 
-  @Input() employeeData: EmployeeModel | null = null;
+  @Input() employeeData: EmployeeModelWithIdAndImage | null = null;
 
   alertButtons = [
     {
@@ -55,7 +55,7 @@ export class DeleteEmployeeComponent {
           duration: 2500,
           position: 'bottom',
           color: 'success',
-          icon: 'trash-bin'
+          icon: 'checkmark-circle'
         });
         this.toggleOpen();
       })

@@ -9,64 +9,85 @@ import {
   updateDoc
 } from '@angular/fire/firestore';
 
-import { EmployeeModel } from '../../shared/models/employed.model';
-import { COLLECTIONS } from '../../shared/constants/firebase.constant';
+import { COLLECTIONS, STORAGE } from '../../shared/constants/firebase.constant';
+import { EmployeeModelWithFile, EmployeeModelWithIdAndFileAndImage, EmployeeModelWithIdAndImage, EmployeeModelWithImage } from '../../shared/models/employed.model';
 
-import { getStorage, ref as storageRef, deleteObject } from '@angular/fire/storage';
+import { StorageService } from '../../shared/services/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeeService {
   private readonly firestore = inject(Firestore);
-  private readonly storage = getStorage();
+  private readonly storageService = inject(StorageService);
+  collection = COLLECTIONS.EMPLOYEES;
 
-  createEmployee(employeeData: EmployeeModel) {
-    const employeeRef = doc(this.firestore, COLLECTIONS.EMPLOYEES, crypto.randomUUID());
-    return setDoc(employeeRef, employeeData);
+  async createEmployee(employeeData: EmployeeModelWithFile) {
+
+    // Subir la imagen y obtener la URL
+    const imageUrl = await this.storageService.uploadFile(employeeData.image, `${STORAGE.IMAGES}/${this.collection}/${employeeData.image.name}`);
+
+    const now = new Date().toISOString();
+    const employeeRef = doc(this.firestore, this.collection, crypto.randomUUID());
+
+    const data: EmployeeModelWithImage = {
+      name: employeeData.name,
+      phone: employeeData.phone,
+      email: employeeData.email,
+      role: employeeData.role,
+      imageURL: imageUrl,
+      createdAt: now,
+      createdBy: 'system',
+      updatedAt: now,
+      updatedBy: 'system'
+    };
+
+    return setDoc(employeeRef, data);
   }
 
-  async getAllEmployees(): Promise<EmployeeModel[]> {
-    const employeeRef = collection(this.firestore, COLLECTIONS.EMPLOYEES);
+  async getAllEmployees(): Promise<EmployeeModelWithIdAndImage[]> {
+    const employeeRef = collection(this.firestore, this.collection);
     const snapshot = await getDocs(employeeRef);
 
     return snapshot.docs.map(doc => ({
       ...doc.data(),
       id: doc.id
-    } as EmployeeModel));
+    } as EmployeeModelWithIdAndImage));
   }
 
-  async updateEmployee(employeeData: EmployeeModel, oldImageURL?: string): Promise<void> {
-    const employeeRef = doc(this.firestore, COLLECTIONS.EMPLOYEES, employeeData.id!);
-    const { id, ...data } = employeeData;
+  async updateEmployee(employeeData: EmployeeModelWithIdAndFileAndImage): Promise<void> {
+    let updatedImageUrl = employeeData.imageURL;
 
-    // Eliminar imagen anterior si es distinta
-    if (oldImageURL && oldImageURL !== employeeData.imageURL) {
-      try {
-        const imageRef = storageRef(this.storage, oldImageURL);
-        await deleteObject(imageRef);
-        console.log('🧹 Imagen anterior eliminada del storage');
-      } catch (error) {
-        console.warn('⚠️ No se pudo eliminar la imagen anterior:', error);
+    // Revisa si en classData image es diferente de null, de ser asi borra la imagen anterior (imageURL) y sube la nueva
+    if (employeeData.image) {
+      if (employeeData.imageURL) {
+        await this.storageService.deleteFile(employeeData.imageURL);
       }
+      updatedImageUrl = await this.storageService.uploadFile(employeeData.image, `${STORAGE.IMAGES}/${this.collection}/${employeeData.image.name}`);
     }
 
-    return updateDoc(employeeRef, data);
+    // Si no hay imagen, solo actualiza el resto de los datos
+    const employeeRef = doc(this.firestore, this.collection, employeeData.id);
+    const { id, createdAt, createdBy, image, ...data } = employeeData;
+
+
+    const updatePayload = {
+      ...data,
+      imageURL: updatedImageUrl,
+      updatedAt: new Date().toISOString(),
+      updatedBy: 'system'
+    };
+
+    return updateDoc(employeeRef, updatePayload);
   }
 
-  async deleteEmployee(employeeData: EmployeeModel): Promise<void> {
-    const employeeRef = doc(this.firestore, COLLECTIONS.EMPLOYEES, employeeData.id!);
+  async deleteEmployee(employeeData: EmployeeModelWithIdAndImage): Promise<void> {
+    const classRef = doc(this.firestore, this.collection, employeeData.id);
 
     if (employeeData.imageURL) {
-      try {
-        const imageRef = storageRef(this.storage, employeeData.imageURL);
-        await deleteObject(imageRef);
-        console.log('🗑️ Imagen eliminada del Storage');
-      } catch (error) {
-        console.warn('⚠️ No se pudo eliminar la imagen del Storage:', error);
-      }
+      await this.storageService.deleteFile(employeeData.imageURL);
     }
 
-    return deleteDoc(employeeRef);
+    return deleteDoc(classRef);
   }
 }

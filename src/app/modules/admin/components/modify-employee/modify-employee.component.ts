@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  IonAvatar,
   IonButton,
   IonButtons,
   IonContent,
@@ -9,21 +10,15 @@ import {
   IonIcon,
   IonInput,
   IonItem,
+  IonLabel,
   IonList,
   IonModal,
-  IonText,
   IonTitle,
-  IonToolbar,
-  IonLabel,
-  IonAvatar
+  IonToolbar
 } from '@ionic/angular/standalone';
-
-import { Storage } from '@angular/fire/storage';
-import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
-
 import { EmployeeService } from '../../../core/services/employee.service';
+import { EmployeeModelWithIdAndFileAndImage, EmployeeModelWithIdAndImage } from '../../../shared/models/employed.model';
 import { UtilsService } from '../../../shared/services/utils.service';
-import { EmployeeModel } from '../../../shared/models/employed.model';
 
 @Component({
   selector: 'app-modify-employee',
@@ -48,28 +43,25 @@ import { EmployeeModel } from '../../../shared/models/employed.model';
   templateUrl: './modify-employee.component.html',
   styleUrls: ['./modify-employee.component.scss']
 })
-export class ModifyEmployeeComponent implements OnChanges {
+export class ModifyEmployeeComponent implements OnInit, OnChanges {
   private readonly formBuilder = inject(FormBuilder);
   private readonly employeeService = inject(EmployeeService);
   private readonly utilsService = inject(UtilsService);
-  private readonly storage = inject(Storage);
 
   @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<void>();
 
-  @Input() employeeData: EmployeeModel | null = null;
+  @Input() employeeData: EmployeeModelWithIdAndImage | null = null;
 
   formGroup: FormGroup;
-  selectedFile: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null;
 
-  constructor() {
+  ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
       role: ['', Validators.required],
       phone: ['', [Validators.required, Validators.minLength(7)]],
       email: ['', [Validators.required, Validators.email]],
-      imageURL: ['', Validators.required]
+      image: [null]
     });
   }
 
@@ -79,8 +71,7 @@ export class ModifyEmployeeComponent implements OnChanges {
         name: this.employeeData.name,
         role: this.employeeData.role,
         phone: this.employeeData.phone,
-        email: this.employeeData.email,
-        imageURL: this.employeeData.imageURL
+        email: this.employeeData.email
       });
     }
   }
@@ -92,13 +83,7 @@ export class ModifyEmployeeComponent implements OnChanges {
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.selectedFile = file;
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result;
-      };
-      reader.readAsDataURL(file);
+      this.formGroup.patchValue({ image: file });
     }
   }
 
@@ -111,53 +96,36 @@ export class ModifyEmployeeComponent implements OnChanges {
     const loading = await this.utilsService.loading();
     await loading.present();
 
-    try {
-      let imageURL = this.employeeData.imageURL;
-
-      if (this.selectedFile) {
-        // 🧹 Eliminar imagen anterior
-        if (imageURL) {
-          try {
-            const oldRef = storageRef(this.storage, imageURL);
-            await deleteObject(oldRef);
-          } catch (error) {
-            console.warn('No se pudo eliminar la imagen anterior:', error);
-          }
-        }
-
-        const path = `employee-images/${Date.now()}-${this.selectedFile.name}`;
-        const newRef = storageRef(this.storage, path);
-        await uploadBytes(newRef, this.selectedFile);
-        imageURL = await getDownloadURL(newRef);
-      }
-
-      const updatedEmployee: EmployeeModel = {
-        ...this.employeeData,
-        ...this.formGroup.value,
-        imageURL
-      };
-
-      await this.employeeService.updateEmployee(updatedEmployee, this.employeeData.imageURL);
-
-      await this.utilsService.presentToast({
+    const updatedEmployee: EmployeeModelWithIdAndFileAndImage = {
+      ...this.employeeData,
+      ...this.formGroup.value
+    }
+  
+    this.employeeService.updateEmployee(updatedEmployee)
+    .then(() => {
+      this.utilsService.presentToast({
         message: 'Empleado actualizado correctamente',
         duration: 2500,
         position: 'bottom',
         color: 'success',
         icon: 'checkmark-circle'
-      });
-
+      })
       this.toggleOpen();
-    } catch (error: any) {
-      await this.utilsService.presentToast({
-        message: error.message || 'Error al actualizar empleado',
-        duration: 2500,
-        color: 'danger',
-        position: 'bottom',
-        icon: 'alert-circle-outline'
-      });
-    } finally {
-      loading.dismiss();
-    }
+    })
+    .catch((error) => {
+      this.utilsService.presentToast({
+          message: error.message,
+          duration: 2500,
+          color: 'danger',
+          position: 'bottom',
+          icon: 'alert-circle-outline'
+        });
+    })
+    .finally(() => loading.dismiss());
+  }
+
+   get imagePreview(): string | null {
+    const file = this.formGroup.get('image')?.value as File | null;
+    return file ? URL.createObjectURL(file) : this.employeeData.imageURL;
   }
 }
