@@ -21,7 +21,7 @@ import {
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 import { UtilsService } from '../../../shared/services/utils.service';
-import { EmployeeModel } from '../../../shared/models/employed.model';
+import { EmployeeModel, EmployeeModelWithFile } from '../../../shared/models/employed.model';
 import { EmployeeService } from '../../../core/services/employee.service';
 
 @Component({
@@ -57,8 +57,6 @@ export class CreateEmployeeComponent implements OnInit {
   @Output() isOpenChange = new EventEmitter<void>();
 
   formGroup: FormGroup;
-  selectedFile: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null; // ✅ NUEVO
 
   ngOnInit(): void {
     this.setupForm();
@@ -70,7 +68,7 @@ export class CreateEmployeeComponent implements OnInit {
       role: ['', Validators.required],
       phone: ['', [Validators.required, Validators.minLength(7)]],
       email: ['', [Validators.required, Validators.email]],
-      imageURL: ['']
+      image: [null, Validators.required]
     });
   }
 
@@ -81,74 +79,49 @@ export class CreateEmployeeComponent implements OnInit {
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.selectedFile = file;
-
-      // ✅ Mostrar vista previa
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result;
-      };
-      reader.readAsDataURL(file);
+      this.formGroup.patchValue({ image: file });
     }
   }
 
   async onSubmit(): Promise<void> {
-    if (this.formGroup.invalid || !this.selectedFile) {
+    if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
-      if (!this.selectedFile) {
-        await this.utilsService.presentToast({
-          message: 'Debe seleccionar una imagen',
-          duration: 2500,
-          color: 'danger',
-          position: 'bottom',
-          icon: 'alert-circle-outline'
-        });
-      }
       return;
     }
 
     const loading = await this.utilsService.loading();
-    loading.message = 'Guardando empleado...';
     await loading.present();
 
-    try {
-      const path = `employee-images/${Date.now()}-${this.selectedFile.name}`;
-      const storageRef = ref(this.storage, path);
-      await uploadBytes(storageRef, this.selectedFile);
-      const imageURL = await getDownloadURL(storageRef);
+    const employeeData: EmployeeModelWithFile = {
+      ...this.formGroup.value
+    };
 
-      const employeeData: EmployeeModel = {
-        ...this.formGroup.value,
-        imageURL,
-        createdAt: new Date()
-      };
+    this.employeeService.createEmployee(employeeData)
+      .then(() => {
+        this.utilsService.presentToast({
+          message: 'Empleado creado correctamente',
+          duration: 2500,
+          position: 'bottom',
+          color: 'success',
+          icon: 'checkmark-circle'
+        });
+        this.formGroup.reset();
+        this.toggleOpen();
+      })
+      .catch((error) => {
+        this.utilsService.presentToast({
+          message: error.message || 'Error al crear empleado',
+          duration: 2500,
+          position: 'bottom',
+          color: 'danger',
+          icon: 'alert-circle-outline'
+        });
+      })
+      .finally(() => loading.dismiss());
+  }
 
-      await this.employeeService.createEmployee(employeeData);
-
-      await this.utilsService.presentToast({
-        message: 'Empleado creado correctamente',
-        duration: 2500,
-        position: 'bottom',
-        color: 'success',
-        icon: 'checkmark-circle'
-      });
-
-      this.formGroup.reset();
-      this.selectedFile = null;
-      this.imagePreview = null; // ✅ Limpiar vista previa
-      this.setupForm();
-      this.toggleOpen();
-
-    } catch (error: any) {
-      await this.utilsService.presentToast({
-        message: error.message || 'Error al crear empleado',
-        duration: 2500,
-        position: 'bottom',
-        color: 'danger',
-        icon: 'alert-circle-outline'
-      });
-    } finally {
-      loading.dismiss();
-    }
+  get imagePreview(): string | null {
+    const file = this.formGroup.get('image')?.value as File | null;
+    return file ? URL.createObjectURL(file) : null;
   }
 }
