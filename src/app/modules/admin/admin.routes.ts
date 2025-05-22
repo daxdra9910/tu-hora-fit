@@ -15,9 +15,8 @@ const routes: Routes = [
   },
   {
     path: 'classes',
-    loadComponent: () => import('./pages/class-page/class-page.page').then(m => m.ClassPage)
+    loadComponent: () => import('./pages/class/class.page').then(m => m.ClassPage)
   },
-  {
   {
     path: 'employees',
     loadComponent: () => import('./pages/employees/employees.page').then( m => m.EmployeesPage)
