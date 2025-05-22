@@ -4,7 +4,7 @@ import { IonAlert } from '@ionic/angular/standalone';
 
 import { ClassService } from '../../../core/services/class.service';
 import { UtilsService } from '../../../shared/services/utils.service';
-import { ClassModel } from '../../../shared/models/class.model';
+import { ClassModel, ClassModelWithIdAndImage } from '../../../shared/models/class.model';
 
 @Component({
   selector: 'app-delete-class',
@@ -22,7 +22,7 @@ export class DeleteClassComponent {
   @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<void>();
 
-  @Input() classData: ClassModel | null = null;
+  @Input() classData: ClassModelWithIdAndImage | null = null;
 
   alertButtons = [
     {
@@ -54,7 +54,7 @@ export class DeleteClassComponent {
           duration: 2500,
           position: 'bottom',
           color: 'success',
-          icon: 'trash-bin'
+          icon: 'checkmark-circle'
         });
         this.toggleOpen();
       })
