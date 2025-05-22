@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
+  IonAvatar,
   IonButton,
   IonButtons,
-  IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
   IonItem,
@@ -14,23 +14,17 @@ import {
   IonItemSliding,
   IonLabel,
   IonList,
-  IonRow,
   IonSearchbar,
   IonText,
   IonTitle,
-  IonToolbar,
-  IonAvatar
+  IonToolbar
 } from '@ionic/angular/standalone';
-
-import { FormsModule } from '@angular/forms';
-
 import { EmployeeService } from '../../../core/services/employee.service';
+import { EmployeeModelWithIdAndImage } from '../../../shared/models/employed.model';
 import { UtilsService } from '../../../shared/services/utils.service';
-import { EmployeeModel } from '../../../shared/models/employed.model';
-
 import { CreateEmployeeComponent } from '../../components/create-employee/create-employee.component';
-import { ModifyEmployeeComponent } from '../../components/modify-employee/modify-employee.component';
 import { DeleteEmployeeComponent } from '../../components/delete-employee/delete-employee.component';
+import { ModifyEmployeeComponent } from '../../components/modify-employee/modify-employee.component';
 
 @Component({
   selector: 'app-employees-page',
@@ -67,8 +61,8 @@ export class EmployeesPage implements OnInit {
 
   @ViewChild(IonList) employeeList!: IonList;
 
-  employees: EmployeeModel[] = [];
-  selectedEmployee: EmployeeModel | null = null;
+  employees: EmployeeModelWithIdAndImage[] = [];
+  selectedEmployee: EmployeeModelWithIdAndImage | null = null;
 
   isCreating = false;
   isEditing = false;
@@ -119,7 +113,7 @@ export class EmployeesPage implements OnInit {
     this.getEmployees();
   }
 
-  openEdit(emp: EmployeeModel) {
+  openEdit(emp: EmployeeModelWithIdAndImage) {
     this.employeeList?.closeSlidingItems().then(() => {
       this.selectedEmployee = emp;
       this.isEditing = true;
@@ -132,7 +126,7 @@ export class EmployeesPage implements OnInit {
     this.getEmployees();
   }
 
-  openDelete(emp: EmployeeModel) {
+  openDelete(emp: EmployeeModelWithIdAndImage) {
     this.employeeList?.closeSlidingItems().then(() => {
       this.selectedEmployee = emp;
       this.isDeleting = true;
@@ -143,9 +137,5 @@ export class EmployeesPage implements OnInit {
     this.isDeleting = false;
     this.selectedEmployee = null;
     this.getEmployees();
-  }
-
-  trackById(index: number, item: EmployeeModel): string {
-    return item.id!;
   }
 }
