@@ -21,8 +21,6 @@ const routes: Routes = [
     path: 'employees',
     loadComponent: () => import('./pages/employees/employees.page').then( m => m.EmployeesPage)
   },
-
-
 ];
 
 export default routes;
