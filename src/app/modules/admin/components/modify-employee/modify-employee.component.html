@@ -41,9 +41,9 @@
           </ion-item>
 
           <!-- Vista previa -->
-          <ion-item *ngIf="formGroup.get('imageURL')?.value || selectedFile">
+          <ion-item lines="none">
             <ion-avatar slot="start">
-              <img [src]="selectedFile ? imagePreview : formGroup.get('imageURL')?.value" alt="Vista previa" style="object-fit: cover;" />
+              <img [src]="imagePreview" alt="Vista previa" style="object-fit: cover;" />
             </ion-avatar>
           </ion-item>
         </ion-list>
