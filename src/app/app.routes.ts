@@ -22,6 +22,11 @@ export const routes: Routes = [
         path: 'admin',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
         loadChildren: () => import('./modules/admin/admin.routes').then((m) => m.default)
+      },
+      {
+        path: 'reports',
+        canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
+        loadChildren: () => import('./modules/reports/reports.routes').then((m) => m.default)
       }
     ]
   },
@@ -30,4 +35,6 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+
+
 ];
