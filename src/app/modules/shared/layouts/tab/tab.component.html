@@ -5,10 +5,24 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
-    <ion-nav-link [routerLink]="['/admin/customers']" router-direction="forward">
+    <ion-button expand="block" (click)="navigateTo('/admin/customers')">
+      <ion-icon slot="start" name="people-outline"></ion-icon>
       Administrar clientes
-    </ion-nav-link>
-    <ion-button expand="block" (click)="onLogout()">
+    </ion-button>
+    <ion-button expand="block" (click)="navigateTo('/admin/classes')">
+      <ion-icon slot="start" name="calendar-outline"></ion-icon>
+      Administrar clases
+    </ion-button>
+    <ion-button expand="block" (click)="navigateTo('/admin/inventory')">
+      <ion-icon slot="start" name="barbell-outline"></ion-icon>
+      Administrar inventario
+    </ion-button>
+    <ion-button expand="block" (click)="navigateTo('/admin/employees')">
+      <ion-icon slot="start" name="people-outline"></ion-icon>
+      Administrar empleados
+    </ion-button>
+    <ion-button color="danger" expand="block" (click)="onLogout()" class="ion-margin-top">
+      <ion-icon slot="start" name="log-out-outline"></ion-icon>
       Salir de la aplicación
     </ion-button>
   </ion-content>

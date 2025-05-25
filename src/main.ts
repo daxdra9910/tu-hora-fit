@@ -24,7 +24,10 @@ import {
   menuOutline,
   pencilOutline,
   personOutline,
-  trashOutline
+  trashOutline,
+  logOutOutline,
+  peopleOutline,
+  barbellOutline
 } from 'ionicons/icons'
 
 addIcons({
@@ -39,7 +42,10 @@ addIcons({
   'pencil-outline': pencilOutline,
   'trash-outline': trashOutline,
   'close': close,
-  'checkmark-circle': checkmarkCircle
+  'checkmark-circle': checkmarkCircle,
+  'log-out-outline': logOutOutline,
+  'people-outline': peopleOutline,
+  'barbell-outline': barbellOutline
 })
 
 setLogLevel(LogLevel.SILENT);

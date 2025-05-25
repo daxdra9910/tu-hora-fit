@@ -34,6 +34,11 @@ export class TabComponent {
     });
   }
 
+  navigateTo(path: string) {
+    this.navCtrl.navigateForward(path);
+    this.menuCtrl.close('optionsMenu');
+  }
+
   async openOptionsMenu() {
     await this.menuCtrl.open('optionsMenu');
   }
