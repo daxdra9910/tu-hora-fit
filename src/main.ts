@@ -1,51 +1,53 @@
-import {bootstrapApplication} from '@angular/platform-browser';
-import {PreloadAllModules, provideRouter, RouteReuseStrategy, withPreloading} from '@angular/router';
-import {IonicRouteStrategy, provideIonicAngular} from '@ionic/angular/standalone';
-import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
-import {getAuth, provideAuth} from '@angular/fire/auth';
-import {getFirestore, provideFirestore} from '@angular/fire/firestore';
-import {setLogLevel, LogLevel} from "@angular/fire";
+import { LogLevel, setLogLevel } from "@angular/fire";
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { PreloadAllModules, provideRouter, RouteReuseStrategy, withPreloading } from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 
-import {routes} from './app/app.routes';
-import {AppComponent} from './app/app.component';
-import {environment} from './environments/environment';
-import {addIcons} from 'ionicons';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { addIcons } from 'ionicons';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+import { environment } from './environments/environment';
 
 
 import {
   addOutline,
   alertCircleOutline,
+  barbellOutline,
   calendarOutline, checkmarkCircle,
   close,
   eyeOutline,
   homeOutline,
   idCardOutline,
+  logOutOutline,
   menuOutline,
   pencilOutline,
-  personOutline,
-  trashOutline,
-  logOutOutline,
   peopleOutline,
-  barbellOutline
-} from 'ionicons/icons'
+  personOutline,
+  timerOutline,
+  trashOutline
+} from 'ionicons/icons';
 
 addIcons({
-  'alert-circle-outline': alertCircleOutline,
-  'person-outline': personOutline,
-  'menu-outline': menuOutline,
-  'home-outline': homeOutline,
-  'calendar-outline': calendarOutline,
-  'id-card-outline': idCardOutline,
   'add-outline': addOutline,
-  'eye-outline': eyeOutline,
-  'pencil-outline': pencilOutline,
-  'trash-outline': trashOutline,
+  'alert-circle-outline': alertCircleOutline,
+  'barbell-outline': barbellOutline,
+  'calendar-outline': calendarOutline,
   'close': close,
   'checkmark-circle': checkmarkCircle,
+  'eye-outline': eyeOutline,
+  'home-outline': homeOutline,
+  'id-card-outline': idCardOutline,
   'log-out-outline': logOutOutline,
+  'menu-outline': menuOutline,
+  'pencil-outline': pencilOutline,
   'people-outline': peopleOutline,
-  'barbell-outline': barbellOutline
+  'person-outline': personOutline,
+  'time-outline': timerOutline,
+  'trash-outline': trashOutline,
 })
 
 setLogLevel(LogLevel.SILENT);
