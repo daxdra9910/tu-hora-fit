@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Horarios</ion-title>
+    <ion-buttons slot="end">
+    <ion-button (click)="openCreate()">
+      <ion-icon icon="add-outline" slot="icon-only">
+      </ion-icon>
+    </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-text>
+        <h1>Horarios</h1>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
+            vehicula, enim nec facilisis efficitur, nunc nisi bibendum nunc,
+            eget tincidunt nunc nisi euismod nunc.
+        </p>
+    </ion-text>
+
+    <!-- Modals -->
+  <app-create-schedule
+    [isOpen]="isCreating"
+    (isOpenChange)="closeCreate()"
+  ></app-create-schedule>
+</ion-content>
