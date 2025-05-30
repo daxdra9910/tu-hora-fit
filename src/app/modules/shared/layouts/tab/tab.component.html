@@ -21,6 +21,10 @@
       <ion-icon slot="start" name="people-outline"></ion-icon>
       Administrar empleados
     </ion-button>
+     <ion-button expand="block" (click)="navigateTo('/admin/schedule')">
+      <ion-icon slot="start" name="time-outline"></ion-icon>
+      Administrar horarios
+    </ion-button>
     <ion-button color="danger" expand="block" (click)="onLogout()" class="ion-margin-top">
       <ion-icon slot="start" name="log-out-outline"></ion-icon>
       Salir de la aplicación
