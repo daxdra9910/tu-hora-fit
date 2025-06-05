@@ -1,0 +1,198 @@
+/* ======================= */
+/* 🎨 Tema energético      */
+/* ======================= */
+:root {
+  --energy-primary: #3880ff;
+  --energy-secondary: #ffaa00;
+  --energy-gradient: linear-gradient(135deg, var(--energy-primary) 0%, var(--energy-secondary) 100%);
+}
+
+/* ======================= */
+/* 🔝 Encabezado (Header)  */
+/* ======================= */
+.header-title {
+  display: flex;
+  align-items: center;
+
+  .energy-icon {
+    color: var(--energy-secondary);
+    margin-right: 8px;
+    font-size: 1.2em;
+  }
+}
+
+/* ======================= */
+/* 📱 Área de contenido    */
+/* ======================= */
+.energy-content {
+  --background: #f8f9fa;
+  background: var(--background);
+  padding-bottom: 80px;
+}
+
+/* ======================= */
+/* 💬 Estilo de mensajes   */
+/* ======================= */
+.message-wrapper {
+  display: flex;
+  margin: 10px 12px;
+
+  &.bot {
+    justify-content: flex-start;
+
+    .message-bubble {
+      background: white;
+      color: #1c1c1c;
+      border-radius: 16px;
+      border-left: 4px solid var(--energy-primary);
+      width: 100%;
+    }
+  }
+
+  &.user {
+    justify-content: flex-end;
+
+    .message-bubble {
+      background: #e1f0ff;
+      color: #000;
+      border-radius: 16px 16px 0 16px;
+      max-width: 75%;
+      text-align: right;
+    }
+  }
+
+  .message-bubble {
+    padding: 12px 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.3s ease;
+    word-wrap: break-word;
+  }
+}
+
+/* ======================= */
+/* 🧠 Mensaje del bot      */
+/* ======================= */
+.energy-bubble {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-left: 4px solid var(--energy-primary);
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .bot-avatar {
+      width: 32px;
+      height: 32px;
+      margin-right: 8px;
+
+      img {
+        border: 2px solid var(--energy-secondary);
+        border-radius: 50%;
+      }
+    }
+
+    .message-sender {
+      font-weight: bold;
+      color: var(--energy-primary);
+    }
+  }
+
+  .message-text {
+    margin-bottom: 15px;
+    line-height: 1.4;
+    color: #1c1c1c;
+    text-align: justify;
+
+    strong {
+      font-weight: bold;
+      color: #000;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 10px 0;
+      list-style-type: none;
+    }
+
+    li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--energy-primary);
+      font-weight: bold;
+    }
+  }
+}
+
+/* ======================= */
+/* ✨ Animación            */
+/* ======================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================= */
+/* ⚡ Botones rápidos      */
+/* ======================= */
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+
+  .energy-option {
+    --border-radius: 20px;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+
+    &:active {
+      transform: scale(0.95);
+      transition: transform 0.1s ease;
+    }
+  }
+}
+
+/* ======================= */
+/* 📝 Input del usuario    */
+/* ======================= */
+.energy-footer {
+  ion-toolbar {
+    --background: white;
+    padding: 8px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+
+    .input-item {
+      --background: #f1f3f4;
+      --border-radius: 24px;
+      --padding-start: 16px;
+    }
+
+    .energy-input {
+      --placeholder-color: #7d7d7d;
+      --color: #2d2d2d;
+    }
+  }
+}
