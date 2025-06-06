@@ -1,7 +1,7 @@
-import {Routes} from '@angular/router';
-import {antiAuthGuard, authGuard} from './modules/core/guards/auth.guard';
-import {roleGuard} from "./modules/core/guards/role.guard";
-import {RoleEnum} from "./modules/shared/enums/role.enum";
+import { Routes } from '@angular/router';
+import { antiAuthGuard, authGuard } from './modules/core/guards/auth.guard';
+import { roleGuard } from "./modules/core/guards/role.guard";
+import { RoleEnum } from "./modules/shared/enums/role.enum";
 
 export const routes: Routes = [
   {
@@ -27,14 +27,18 @@ export const routes: Routes = [
         path: 'reports',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
         loadChildren: () => import('./modules/reports/reports.routes').then((m) => m.default)
-      }
+      },
+      {
+        path: 'chatbot',
+        loadComponent: () => import('./modules/chatbot/chatbot.page').then(m => m.ChatbotPage)
+      },
+
     ]
   },
   {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },
-
+  }
 
 ];

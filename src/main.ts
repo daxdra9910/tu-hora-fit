@@ -11,6 +11,8 @@ import {AppComponent} from './app/app.component';
 import {environment} from './environments/environment';
 import {addIcons} from 'ionicons';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { provideHttpClient } from '@angular/common/http';
+
 
 
 import {
@@ -58,6 +60,7 @@ bootstrapApplication(AppComponent, {
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    provideStorage(() => getStorage())
+    provideStorage(() => getStorage()),
+    provideHttpClient()
   ],
 });
