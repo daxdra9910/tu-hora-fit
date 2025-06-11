@@ -1,0 +1,80 @@
+<ion-modal [isOpen]="isOpen">
+  <ng-template>
+    <ion-content>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Crear Horario</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="toggleOpen()">
+              <ion-icon name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+        <ion-list lines="none">
+
+          <!-- Fecha -->
+          <ion-item>
+            <ion-input label="Fecha" labelPlacement="floating" formControlName="date" type="date">
+            </ion-input>
+          </ion-item>
+
+          <!-- Hora Inicio -->
+          <ion-item>
+            <ion-input label="Hora inicio" labelPlacement="floating" formControlName="start_time" type="time">
+            </ion-input>
+          </ion-item>
+
+          <!-- Hora Fin -->
+          <ion-item>
+            <ion-input label="Hora fin" labelPlacement="floating" formControlName="end_time" type="time">
+            </ion-input>
+          </ion-item>
+
+           <!-- Clase -->
+           <ion-item>
+            <ion-select label="Clase" labelPlacement="floating" formControlName="class_id">
+                <ion-select-option *ngFor="let class of classes" [value]="class.id">{{ class.name }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+           <!-- Entrenador -->
+           <ion-item>
+            <ion-select label="Entrenador" labelPlacement="floating" formControlName="employee_id">
+                <ion-select-option *ngFor="let employee of employees" [value]="employee.id">{{ employee.name }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Capacidad Máxima -->
+          <ion-item>
+            <ion-input label="Capacidad Máxima" labelPlacement="floating" formControlName="max_capacity" type="number"
+              placeholder="Capacidad máxima de la clase">
+            </ion-input>
+          </ion-item>
+
+          <!-- Recurrencia -->
+          <ion-item>
+            <ion-select label="Recurrencia" labelPlacement="floating" formControlName="recurrence">
+              <ion-select-option [value]="recurrences.ONCE">Una vez</ion-select-option>
+              <ion-select-option [value]="recurrences.DAILY">Diariamente</ion-select-option>
+              <ion-select-option [value]="recurrences.WEEKLY">Semanalmente</ion-select-option>
+              <ion-select-option [value]="recurrences.MONTHLY">Mensualmente</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Repetir hasta -->
+          <ion-item *ngIf="formGroup.get('recurrence').value !== recurrences.ONCE" formControlName="end_recurrence">
+            <ion-input label="Repetir hasta" labelPlacement="floating" formControlName="name" type="date">
+            </ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-button expand="block" type="submit" [disabled]="formGroup.invalid">
+          Guardar
+        </ion-button>
+      </form>
+    </ion-content>
+  </ng-template>
+</ion-modal>
