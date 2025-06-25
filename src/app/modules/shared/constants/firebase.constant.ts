@@ -5,7 +5,8 @@ export const COLLECTIONS = {
   PLANS: 'plans',
   INVENTORIES: 'inventories',
   CLASSES: 'classes',
-  EMPLOYEES: 'employees'
+  EMPLOYEES: 'employees',
+  SCHEDULES: 'schedules',
 }
 
 export const STORAGE = {
