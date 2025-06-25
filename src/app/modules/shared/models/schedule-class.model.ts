@@ -9,7 +9,7 @@ export interface ScheduleClassModel extends AuditModel {
   end_time: string;
   max_capacity: number;
   recurrence: RecurrenceEnum;
-  recurrence_days?: string[];
+  end_recurrence?: Date;
   active: boolean;
 }
 
