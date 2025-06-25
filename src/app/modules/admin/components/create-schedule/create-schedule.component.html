@@ -65,8 +65,8 @@
           </ion-item>
 
           <!-- Repetir hasta -->
-          <ion-item *ngIf="formGroup.get('recurrence').value !== recurrences.ONCE" formControlName="end_recurrence">
-            <ion-input label="Repetir hasta" labelPlacement="floating" formControlName="name" type="date">
+          <ion-item *ngIf="formGroup.get('recurrence').value !== recurrences.ONCE">
+            <ion-input label="Repetir hasta" labelPlacement="floating" formControlName="end_recurrence" type="date">
             </ion-input>
           </ion-item>
         </ion-list>
