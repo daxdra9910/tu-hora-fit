@@ -16,7 +16,9 @@ import {
   addOutline,
   alertCircleOutline,
   barbellOutline,
-  calendarOutline, checkmarkCircle,
+  barChartOutline,
+  calendarOutline, cardOutline, cashOutline, checkmarkCircle,
+  checkmarkOutline,
   close,
   eyeOutline,
   homeOutline,
@@ -34,9 +36,13 @@ addIcons({
   'add-outline': addOutline,
   'alert-circle-outline': alertCircleOutline,
   'barbell-outline': barbellOutline,
+  'bar-chart-outline': barChartOutline,
   'calendar-outline': calendarOutline,
+  'card-outline': cardOutline,
+  'cash-outline': cashOutline,
   'close': close,
   'checkmark-circle': checkmarkCircle,
+  'checkmark-outline': checkmarkOutline,
   'eye-outline': eyeOutline,
   'home-outline': homeOutline,
   'id-card-outline': idCardOutline,
@@ -46,7 +52,7 @@ addIcons({
   'people-outline': peopleOutline,
   'person-outline': personOutline,
   'time-outline': timerOutline,
-  'trash-outline': trashOutline,
+  'trash-outline': trashOutline
 })
 
 setLogLevel(LogLevel.SILENT);
