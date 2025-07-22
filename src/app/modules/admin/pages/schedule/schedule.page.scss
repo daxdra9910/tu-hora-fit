@@ -1,0 +1,27 @@
+.schedule-item {
+  border-radius: 12px;
+  margin-bottom: 12px;
+  --inner-padding-end: 12px;
+  --inner-padding-start: 12px;
+  --background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  ion-label {
+    padding: 8px 0;
+
+    p {
+      margin: 6px 0;
+      font-size: 15px;
+    }
+
+    .schedule-title {
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .label {
+      color: #666;
+      font-weight: 500;
+    }
+  }
+}

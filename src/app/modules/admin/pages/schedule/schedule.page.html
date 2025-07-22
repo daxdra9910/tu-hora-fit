@@ -1,28 +1,53 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-title>Horarios</ion-title>
     <ion-buttons slot="end">
-    <ion-button (click)="openCreate()">
-      <ion-icon icon="add-outline" slot="icon-only">
-      </ion-icon>
-    </ion-button>
+      <ion-button (click)="openCreate()">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-    <ion-text>
-        <h1>Horarios</h1>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            vehicula, enim nec facilisis efficitur, nunc nisi bibendum nunc,
-            eget tincidunt nunc nisi euismod nunc.
-        </p>
-    </ion-text>
+<ion-content>
+  <!-- Buscador -->
+  <ion-searchbar
+    placeholder="Buscar por clase o empleado"
+    [debounce]="300"
+    (ionInput)="handleSearch($event)"
+    animated="true">
+  </ion-searchbar>
 
-    <!-- Modals -->
+  <!-- Lista de horarios -->
+  <ng-container *ngIf="filteredSchedules.length > 0; else noSchedules">
+    <ion-list class="ion-padding-horizontal">
+      <ion-item-sliding *ngFor="let schedule of filteredSchedules; trackBy: trackById">
+        <ion-item class="schedule-item" lines="inset">
+          <ion-label class="ion-text-wrap">
+            <h2 class="schedule-title">
+              <strong>Clase:</strong> {{ classesMap.get(schedule.class_id) || 'Sin nombre' }}
+            </h2>
+            <p><span class="label">Empleado:</span> {{ employeesMap.get(schedule.employee_id) || 'Sin nombre' }}</p>
+            <p><span class="label">Fecha:</span> {{ formatDate(schedule.date) }}</p>
+            <p><span class="label">Horario:</span> {{ formatTimeRange(schedule.start_time, schedule.end_time) }}</p>
+            <p><span class="label">Capacidad:</span> {{ schedule.max_capacity }}</p>
+            <p><span class="label">Repetición:</span> {{ getRecurrenceLabel(schedule.recurrence) }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
+  </ng-container>
+
+  <!-- Si no hay horarios -->
+  <ng-template #noSchedules>
+    <ion-text class="ion-text-center ion-margin-top" color="medium">
+      <p>No hay horarios registrados.</p>
+    </ion-text>
+  </ng-template>
+
+  <!-- Modal crear horario -->
   <app-create-schedule
     [isOpen]="isCreating"
-    (isOpenChange)="closeCreate()"
-  ></app-create-schedule>
+    (isOpenChange)="closeCreate()">
+  </app-create-schedule>
 </ion-content>
