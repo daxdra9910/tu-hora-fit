@@ -32,6 +32,12 @@ export const routes: Routes = [
         path: 'chatbot',
         loadComponent: () => import('./modules/chatbot/chatbot.page').then(m => m.ChatbotPage)
       },
+      {
+        path: 'notifications',
+        canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
+        loadComponent: () => import('./modules/notifications/notifications.component').then(m => m.NotificationsComponent)
+      }
+
 
     ]
   },
