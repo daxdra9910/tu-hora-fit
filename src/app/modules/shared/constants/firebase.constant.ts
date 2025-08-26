@@ -7,9 +7,10 @@ export const COLLECTIONS = {
   CLASSES: 'classes',
   EMPLOYEES: 'employees',
   SCHEDULES: 'schedules',
-}
+  RESERVATIONS: 'reservations', // 👈 agrega esta línea
+};
 
 export const STORAGE = {
   IMAGES: 'images',
   FILES: 'files'
-}
+};

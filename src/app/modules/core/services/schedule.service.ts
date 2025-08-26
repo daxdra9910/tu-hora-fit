@@ -11,7 +11,7 @@ import { DateTime } from 'luxon';
 export class ScheduleService {
   private readonly firestore = inject(Firestore);
   private readonly collection = COLLECTIONS.SCHEDULES;
-  
+
   async createSchedule(schedule: ScheduleClassModel) {
     const schedules = this.generateRecurringSchedules(schedule);
 
