@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Clases del día</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="moveDays(-5)">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="moveDays(5)">
+        <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Chips de días -->
+  <ion-grid class="ion-padding-start ion-padding-end">
+    <ion-row class="ion-justify-content-center ion-margin-top">
+      @for (d of chipDays; track d.toISODate()) {
+        <ion-col size="auto">
+          <ion-chip
+            [color]="d.hasSame(selected, 'day') ? 'primary' : 'medium'"
+            (click)="pickDay(d)"
+          >
+            {{ d.toFormat('dd') }}
+          </ion-chip>
+        </ion-col>
+      }
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-text color="medium">{{ selected.toFormat('cccc d LLLL, yyyy') }}</ion-text>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Lista de clases del día -->
+  @if (loadingList) {
+    <ion-text class="ion-text-center ion-margin-top" color="medium">
+      <p>Cargando clases…</p>
+    </ion-text>
+  } @else if (schedules.length === 0) {
+    <ion-text class="ion-text-center ion-margin-top" color="medium">
+      <p>No hay clases programadas para esta fecha.</p>
+    </ion-text>
+  } @else {
+    <ion-list>
+      @for (s of schedules; track s.id) {
+        <ion-item lines="full">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="3" class="ion-text-center">
+                <img
+                  *ngIf="classesById[s.idClass]?.imageURL"
+                  [src]="classesById[s.idClass]?.imageURL"
+                  [alt]="classesById[s.idClass]?.name"
+                  style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px;"
+                />
+              </ion-col>
+              <ion-col>
+                <ion-text>
+                  <h3 class="ion-no-margin">{{ classesById[s.idClass]?.name || 'Clase' }}</h3>
+                </ion-text>
+                <ion-text color="medium">
+                  <p class="ion-no-margin">
+                    Capacidad: {{ s.capacity }} Personas •
+                    Inicio: {{ fmtHour(s.start) }} • Final: {{ fmtHour(s.end) }}
+                  </p>
+                </ion-text>
+              </ion-col>
+              <ion-col size="auto" class="ion-text-end">
+                <ion-button
+                  [disabled]="libres(s) === 0 || reservingId === s.id"
+                  (click)="reservar(s)"
+                >
+                  {{ libres(s) === 0 ? 'Sin cupo' : (reservingId === s.id ? 'Reservando…' : 'Reservar') }}
+                </ion-button>
+                <ion-text color="medium">
+                  <p class="ion-no-margin ion-text-right">{{ libres(s) }} cupos</p>
+                </ion-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>
