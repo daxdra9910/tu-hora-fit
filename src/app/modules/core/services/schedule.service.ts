@@ -1,7 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, doc, Firestore, getDocs, setDoc } from '@angular/fire/firestore';
+import {
+  collection,
+  doc,
+  Firestore,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc
+} from '@angular/fire/firestore';
+
 import { COLLECTIONS } from '../../shared/constants/firebase.constant';
-import { ScheduleClassModel, ScheduleClassModelWithId } from '../../shared/models/schedule-class.model';
+import {
+  ScheduleClassModel,
+  ScheduleClassModelWithId
+} from '../../shared/models/schedule-class.model';
 import { RecurrenceEnum } from '../../shared/enums/recurrence.enum';
 import { DateTime } from 'luxon';
 
@@ -12,12 +24,14 @@ export class ScheduleService {
   private readonly firestore = inject(Firestore);
   private readonly collection = COLLECTIONS.SCHEDULES;
 
-  async createSchedule(schedule: ScheduleClassModel) {
+
+  async createSchedule(schedule: ScheduleClassModel): Promise<void> {
     const schedules = this.generateRecurringSchedules(schedule);
 
     for (const sched of schedules) {
       const id = crypto.randomUUID();
       const scheduleRef = doc(this.firestore, this.collection, id);
+
       await setDoc(scheduleRef, {
         ...sched,
         createdAt: new Date().toISOString(),
@@ -29,16 +43,29 @@ export class ScheduleService {
     }
   }
 
-  async getAllSchedules() {
+  async getAllSchedules(): Promise<ScheduleClassModelWithId[]> {
     const schedulesRef = collection(this.firestore, this.collection);
     const snapshot = await getDocs(schedulesRef);
 
-    return snapshot.docs.map(doc => {
-      return {
-        ...doc.data(),
-        id: doc.id
-      } as ScheduleClassModelWithId;
+    return snapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    } as ScheduleClassModelWithId));
+  }
+
+  async updateSchedule(id: string, data: Partial<ScheduleClassModel>): Promise<void> {
+    const scheduleRef = doc(this.firestore, this.collection, id);
+
+    await updateDoc(scheduleRef, {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      updatedBy: 'system'
     });
+  }
+
+  async deleteSchedule(id: string): Promise<void> {
+    const scheduleRef = doc(this.firestore, this.collection, id);
+    await deleteDoc(scheduleRef);
   }
 
   private generateRecurringSchedules(schedule: ScheduleClassModel): ScheduleClassModel[] {
@@ -51,6 +78,7 @@ export class ScheduleService {
 
     do {
       schedules.push({ ...schedule, date: currentDate.toISO() });
+
       if (recurrence === RecurrenceEnum.ONCE) break;
 
       if (recurrence === RecurrenceEnum.MONTHLY) {
@@ -64,8 +92,4 @@ export class ScheduleService {
 
     return schedules;
   }
-
-  updateSchedule() {}
-
-  deleteSchedule() {}
 }

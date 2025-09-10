@@ -10,44 +10,57 @@
 </ion-header>
 
 <ion-content>
+
   <!-- Buscador -->
-  <ion-searchbar
-    placeholder="Buscar por clase o empleado"
-    [debounce]="300"
-    (ionInput)="handleSearch($event)"
+  <ion-searchbar placeholder="Buscar por clase o empleado" [debounce]="300" (ionInput)="handleInput($event)"
     animated="true">
   </ion-searchbar>
 
   <!-- Lista de horarios -->
-  <ng-container *ngIf="filteredSchedules.length > 0; else noSchedules">
-    <ion-list class="ion-padding-horizontal">
+  <ng-container *ngIf="filteredSchedules?.length; else noSchedules">
+    <ion-list class="ion-padding-horizontal" #scheduleList>
       <ion-item-sliding *ngFor="let schedule of filteredSchedules; trackBy: trackById">
-        <ion-item class="schedule-item" lines="inset">
+        <ion-item lines="inset">
           <ion-label class="ion-text-wrap">
-            <h2 class="schedule-title">
+            <h2 class="ion-no-margin">
               <strong>Clase:</strong> {{ classesMap.get(schedule.class_id) || 'Sin nombre' }}
             </h2>
-            <p><span class="label">Empleado:</span> {{ employeesMap.get(schedule.employee_id) || 'Sin nombre' }}</p>
-            <p><span class="label">Fecha:</span> {{ formatDate(schedule.date) }}</p>
-            <p><span class="label">Horario:</span> {{ formatTimeRange(schedule.start_time, schedule.end_time) }}</p>
-            <p><span class="label">Capacidad:</span> {{ schedule.max_capacity }}</p>
-            <p><span class="label">Repetición:</span> {{ getRecurrenceLabel(schedule.recurrence) }}</p>
+            <p class="ion-no-margin"><strong>Empleado:</strong> {{ employeesMap.get(schedule.employee_id) || 'Sin
+              nombre' }}</p>
+            <p class="ion-no-margin"><strong>Fecha:</strong> {{ schedule.date | date:'shortDate' }}</p>
+            <p class="ion-no-margin"><strong>Horario:</strong> {{ schedule.start_time }} - {{ schedule.end_time }}</p>
+            <p class="ion-no-margin"><strong>Capacidad:</strong> {{ schedule.max_capacity }}</p>
+            <p class="ion-no-margin"><strong>Repetición:</strong> {{ schedule.recurrence }}</p>
           </ion-label>
         </ion-item>
+
+        <!-- Acciones -->
+        <ion-item-options side="end">
+          <ion-item-option color="warning" (click)="openEdit(schedule)" aria-label="Editar">
+            <ion-icon name="pencil" slot="icon-only"></ion-icon>
+          </ion-item-option>
+
+          <ion-item-option color="danger" (click)="deleteSchedule(schedule)" aria-label="Eliminar">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
       </ion-item-sliding>
     </ion-list>
   </ng-container>
 
-  <!-- Si no hay horarios -->
+  <!-- Mensaje si no hay horarios -->
   <ng-template #noSchedules>
     <ion-text class="ion-text-center ion-margin-top" color="medium">
       <p>No hay horarios registrados.</p>
     </ion-text>
   </ng-template>
 
-  <!-- Modal crear horario -->
-  <app-create-schedule
-    [isOpen]="isCreating"
-    (isOpenChange)="closeCreate()">
+  <!-- Crear -->
+  <app-create-schedule [isOpen]="isCreating" (isOpenChange)="closeCreate()">
   </app-create-schedule>
+
+  <!-- Editar -->
+  <app-modify-schedule [isOpen]="isEditing" [schedule]="selectedSchedule" (isOpenChange)="closeEdit()">
+  </app-modify-schedule>
+
 </ion-content>
