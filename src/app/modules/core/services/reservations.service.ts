@@ -16,44 +16,37 @@ import {
 } from '@angular/fire/firestore';
 import { COLLECTIONS } from '../../shared/constants/firebase.constant';
 
-/**
- * Estructuras base (ajusta si tus modelos difieren)
- */
 export interface ReservationModel {
-  id: string;              // doc id
-  scheduleId: string;      // ref a SCHEDULES
-  userId: string;          // ref a USERS (o UID de auth)
-  createdAt: any;          // serverTimestamp
-  cancelledAt?: any;       // serverTimestamp
-  active: boolean;         // true = vigente, false = cancelada
+  id: string;
+  scheduleId: string;
+  userId: string;
+  createdAt: any;       // serverTimestamp
+  cancelledAt?: any;    // serverTimestamp
+  active: boolean;
 }
 
 export interface ScheduleMinimal {
   id: string;
   idClass: string;
-  date: string;            // ISO
-  start: string;           // ISO
-  end: string;             // ISO
-  capacity: number;        // total cupos
-  booked: number;          // cupos tomados
+  date: string;         // ISO
+  start: string;        // ISO
+  end: string;          // ISO
+  capacity: number;
+  booked: number;
   active: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ReservationService {
   private readonly firestore = inject(Firestore);
+  private schedulesCol = COLLECTIONS.SCHEDULES;
+  private reservationsCol = COLLECTIONS.RESERVATIONS;
 
-  private schedulesCol = COLLECTIONS.SCHEDULES;     // e.g. 'schedules'
-  private reservationsCol = COLLECTIONS.RESERVATIONS; // e.g. 'reservations'
-
-  /**
-   * Crea una reserva de forma transaccional, evitando sobrecupo y duplicados por usuario.
-   * @throws Error con mensaje de usuario si no hay cupos o ya existe reserva.
-   */
-  async reserve(scheduleId: string, userId: string): Promise<{ id: string }>{
+  /** Reserva transaccional (sin duplicados por usuario) */
+  async reserve(scheduleId: string, userId: string): Promise<{ id: string }> {
     const scheduleRef = doc(this.firestore, this.schedulesCol, scheduleId);
 
-    // Duplicado por usuario (idempotencia): si ya tiene una activa, devolvemos esa.
+    // Idempotencia: si ya existe una activa, reusar
     const existing = await this.findActiveReservationByUser(scheduleId, userId);
     if (existing) return { id: existing.id };
 
@@ -70,7 +63,7 @@ export class ReservationService {
       const booked = Number(s.booked ?? 0);
       if (booked >= capacity) throw new Error('No hay cupos disponibles.');
 
-      // Rechequea duplicado dentro de la transacción
+      // Duplicado dentro de la tx
       const dupQ = query(
         collection(this.firestore, this.reservationsCol),
         where('scheduleId', '==', scheduleId),
@@ -93,16 +86,13 @@ export class ReservationService {
         userId,
         createdAt: serverTimestamp(),
         active: true
-      } satisfies Partial<ReservationModel>);
+      } as Partial<ReservationModel>);
     });
 
     return { id: reservationId };
   }
 
-  /**
-   * Cancela una reserva activa y libera cupo (transaccional).
-   * Verifica que la reserva corresponda al usuario a menos que bypassUserCheck sea true.
-   */
+  /** Cancela reserva y libera cupo (transaccional) */
   async cancel(reservationId: string, userId: string, bypassUserCheck = false): Promise<void> {
     const reservationRef = doc(this.firestore, this.reservationsCol, reservationId);
 
@@ -110,8 +100,11 @@ export class ReservationService {
       const rSnap = await tx.get(reservationRef);
       if (!rSnap.exists()) throw new Error('La reserva no existe.');
       const r = rSnap.data() as ReservationModel;
-      if (!r.active) return; // ya cancelada → idempotente
-      if (!bypassUserCheck && r.userId !== userId) throw new Error('No puedes cancelar esta reserva.');
+      if (!r.active) return; // idempotente
+
+      if (!bypassUserCheck && r.userId !== userId) {
+        throw new Error('No puedes cancelar esta reserva.');
+      }
 
       const scheduleRef = doc(this.firestore, this.schedulesCol, r.scheduleId);
       const sSnap = await tx.get(scheduleRef);
@@ -121,14 +114,16 @@ export class ReservationService {
       const booked = Number(s.booked ?? 0);
 
       tx.update(reservationRef, { active: false, cancelledAt: serverTimestamp() });
-      tx.update(scheduleRef, { booked: Math.max(0, booked - 1), updatedAt: new Date().toISOString(), updatedBy: userId });
+      tx.update(scheduleRef, {
+        booked: Math.max(0, booked - 1),
+        updatedAt: new Date().toISOString(),
+        updatedBy: userId
+      });
     });
   }
 
-  /**
-   * Obtiene la reserva activa del usuario para un schedule (si existe).
-   */
-  async findActiveReservationByUser(scheduleId: string, userId: string): Promise<ReservationModel | null> {
+  /** Reserva activa del usuario para un schedule (si existe) */
+  async findActiveReservationByUser(scheduleId: string, userId: string) {
     const qy = query(
       collection(this.firestore, this.reservationsCol),
       where('scheduleId', '==', scheduleId),
@@ -141,10 +136,8 @@ export class ReservationService {
     return snap.docs[0].data() as ReservationModel;
   }
 
-  /**
-   * Lista las reservas activas de un usuario, ordenadas por creación.
-   */
-  async listUserActiveReservations(userId: string, top = 50): Promise<ReservationModel[]> {
+  /** Lista reservas activas de un usuario */
+  async listUserActiveReservations(userId: string, top = 50) {
     const qy = query(
       collection(this.firestore, this.reservationsCol),
       where('userId', '==', userId),
@@ -156,10 +149,8 @@ export class ReservationService {
     return snap.docs.map(d => d.data() as ReservationModel);
   }
 
-  /**
-   * Lista reservas (activas) de un schedule.
-   */
-  async listScheduleReservations(scheduleId: string): Promise<ReservationModel[]> {
+  /** Lista reservas activas de un schedule */
+  async listScheduleReservations(scheduleId: string) {
     const qy = query(
       collection(this.firestore, this.reservationsCol),
       where('scheduleId', '==', scheduleId),
@@ -169,10 +160,8 @@ export class ReservationService {
     return snap.docs.map(d => d.data() as ReservationModel);
   }
 
-  /**
-   * Verifica disponibilidad actual de un schedule.
-   */
-  async getAvailability(scheduleId: string): Promise<{ capacity: number; booked: number; free: number; active: boolean }>{
+  /** Disponibilidad actual */
+  async getAvailability(scheduleId: string) {
     const scheduleRef = doc(this.firestore, this.schedulesCol, scheduleId);
     const snap = await getDoc(scheduleRef);
     if (!snap.exists()) throw new Error('Horario no encontrado');
@@ -180,11 +169,9 @@ export class ReservationService {
     const capacity = Number(s.capacity ?? 0);
     const booked = Number(s.booked ?? 0);
     return { capacity, booked, free: Math.max(0, capacity - booked), active: s.active !== false };
-  }
+    }
 
-  /**
-   * Limpieza masiva: cancelar todas las reservas activas de un schedule (admin).
-   */
+  /** Admin: cancelar todas las activas de un schedule */
   async cancelAllForSchedule(scheduleId: string): Promise<number> {
     const qy = query(
       collection(this.firestore, this.reservationsCol),
@@ -200,19 +187,8 @@ export class ReservationService {
     }
     await batch.commit();
 
-    // opcional: resetear booked en schedule a 0 (o recalcular)
     const scheduleRef = doc(this.firestore, this.schedulesCol, scheduleId);
     await updateDoc(scheduleRef, { booked: 0, updatedAt: new Date().toISOString() });
     return count;
   }
 }
-
-/**
- * === Notas de implementación ===
- * 1) Índices recomendados en Firestore:
- *    - reservations: [scheduleId ASC, active ASC]
- *    - reservations: [userId ASC, active ASC, createdAt DESC]
- * 2) Para consultas por día/hora en schedules, guarda también `dateEpoch` (ms) al crear el schedule.
- * 3) Idempotencia: `reserve` previene duplicados por usuario.
- * 4) Seguridad: refuerza reglas de Firestore para permitir reservar/cancelar sólo al propio user o a roles admin.
- */
