@@ -20,6 +20,7 @@
         <ion-col size="auto">
           <ion-chip
             [color]="d.hasSame(selected, 'day') ? 'primary' : 'medium'"
+            class="day-chip"
             (click)="pickDay(d)"
           >
             {{ d.toFormat('dd') }}
@@ -28,59 +29,100 @@
       }
     </ion-row>
     <ion-row class="ion-justify-content-center">
-      <ion-text color="medium">{{ selected.toFormat('cccc d LLLL, yyyy') }}</ion-text>
+      <ion-text color="medium">{{ selectedLabel }}</ion-text>
     </ion-row>
   </ion-grid>
 
-  <!-- Lista de clases del día -->
+  <!-- Lista / estados -->
   @if (loadingList) {
-    <ion-text class="ion-text-center ion-margin-top" color="medium">
-      <p>Cargando clases…</p>
-    </ion-text>
-  } @else if (schedules.length === 0) {
-    <ion-text class="ion-text-center ion-margin-top" color="medium">
-      <p>No hay clases programadas para esta fecha.</p>
-    </ion-text>
-  } @else {
     <ion-list>
-      @for (s of schedules; track s.id) {
+      @for (n of [0,1,2]; track n) {
         <ion-item lines="full">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-align-items-center">
               <ion-col size="3" class="ion-text-center">
-                <img
-                  *ngIf="classesById[s.idClass]?.imageURL"
-                  [src]="classesById[s.idClass]?.imageURL"
-                  [alt]="classesById[s.idClass]?.name"
-                  style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px;"
-                />
+                <ion-skeleton-text animated style="width:64px;height:64px;border-radius:12px;"></ion-skeleton-text>
               </ion-col>
               <ion-col>
-                <ion-text>
-                  <h3 class="ion-no-margin">{{ classesById[s.idClass]?.name || 'Clase' }}</h3>
-                </ion-text>
-                <ion-text color="medium">
-                  <p class="ion-no-margin">
-                    Capacidad: {{ s.capacity }} Personas •
-                    Inicio: {{ fmtHour(s.start) }} • Final: {{ fmtHour(s.end) }}
-                  </p>
-                </ion-text>
-              </ion-col>
-              <ion-col size="auto" class="ion-text-end">
-                <ion-button
-                  [disabled]="libres(s) === 0 || reservingId === s.id"
-                  (click)="reservar(s)"
-                >
-                  {{ libres(s) === 0 ? 'Sin cupo' : (reservingId === s.id ? 'Reservando…' : 'Reservar') }}
-                </ion-button>
-                <ion-text color="medium">
-                  <p class="ion-no-margin ion-text-right">{{ libres(s) }} cupos</p>
-                </ion-text>
+                <ion-skeleton-text animated style="width:60%;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width:90%;"></ion-skeleton-text>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-item>
       }
     </ion-list>
+  } @else if (viewList.length === 0) {
+    <div class="empty">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <h4>Sin clases para esta fecha</h4>
+      <p>Prueba otro día con los chips o las flechas.</p>
+    </div>
+  } @else {
+    <ion-list class="ion-padding-horizontal">
+      @for (v of viewList; track v.schedule.id) {
+        <!-- Card deslizable -->
+        <ion-item-sliding #sliding class="class-card-wrap">
+          <ion-item lines="none" class="class-card" (click)="openSlide(sliding)">
+            @if (v.free === 0) { <div class="ribbon">SIN CUPO</div> }
+
+            <ion-grid class="ion-no-padding">
+              <ion-row class="ion-align-items-center">
+                <!-- thumb -->
+                <ion-col size="auto" class="thumb">
+                  <ion-img
+                    [src]="v.class.imageURL || 'assets/placeholder-class.jpg'"
+                    [alt]="v.class.name">
+                  </ion-img>
+                </ion-col>
+
+                <!-- info -->
+                <ion-col class="info">
+                  <h3 class="title">{{ v.class.name }}</h3>
+
+                  <div class="lines">
+                    <div><strong>Capacidad:</strong> {{ v.capacity }} Personas</div>
+                    <div><strong>Duración:</strong> {{ v.durationText }}</div>
+                    <div><strong>Inicio:</strong> {{ v.startLocal }}</div>
+                    <div><strong>Fin:</strong> {{ v.endLocal }}</div>
+                  </div>
+                </ion-col>
+
+                <!-- badge de cupos -->
+                <ion-col size="auto" class="badge-col">
+                  <div class="cupos-badge" [class.soldout]="v.free===0">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <strong *ngIf="v.free > 0">{{ v.free }}</strong>
+                    <span>{{ v.free > 0 ? 'libres' : 'sin cupo' }}</span>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+
+          <!-- Slide: botón Reservar mejorado -->
+          <ion-item-options side="end" class="slide-actions">
+            <ion-item-option
+              class="slide-reservar"
+              [disabled]="v.free === 0 || reservingId === v.schedule.id"
+              (click)="reservar(v.schedule)"
+              aria-label="Reservar"
+            >
+              <ion-icon *ngIf="reservingId !== v.schedule.id" name="checkmark-circle-outline" slot="start"></ion-icon>
+              <ion-spinner *ngIf="reservingId === v.schedule.id" name="crescent" slot="start"></ion-spinner>
+              <span class="slide-btn-label">
+                {{ reservingId === v.schedule.id ? 'Reservando…' : 'Reservar' }}
+              </span>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
   }
+
+  <!-- pista “desliza” -->
+  <div class="swipe-hint">
+    <ion-icon name="swap-horizontal-outline"></ion-icon>
+    Desliza para reservar
+  </div>
 </ion-content>
