@@ -1,132 +1,94 @@
+// src/app/modules/admin/pages/plans/plans.page.ts
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonItemSliding,
-  IonSearchbar,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonRow,
-  IonCol,
-  IonText,
-  IonGrid,
-  IonList,
-  IonItemOptions,
-  IonItemOption,
-  IonItem,
-  SearchbarInputEventDetail, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonChip, IonAvatar, IonLabel } from '@ionic/angular/standalone';
+  IonContent, IonHeader, IonTitle, IonToolbar, IonItemSliding, IonSearchbar,
+  IonButtons, IonButton, IonIcon, IonText, IonList, IonItemOptions, IonItemOption, IonItem,
+  IonChip, IonLabel
+} from '@ionic/angular/standalone';
 import { IonSearchbarCustomEvent } from '@ionic/core';
+import { SearchbarInputEventDetail } from '@ionic/angular';
 
 import { CreatePlanComponent } from '../../components/create-plan/create-plan.component';
 import { ModifyPlanComponent } from '../../components/modify-plan/modify-plan.component';
 import { DeletePlanComponent } from '../../components/delete-plan/delete-plan.component';
+
+import { PlansService } from '../../../core/services/plans.service';
+import { PlanModel } from '../../../shared/models/plan.model';
+import { StateEnum } from '../../../shared/enums/state.enum';
 
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.page.html',
   styleUrls: ['./plans.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonAvatar, IonChip, IonCardContent, IonCardTitle, IonCardHeader, IonCard,
-    CommonModule,
-    FormsModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonItemSliding,
-    IonSearchbar,
-    IonButtons,
-    IonButton,
-    IonIcon,
-    IonRow,
-    IonCol,
-    IonText,
-    IonGrid,
-    IonList,
-    IonItemOptions,
-    IonItemOption,
-    IonItem,
-    CreatePlanComponent,
-    ModifyPlanComponent,
-    DeletePlanComponent
-  ]
+  imports: [
+    CommonModule, FormsModule,
+    IonContent, IonHeader, IonTitle, IonToolbar, IonItemSliding, IonSearchbar,
+    IonButtons, IonButton, IonIcon, IonText, IonList, IonItemOptions, IonItemOption, IonItem,
+    IonChip, IonLabel,                   // 👈 necesarios para <ion-chip> y <ion-label>
+    CreatePlanComponent, ModifyPlanComponent, DeletePlanComponent
+  ],
 })
 export class PlansPage implements OnInit {
   @ViewChild('planList') planList!: IonList;
 
-  plans = [
-    {
-      id: '1',
-      name: 'Plan Básico',
-      duration: 30,
-      price: 50000,
-      description: 'Acceso al gimnasio por 30 días',
-      state: 'active'
-    },
-    {
-      id: '2',
-      name: 'Plan Premium',
-      duration: 90,
-      price: 120000,
-      description: 'Acceso completo por 3 meses',
-      state: 'inactive'
-    }
-  ];
+  StateEnum = StateEnum;
 
-
-  filteredPlans = [...this.plans];
-  selectedPlan: any = null;
+  plans: PlanModel[] = [];
+  filteredPlans: PlanModel[] = [];
+  selectedPlan: PlanModel | null = null;
 
   isCreating = false;
-  isEditing = false;
+  isEditing  = false;
   isDeleting = false;
 
-  constructor() {}
+  constructor(private readonly plansService: PlansService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.reload();
+  }
+
+  async reload(): Promise<void> {
+    try {
+      this.plans = await this.plansService.getAllPlans();
+      this.filteredPlans = [...this.plans];
+    } catch (e) {
+      console.error('Error cargando planes', e);
+      this.filteredPlans = [];
+    }
+  }
 
   handleInput(event: IonSearchbarCustomEvent<SearchbarInputEventDetail>) {
-    const value = event.detail.value?.toLowerCase() || '';
-    this.filteredPlans = this.plans.filter(plan =>
-      plan.name.toLowerCase().includes(value)
+    const q = (event.detail.value ?? '').toString().toLowerCase().trim();
+    if (!q) { this.filteredPlans = [...this.plans]; return; }
+
+    this.filteredPlans = this.plans.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      (p.description ?? '').toLowerCase().includes(q) ||
+      `${p.creditsTotal}`.includes(q) ||
+      `${p.price}`.includes(q)
     );
   }
 
-  openCreate() {
-    this.isCreating = true;
-  }
+  openCreate() { this.isCreating = true; }
+  closeCreate() { this.isCreating = false; this.reload(); }
 
-  closeCreate() {
-    this.isCreating = false;
-  }
-
-  openEdit(plan: any) {
+  openEdit(plan: PlanModel) {
     this.planList?.closeSlidingItems().then(() => {
       this.selectedPlan = plan;
       this.isEditing = true;
     });
   }
+  closeEdit() { this.isEditing = false; this.selectedPlan = null; this.reload(); }
 
-  closeEdit() {
-    this.isEditing = false;
-    this.selectedPlan = null;
-  }
-
-  openDelete(plan: any) {
+  openDelete(plan: PlanModel) {
     this.planList?.closeSlidingItems().then(() => {
       this.selectedPlan = plan;
       this.isDeleting = true;
     });
   }
-
-  closeDelete() {
-    this.isDeleting = false;
-    this.selectedPlan = null;
-  }
+  closeDelete() { this.isDeleting = false; this.selectedPlan = null; this.reload(); }
 }

@@ -1,56 +1,76 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+
+// Ionic standalone
+import {
+  IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+  IonContent, IonList, IonItem, IonInput, IonText, IonSelect, IonSelectOption
+} from '@ionic/angular/standalone';
+
 import { PlansService } from '../../../core/services/plans.service';
 import { UtilsService } from '../../../shared/services/utils.service';
-import { StateEnum } from '../../../shared/enums/state.enum';  // Asegúrate de ajustar la ruta de importación según tu proyecto
+import { StateEnum } from '../../../shared/enums/state.enum';
+import { PlanCreateDTO } from '../../../shared/models/plan.model';
 
 @Component({
   selector: 'app-create-plan',
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule],
+  imports: [
+    // Ionic
+    IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+    IonContent, IonList, IonItem, IonInput, IonText, IonSelect, IonSelectOption,
+    // Angular
+    CommonModule, ReactiveFormsModule
+  ],
   templateUrl: './create-plan.component.html',
   styleUrls: ['./create-plan.component.scss']
 })
 export class CreatePlanComponent {
-  @Input() isOpen: boolean = false;
+  @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<boolean>();
 
-  // Formulario reactivo para crear el plan
   planForm: FormGroup;
-
-  // Exponer el enum de estado para usarlo en la plantilla
   StateEnum = StateEnum;
 
-  constructor(private fb: FormBuilder, private plansService: PlansService, private utils: UtilsService) {
-    // Inicializar el FormGroup con campos y validaciones
+  constructor(
+    private fb: FormBuilder,
+    private plansService: PlansService,
+    private utils: UtilsService
+  ) {
     this.planForm = this.fb.group({
-      name: ['', [Validators.required]],
-      duration: ['', [Validators.required]],       // duración del plan (p. ej., en días)
-      price: ['', [Validators.required]],          // precio del plan
-      description: ['', [Validators.required]],    // descripción del plan
-      state: [StateEnum.ACTIVE, [Validators.required]]  // estado inicial (activo por defecto)
+      name: ['', [Validators.required, Validators.maxLength(80)]],
+      creditsTotal: [1, [Validators.required, Validators.min(1)]], // ← reemplaza duración
+      price: [0, [Validators.required, Validators.min(0)]],
+      description: [''],
+      state: [StateEnum.ACTIVE, [Validators.required]],
     });
   }
 
-  // Método para cerrar el modal (emite false al padre)
   toggleOpen(): void {
     this.isOpenChange.emit(false);
   }
 
-  // Método para enviar el formulario y crear el plan en Firebase
   async onSubmit(): Promise<void> {
     if (this.planForm.invalid) {
-      // Si el formulario no es válido, marcamos todos los campos como tocados para mostrar errores
       this.planForm.markAllAsTouched();
       return;
     }
-    const planData = this.planForm.value;
-    await this.utils.loading();  // Muestra loading indicator
+
+    const { name, creditsTotal, price, description, state } = this.planForm.value;
+
+    const payload: PlanCreateDTO = {
+      name: String(name).trim(),
+      creditsTotal: Number(creditsTotal),
+      price: Number(price),
+      description: String(description ?? '').trim(),
+      state,
+    };
+
+    const loading = await this.utils.loading();
     try {
-      await this.plansService.createPlan(planData);
-      this.utils.presentToast({
+      await this.plansService.createPlan(payload);
+      await this.utils.presentToast({
         message: 'Plan creado con éxito',
         duration: 2500,
         position: 'bottom',
@@ -58,23 +78,25 @@ export class CreatePlanComponent {
         icon: 'checkmark-circle'
       });
 
-      // Limpiar el formulario y cerrar el modal
-      this.planForm.reset();
+      this.planForm.reset({
+        name: '',
+        creditsTotal: 1,
+        price: 0,
+        description: '',
+        state: StateEnum.ACTIVE,
+      });
       this.toggleOpen();
     } catch (error) {
       console.error('Error al crear el plan:', error);
-      this.utils.presentToast({
+      await this.utils.presentToast({
         message: 'Error al crear el plan',
         duration: 2500,
         position: 'bottom',
         color: 'danger',
         icon: 'alert-circle-outline'
       });
-
     } finally {
-      // Ocultar loading indicator si corresponde (asumiendo UtilsService.loading() devuelve un overlay)
-      // Por ejemplo, si UtilsService.loading() muestra un loader, podría haber un UtilsService.dismissLoading()
-      // await this.utils.dismissLoading();  (Descomentar si existe este método)
+      loading?.dismiss?.();
     }
   }
 }

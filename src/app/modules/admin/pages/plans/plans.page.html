@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <ion-searchbar
     placeholder="Buscar plan"
     [debounce]="300"
@@ -24,14 +24,14 @@
           <ion-item lines="full">
             <ion-label>
               <h3>{{ plan.name }}</h3>
-              <p>{{ plan.duration }} días • ${{ plan.price }}</p>
-              <p>{{ plan.description }}</p>
+              <p>{{ plan.creditsTotal }} créditos • {{ plan.price | currency:'COP':'symbol' }}</p>
+              <p *ngIf="plan.description">{{ plan.description }}</p>
             </ion-label>
 
             <ion-chip
               slot="end"
-              [color]="plan.state === 'active' ? 'success' : 'danger'">
-              {{ plan.state === 'active' ? 'Activo' : 'Inactivo' }}
+              [color]="plan.state === StateEnum.ACTIVE ? 'success' : 'medium'">
+              {{ plan.state === StateEnum.ACTIVE ? 'Activo' : 'Inactivo' }}
             </ion-chip>
           </ion-item>
 
