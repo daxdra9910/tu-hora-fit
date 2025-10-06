@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Inventario</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreate()">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar
+    placeholder="Buscar inventario"
+    [debounce]="300"
+    (ionInput)="handleInput($event)"
+    animated="true">
+  </ion-searchbar>
+
+  @if (inventories.length > 0) {
+    <ion-list #inventoryList>
+      @for (inventory of inventories; track inventory.id) {
+        <ion-item-sliding>
+          <ion-item lines="full">
+            <ion-avatar slot="start">
+              <img [src]="inventory.photoURL || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'" alt="Equipo" />
+            </ion-avatar>
+
+            <ion-label>
+              <h3 class="ion-no-margin">{{ inventory.name }}</h3>
+              <p class="ion-no-margin">Cantidad: {{ inventory.quantity }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item-options side="end">
+            <ion-item-option color="warning" (click)="openEdit(inventory)">
+              <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="openDelete(inventory)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  } @else {
+    <ion-text class="ion-text-center ion-margin-top" color="medium">
+      <p>No hay elementos de inventario registrados.</p>
+    </ion-text>
+  }
+
+  <!-- Modales -->
+  <app-create-inventory
+    [isOpen]="isCreating"
+    (isOpenChange)="closeCreate()">
+  </app-create-inventory>
+
+  <app-modify-inventory
+    [isOpen]="isEditing"
+    [inventory]="selectedInventory"
+    (isOpenChange)="closeEdit()">
+  </app-modify-inventory>
+
+  <app-delete-inventory
+    [isOpen]="isDeleting"
+    [inventory]="selectedInventory"
+    (isOpenChange)="closeDelete()">
+  </app-delete-inventory>
+</ion-content>

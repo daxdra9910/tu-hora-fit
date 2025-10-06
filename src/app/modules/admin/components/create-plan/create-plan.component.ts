@@ -1,8 +1,9 @@
+// src/app/modules/admin/components/create-plan/create-plan.component.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
-// Ionic standalone
+// Ionic (standalone)
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
   IonContent, IonList, IonItem, IonInput, IonText, IonSelect, IonSelectOption
@@ -40,7 +41,7 @@ export class CreatePlanComponent {
   ) {
     this.planForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(80)]],
-      creditsTotal: [1, [Validators.required, Validators.min(1)]], // ← reemplaza duración
+      creditsTotal: [1, [Validators.required, Validators.min(1)]],  // ← reemplaza duración
       price: [0, [Validators.required, Validators.min(0)]],
       description: [''],
       state: [StateEnum.ACTIVE, [Validators.required]],
@@ -96,7 +97,7 @@ export class CreatePlanComponent {
         icon: 'alert-circle-outline'
       });
     } finally {
-      loading?.dismiss?.();
+      (loading as any)?.dismiss?.();
     }
   }
 }

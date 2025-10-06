@@ -1,10 +1,10 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   IonButton,
   IonContent,
   IonHeader,
   IonIcon,
-  IonMenu, IonNavLink,
+  IonMenu,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -13,14 +13,13 @@ import {
   MenuController,
   NavController
 } from '@ionic/angular/standalone';
-import {AuthService} from 'src/app/modules/auth/services/auth.service';
-import {RouterLink} from "@angular/router";
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.scss'],
-  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton, IonNavLink, RouterLink],
+  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton],
 })
 export class TabComponent {
   private readonly menuCtrl = inject(MenuController);
@@ -32,6 +31,11 @@ export class TabComponent {
       await this.menuCtrl.close('optionsMenu');
       await this.navCtrl.navigateBack('/auth/login');
     });
+  }
+
+  navigateTo(path: string) {
+    this.navCtrl.navigateForward(path);
+    this.menuCtrl.close('optionsMenu');
   }
 
   async openOptionsMenu() {

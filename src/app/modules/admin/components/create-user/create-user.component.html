@@ -5,41 +5,84 @@
         <ion-title>Crear cliente</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="toggleOpen()">
-            <ion-icon icon="close" slot="icon-only"></ion-icon>
+            <ion-icon name="close" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
+
     <ion-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <ion-list lines="none">
+
+          <!-- Nombre -->
           <ion-item>
-            <ion-input label="Nombre" labelPlacement="floating" formControlName="name" type="text"
-                       autocomplete="name" placeholder="Ingresa tu nombre"></ion-input>
+            <ion-input
+              label="Nombre"
+              labelPlacement="floating"
+              formControlName="name"
+              type="text"
+              autocomplete="name"
+              placeholder="Ingresa tu nombre">
+            </ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
 
+          <!-- Correo electrónico -->
           <ion-item>
-            <ion-input label="Teléfono" labelPlacement="floating" formControlName="phone" type="number"
-                       autocomplete="phone" placeholder="Ingresa tu teléfono"></ion-input>
+            <ion-input
+              label="Correo"
+              labelPlacement="floating"
+              formControlName="email"
+              type="email"
+              autocomplete="email"
+              placeholder="Correo electrónico del usuario">
+            </ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid">
+          <ion-text color="danger" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+            <small class="ion-padding-start">Correo válido requerido</small>
+          </ion-text>
+
+          <!-- Teléfono -->
+          <ion-item>
+            <ion-input
+              label="Teléfono"
+              labelPlacement="floating"
+              formControlName="phoneNumber"
+              type="number"
+              autocomplete="tel"
+              placeholder="Ingresa tu teléfono">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('phoneNumber')?.touched && form.get('phoneNumber')?.invalid">
             <small class="ion-padding-start">Teléfono requerido</small>
           </ion-text>
 
+          <!-- Fecha de nacimiento -->
           <ion-item>
-            <ion-input label="Fecha de nacimiento" labelPlacement="floating" formControlName="birthdate" type="date"
-                       autocomplete="birthdate" placeholder="Ingresa tu fecha de nacimiento"></ion-input>
+            <ion-input
+              label="Fecha de nacimiento"
+              labelPlacement="floating"
+              formControlName="birthdate"
+              type="date"
+              autocomplete="bday"
+              placeholder="Ingresa tu fecha de nacimiento">
+            </ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('birthdate')?.touched && form.get('birthdate')?.invalid">
             <small class="ion-padding-start">Fecha de nacimiento requerida</small>
           </ion-text>
 
+          <!-- Rol -->
           <ion-item>
-            <ion-select label="Rol" label-placement="floating" formControlName="role" cancel-text="Cancelar"
-                        ok-text="Confirmar">
+            <ion-select
+              label="Rol"
+              label-placement="floating"
+              formControlName="role"
+              cancel-text="Cancelar"
+              ok-text="Confirmar">
               <ion-select-option [value]="possibleRoles.ADMIN">Administrador</ion-select-option>
               <ion-select-option [value]="possibleRoles.CLIENT">Cliente</ion-select-option>
             </ion-select>
@@ -48,9 +91,14 @@
             <small class="ion-padding-start">Rol requerido</small>
           </ion-text>
 
+          <!-- Estado -->
           <ion-item>
-            <ion-select label="Estado" label-placement="floating" formControlName="state" cancel-text="Cancelar"
-                        ok-text="Confirmar">
+            <ion-select
+              label="Estado"
+              label-placement="floating"
+              formControlName="state"
+              cancel-text="Cancelar"
+              ok-text="Confirmar">
               <ion-select-option [value]="possibleStates.ACTIVE">Activo</ion-select-option>
               <ion-select-option [value]="possibleStates.INACTIVE">Inactivo</ion-select-option>
             </ion-select>
@@ -58,6 +106,22 @@
           <ion-text color="danger" *ngIf="form.get('state')?.touched && form.get('state')?.invalid">
             <small class="ion-padding-start">Estado requerido</small>
           </ion-text>
+
+          <!-- Foto -->
+          <ion-item>
+            <ion-label>Foto</ion-label>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('image')?.touched && form.get('image')?.invalid">
+            <small class="ion-padding-start">Foto requerida</small>
+          </ion-text>
+
+          <!-- Vista previa de imagen -->
+          <ion-item *ngIf="imagePreview">
+            <ion-avatar slot="start" style="--size: 64px;">
+              <img [src]="imagePreview" alt="Vista previa" style="object-fit: cover;" />
+            </ion-avatar>
+          </ion-item>
 
         </ion-list>
 

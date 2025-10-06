@@ -14,7 +14,6 @@
     <ion-content class="ion-padding">
       <form [formGroup]="planForm" (ngSubmit)="onSubmit()">
         <ion-list lines="none">
-
           <!-- Nombre -->
           <ion-item>
             <ion-input
@@ -29,7 +28,7 @@
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
 
-          <!-- Créditos totales (antes: duración) -->
+          <!-- Créditos totales -->
           <ion-item>
             <ion-input
               label="Créditos totales"
@@ -61,7 +60,7 @@
             <small class="ion-padding-start">Precio requerido</small>
           </ion-text>
 
-          <!-- Descripción -->
+          <!-- Descripción (opcional) -->
           <ion-item>
             <ion-input
               label="Descripción"
@@ -84,7 +83,9 @@
               <ion-select-option [value]="StateEnum.INACTIVE">Inactivo</ion-select-option>
             </ion-select>
           </ion-item>
-
+          <ion-text color="danger" *ngIf="planForm.get('state')?.touched && planForm.get('state')?.invalid">
+            <small class="ion-padding-start">Estado requerido</small>
+          </ion-text>
         </ion-list>
 
         <ion-button expand="block" type="submit" color="primary" [disabled]="planForm.invalid">

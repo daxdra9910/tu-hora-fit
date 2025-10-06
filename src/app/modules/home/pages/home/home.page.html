@@ -4,5 +4,92 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div class="example-content">Home Content</div>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <app-banner></app-banner>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Resumen</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item>
+                <ion-icon name="people-outline" slot="start"></ion-icon>
+                <ion-text><b>Usuarios activos:</b> 2</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="calendar-outline" slot="start"></ion-icon>
+                <ion-text><b>Clases hoy:</b> 2</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                <ion-text><b>Reservas activas:</b> 2</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="card-outline" slot="start"></ion-icon>
+                <ion-text><b>Ingresos mes:</b> $1.200.000</ion-text>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card color="warning">
+          <ion-card-content>
+            <ion-row class="ion-align-items-center">
+              <ion-icon name="calendar-outline" size="large"></ion-icon>
+              <ion-text class="ion-padding-start">
+                <h2>Crear clase</h2>
+              </ion-text>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card color="primary">
+          <ion-card-content>
+            <ion-row class="ion-align-items-center">
+              <ion-icon name="person-outline" size="large"></ion-icon>
+              <ion-text class="ion-padding-start">
+                <h2>Crear cliente</h2>
+              </ion-text>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card color="secondary">
+          <ion-card-content>
+            <ion-row class="ion-align-items-center">
+              <ion-icon name="bar-chart-outline" size="large"></ion-icon>
+              <ion-text class="ion-padding-start">
+                <h2>Reportes</h2>
+              </ion-text>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card color="tertiary">
+          <ion-card-content>
+            <ion-row class="ion-align-items-center">
+              <ion-icon name="cash-outline" size="large"></ion-icon>
+              <ion-text class="ion-padding-start">
+                <h2>Pagos</h2>
+              </ion-text>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

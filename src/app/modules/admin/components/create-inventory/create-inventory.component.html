@@ -1,0 +1,85 @@
+<ion-modal [isOpen]="isOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Crear inventario</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleOpen()">
+            <ion-icon name="close" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <ion-list lines="none">
+
+          <!-- 📷 Campo para subir imagen -->
+          <ion-item>
+            <ion-label>Foto del equipo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-button expand="block" (click)="fileInput.click()">Seleccionar Imagen</ion-button>
+            <input type="file" hidden #fileInput (change)="onFileSelected($event)" accept="image/*" />
+          </ion-item>
+
+          <ion-item *ngIf="selectedFile">
+            <ion-text color="medium">
+              <p class="ion-padding-start">{{ selectedFile?.name }}</p>
+            </ion-text>
+          </ion-item>
+
+          <ion-item *ngIf="selectedFileError">
+            <ion-text color="danger">
+              <small class="ion-padding-start">Imagen requerida</small>
+            </ion-text>
+          </ion-item>
+
+          <!-- Vista previa de la imagen -->
+          <ion-item *ngIf="selectedFile">
+            <img
+              [src]="selectedFile ? imagePreview : ''"
+              alt="Vista previa"
+              style="max-height: 150px; object-fit: contain; margin: auto;" />
+          </ion-item>
+
+          <!-- Nombre -->
+          <ion-item>
+            <ion-input
+              label="Nombre del equipo"
+              labelPlacement="floating"
+              formControlName="name"
+              type="text"
+              placeholder="Ej: Caminadora Pro 3000">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+            <small class="ion-padding-start">Nombre requerido</small>
+          </ion-text>
+
+          <!-- Cantidad -->
+          <ion-item>
+            <ion-input
+              label="Cantidad"
+              labelPlacement="floating"
+              formControlName="quantity"
+              type="number"
+              min="1"
+              placeholder="Ej: 5">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('quantity')?.touched && form.get('quantity')?.invalid">
+            <small class="ion-padding-start">Cantidad requerida</small>
+          </ion-text>
+
+        </ion-list>
+
+        <ion-button expand="block" type="submit" color="primary" [disabled]="form.invalid">
+          Guardar
+        </ion-button>
+      </form>
+    </ion-content>
+  </ng-template>
+</ion-modal>

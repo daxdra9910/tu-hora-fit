@@ -1,43 +1,58 @@
-import {bootstrapApplication} from '@angular/platform-browser';
-import {PreloadAllModules, provideRouter, RouteReuseStrategy, withPreloading} from '@angular/router';
-import {IonicRouteStrategy, provideIonicAngular} from '@ionic/angular/standalone';
-import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
-import {getAuth, provideAuth} from '@angular/fire/auth';
-import {getFirestore, provideFirestore} from '@angular/fire/firestore';
-import {setLogLevel, LogLevel} from "@angular/fire";
-
-import {routes} from './app/app.routes';
-import {AppComponent} from './app/app.component';
-import {environment} from './environments/environment';
-import {addIcons} from 'ionicons';
+import { LogLevel, setLogLevel } from "@angular/fire";
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { PreloadAllModules, provideRouter, RouteReuseStrategy, withPreloading } from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
+import { provideHttpClient } from '@angular/common/http';
+import { addIcons } from 'ionicons';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+import { environment } from './environments/environment';
 
 import {
   addOutline,
   alertCircleOutline,
-  calendarOutline, checkmarkCircle,
+  barbellOutline,
+  barChartOutline,
+  calendarOutline, cardOutline, cashOutline, checkmarkCircle,
+  checkmarkOutline,
   close,
   eyeOutline,
   homeOutline,
   idCardOutline,
+  logOutOutline,
   menuOutline,
   pencilOutline,
+  peopleOutline,
   personOutline,
+  timerOutline,
   trashOutline
-} from 'ionicons/icons'
+} from 'ionicons/icons';
 
 addIcons({
-  'alert-circle-outline': alertCircleOutline,
-  'person-outline': personOutline,
-  'menu-outline': menuOutline,
-  'home-outline': homeOutline,
-  'calendar-outline': calendarOutline,
-  'id-card-outline': idCardOutline,
   'add-outline': addOutline,
-  'eye-outline': eyeOutline,
-  'pencil-outline': pencilOutline,
-  'trash-outline': trashOutline,
+  'alert-circle-outline': alertCircleOutline,
+  'barbell-outline': barbellOutline,
+  'bar-chart-outline': barChartOutline,
+  'calendar-outline': calendarOutline,
+  'card-outline': cardOutline,
+  'cash-outline': cashOutline,
   'close': close,
-  'checkmark-circle': checkmarkCircle
+  'checkmark-circle': checkmarkCircle,
+  'checkmark-outline': checkmarkOutline,
+  'eye-outline': eyeOutline,
+  'home-outline': homeOutline,
+  'id-card-outline': idCardOutline,
+  'log-out-outline': logOutOutline,
+  'menu-outline': menuOutline,
+  'pencil-outline': pencilOutline,
+  'people-outline': peopleOutline,
+  'person-outline': personOutline,
+  'time-outline': timerOutline,
+  'trash-outline': trashOutline
 })
 
 setLogLevel(LogLevel.SILENT);
@@ -49,6 +64,8 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
+    provideHttpClient()
   ],
 });

@@ -1,4 +1,3 @@
-// src/app/modules/admin/pages/plans/plans.page.ts
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +27,7 @@ import { StateEnum } from '../../../shared/enums/state.enum';
     CommonModule, FormsModule,
     IonContent, IonHeader, IonTitle, IonToolbar, IonItemSliding, IonSearchbar,
     IonButtons, IonButton, IonIcon, IonText, IonList, IonItemOptions, IonItemOption, IonItem,
-    IonChip, IonLabel,                   // 👈 necesarios para <ion-chip> y <ion-label>
+    IonChip, IonLabel,
     CreatePlanComponent, ModifyPlanComponent, DeletePlanComponent
   ],
 })
@@ -47,8 +46,8 @@ export class PlansPage implements OnInit {
 
   constructor(private readonly plansService: PlansService) {}
 
-  ngOnInit(): void {
-    this.reload();
+  async ngOnInit(): Promise<void> {
+    await this.reload();
   }
 
   async reload(): Promise<void> {
