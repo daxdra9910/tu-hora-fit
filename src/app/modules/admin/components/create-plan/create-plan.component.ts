@@ -1,98 +1,103 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {PlansService} from '../../../core/services/plans.service';
-import {UtilsService} from '../../../shared/services/utils.service';
-import {StateEnum} from '../../../shared/enums/state.enum';
+// src/app/modules/admin/components/create-plan/create-plan.component.ts
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
+// Ionic (standalone)
 import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonInput,
-  IonItem,
-  IonList,
-  IonModal,
-  IonSelect,
-  IonSelectOption,
-  IonText,
-  IonTitle,
-  IonToolbar
-} from "@ionic/angular/standalone";
-import {PlanModel} from "../../../shared/models/plan.model"; // Asegúrate de ajustar la ruta de importación según tu proyecto
+  IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+  IonContent, IonList, IonItem, IonInput, IonText, IonSelect, IonSelectOption
+} from '@ionic/angular/standalone';
+
+import { PlansService } from '../../../core/services/plans.service';
+import { UtilsService } from '../../../shared/services/utils.service';
+import { StateEnum } from '../../../shared/enums/state.enum';
+import { PlanCreateDTO } from '../../../shared/models/plan.model';
 
 @Component({
   selector: 'app-create-plan',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonList, IonItem, IonInput, IonText, IonSelect, IonSelectOption],
+  imports: [
+    // Ionic
+    IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+    IonContent, IonList, IonItem, IonInput, IonText, IonSelect, IonSelectOption,
+    // Angular
+    CommonModule, ReactiveFormsModule
+  ],
   templateUrl: './create-plan.component.html',
   styleUrls: ['./create-plan.component.scss']
 })
-export class CreatePlanComponent implements OnInit {
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly plansService = inject(PlansService);
-  private readonly utilsService = inject(UtilsService);
-
+export class CreatePlanComponent {
   @Input() isOpen = false;
-  @Output() isOpenChange = new EventEmitter<void>();
+  @Output() isOpenChange = new EventEmitter<boolean>();
 
-  // Formulario reactivo para crear el plan
-  formGroup: FormGroup;
-
-  // Exponer el enum de estado para usarlo en la plantilla
+  planForm: FormGroup;
   StateEnum = StateEnum;
 
-  ngOnInit() {
-    this.setupForm();
-  }
-
-  setupForm() {
-    this.formGroup = this.formBuilder.group({
-      name: ['', [Validators.required]],
-      duration: ['', [Validators.required]],       // duración del plan (p. ej., en días)
-      price: ['', [Validators.required]],          // precio del plan
-      description: ['', [Validators.required]],    // descripción del plan
-      state: [StateEnum.ACTIVE, [Validators.required]]  // estado inicial (activo por defecto)
+  constructor(
+    private fb: FormBuilder,
+    private plansService: PlansService,
+    private utils: UtilsService
+  ) {
+    this.planForm = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(80)]],
+      creditsTotal: [1, [Validators.required, Validators.min(1)]],  // ← reemplaza duración
+      price: [0, [Validators.required, Validators.min(0)]],
+      description: [''],
+      state: [StateEnum.ACTIVE, [Validators.required]],
     });
   }
 
-  // Método para cerrar el modal
   toggleOpen(): void {
-    this.isOpenChange.emit();
+    this.isOpenChange.emit(false);
   }
 
-  // Método para enviar el formulario y crear el plan en Firebase
   async onSubmit(): Promise<void> {
-    if (this.formGroup.invalid) {
-      // Si el formulario no es válido, marcamos todos los campos como tocados para mostrar errores
-      this.formGroup.markAllAsTouched();
+    if (this.planForm.invalid) {
+      this.planForm.markAllAsTouched();
       return;
     }
-    const planData = this.formGroup.value as PlanModel;
-    const loading = await this.utilsService.loading();
-    await loading.present();
 
-    this.plansService.createPlan(planData)
-      .then(async () => {
-        await this.utilsService.presentToast({
-          message: "Plan creado correctamente",
-          duration: 2500,
-          position: "bottom",
-          color: "success",
-          icon: "checkmark-circle"
-        });
-        this.toggleOpen();
-      })
-      .catch(async (error) => {
-        await this.utilsService.presentToast({
-          message: error.message,
-          duration: 2500,
-          color: 'danger',
-          position: 'bottom',
-          icon: 'alert-circle-outline'
-        })
-      })
-      .finally(() => loading.dismiss())
+    const { name, creditsTotal, price, description, state } = this.planForm.value;
+
+    const payload: PlanCreateDTO = {
+      name: String(name).trim(),
+      creditsTotal: Number(creditsTotal),
+      price: Number(price),
+      description: String(description ?? '').trim(),
+      state,
+    };
+
+    const loading = await this.utils.loading();
+    try {
+      await this.plansService.createPlan(payload);
+      await this.utils.presentToast({
+        message: 'Plan creado con éxito',
+        duration: 2500,
+        position: 'bottom',
+        color: 'success',
+        icon: 'checkmark-circle'
+      });
+
+      this.planForm.reset({
+        name: '',
+        creditsTotal: 1,
+        price: 0,
+        description: '',
+        state: StateEnum.ACTIVE,
+      });
+      this.toggleOpen();
+    } catch (error) {
+      console.error('Error al crear el plan:', error);
+      await this.utils.presentToast({
+        message: 'Error al crear el plan',
+        duration: 2500,
+        position: 'bottom',
+        color: 'danger',
+        icon: 'alert-circle-outline'
+      });
+    } finally {
+      (loading as any)?.dismiss?.();
+    }
   }
 }
