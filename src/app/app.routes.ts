@@ -27,14 +27,18 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./modules/home/home.routes').then((m) => m.default),
       },
+
+      // 👇 Cliente: SOLO clientes
       {
         path: 'reservations',
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard([RoleEnum.CLIENT])],
         loadChildren: () =>
           import('./modules/reservations/reservations.routes').then(
             (m) => m.default
           ),
       },
+
+      // 👇 Admin: SOLO admin
       {
         path: 'admin',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
@@ -48,17 +52,20 @@ export const routes: Routes = [
           import('./modules/reports/reports.routes').then((m) => m.default),
       },
       {
-        path: 'chatbot',
-        loadComponent: () =>
-          import('./modules/chatbot/chatbot.page').then((m) => m.ChatbotPage),
-      },
-      {
         path: 'notifications',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
         loadComponent: () =>
           import('./modules/notifications/notifications.component').then(
             (m) => m.NotificationsComponent
           ),
+      },
+
+      // Chatbot: decide si debe requerir login
+      {
+        path: 'chatbot',
+        canActivate: [authGuard], // <-- quítalo si quieres público
+        loadComponent: () =>
+          import('./modules/chatbot/chatbot.page').then((m) => m.ChatbotPage),
       },
 
       // redirección por defecto dentro del layout

@@ -3,7 +3,7 @@ import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, 
 
 @Component({
   selector: 'app-banner',
-  imports: [IonCardSubtitle, IonCardTitle, IonCardHeader, IonCardContent, IonCard, IonImg],
+  imports: [IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonImg],
   templateUrl: './banner.component.html',
   styleUrls: ['./banner.component.scss'],
 })

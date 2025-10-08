@@ -10,21 +10,48 @@ import {
   IonTabs,
   IonTitle,
   IonToolbar,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonMenuToggle,
   MenuController,
   NavController
 } from '@ionic/angular/standalone';
-import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.scss'],
-  imports: [IonIcon, IonTabBar, IonTabButton, IonTabs, IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton],
+  imports: [
+    // Ionic
+    IonIcon, IonTabBar, IonTabButton, IonTabs,
+    IonMenu, IonHeader, IonToolbar, IonContent, IonTitle, IonButton,
+    IonList, IonItem, IonLabel, IonMenuToggle,
+    // Angular
+    NgIf, AsyncPipe
+  ],
 })
 export class TabComponent {
   private readonly menuCtrl = inject(MenuController);
   private readonly authService = inject(AuthService);
   private readonly navCtrl = inject(NavController);
+  private readonly router = inject(Router);
+
+  // Rol
+  get isAdmin()  { return this.authService.hasRole('admin'); }
+  get isClient() { return this.authService.hasRole('client'); }
+
+  // Usuario (para foto/nombre en el header)
+  user$ = this.authService.authState$;
+
+  // Marca activo comparando por prefijo
+  isActivePrefix(prefix: string): boolean {
+    const url = this.router.url || '';
+    return url === prefix || url.startsWith(prefix + '/');
+  }
 
   onLogout() {
     this.authService.logout().then(async () => {

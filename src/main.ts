@@ -29,7 +29,8 @@ import {
   peopleOutline,
   personOutline,
   timerOutline,
-  trashOutline
+  trashOutline,
+  chatbubblesOutline
 } from 'ionicons/icons';
 
 addIcons({
@@ -52,7 +53,8 @@ addIcons({
   'people-outline': peopleOutline,
   'person-outline': personOutline,
   'time-outline': timerOutline,
-  'trash-outline': trashOutline
+  'trash-outline': trashOutline,
+  'chatbubbles-outline': chatbubblesOutline,
 })
 
 setLogLevel(LogLevel.SILENT);

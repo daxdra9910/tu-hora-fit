@@ -10,7 +10,7 @@ import { BannerComponent } from '../../components/banner/banner.component';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonText, IonLabel, IonIcon, IonItem, IonList, IonCardTitle, IonCardContent, IonCardHeader, IonCard, IonCol, IonRow, IonGrid, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, BannerComponent]
+  imports: [IonText, IonIcon, IonItem, IonList, IonCardTitle, IonCardContent, IonCardHeader, IonCard, IonCol, IonRow, IonGrid, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, BannerComponent]
 })
 export class HomePage {
 }
