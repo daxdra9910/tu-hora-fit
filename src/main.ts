@@ -17,7 +17,10 @@ import {
   alertCircleOutline,
   barbellOutline,
   barChartOutline,
-  calendarOutline, cardOutline, cashOutline, checkmarkCircle,
+  calendarOutline,
+  cardOutline,
+  cashOutline,
+  checkmarkCircle,
   checkmarkOutline,
   close,
   eyeOutline,
@@ -28,9 +31,12 @@ import {
   pencilOutline,
   peopleOutline,
   personOutline,
-  timerOutline,
+  timeOutline,
   trashOutline,
-  chatbubblesOutline
+  chatbubblesOutline,
+  // 👇 NUEVO: ícono para “Reservas”
+  ticketOutline,
+  // listOutline, // ← alternativa si tu versión no tiene “ticket-outline”
 } from 'ionicons/icons';
 
 addIcons({
@@ -52,17 +58,20 @@ addIcons({
   'pencil-outline': pencilOutline,
   'people-outline': peopleOutline,
   'person-outline': personOutline,
-  'time-outline': timerOutline,
+  'time-outline': timeOutline,
   'trash-outline': trashOutline,
   'chatbubbles-outline': chatbubblesOutline,
-})
+  // 👇 NUEVO: Registro del ícono de Reservas
+  'ticket-outline': ticketOutline,
+  // 'list-outline': listOutline, // ← usa este si el anterior no existe
+});
 
 setLogLevel(LogLevel.SILENT);
 
 bootstrapApplication(AppComponent, {
   providers: [
-    {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
-    provideIonicAngular({mode: 'md'}),
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideIonicAngular({ mode: 'md' }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),

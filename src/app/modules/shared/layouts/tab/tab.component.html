@@ -69,27 +69,39 @@
       </ion-list>
     </ng-container>
 
-    <!-- ====== CLIENTE ====== -->
-    <ng-container *ngIf="isClient">
-      <div class="section-title">Mi cuenta</div>
+<!-- ====== CLIENTE ====== -->
+<ng-container *ngIf="isClient">
+  <div class="section-title">Mi cuenta</div>
 
-      <ion-list lines="none" class="menu-list">
-        <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/reservations')" [class.active]="isActivePrefix('/reservations')">
-            <ion-icon slot="start" name="calendar-outline"></ion-icon>
-            <ion-label>Mis reservas</ion-label>
-          </ion-item>
-        </ion-menu-toggle>
+  <ion-list lines="none" class="menu-list">
+    <!-- Clases (Browse) -->
+    <ion-menu-toggle auto-hide="true">
+      <ion-item button (click)="navigateTo('/reservations/browse')"
+                [class.active]="isActivePrefix('/reservations/browse')">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        <ion-label>Clases</ion-label>
+      </ion-item>
+    </ion-menu-toggle>
 
-        <!-- 👇 NUEVO: Chatbot dentro del bloque CLIENTE -->
-        <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/chatbot')" [class.active]="isActivePrefix('/chatbot')">
-            <ion-icon slot="start" name="chatbubbles-outline"></ion-icon>
-            <ion-label>Chatbot</ion-label>
-          </ion-item>
-        </ion-menu-toggle>
-      </ion-list>
-    </ng-container>
+    <!-- Reservas (Mine) -->
+    <ion-menu-toggle auto-hide="true">
+      <ion-item button (click)="navigateTo('/reservations/mine')"
+                [class.active]="isActivePrefix('/reservations/mine')">
+        <ion-icon slot="start" name="ticket-outline"></ion-icon>
+        <ion-label>Reservas</ion-label>
+      </ion-item>
+    </ion-menu-toggle>
+
+    <!-- Chatbot -->
+    <ion-menu-toggle auto-hide="true">
+      <ion-item button (click)="navigateTo('/chatbot')"
+                [class.active]="isActivePrefix('/chatbot')">
+        <ion-icon slot="start" name="chatbubbles-outline"></ion-icon>
+        <ion-label>Chatbot</ion-label>
+      </ion-item>
+    </ion-menu-toggle>
+  </ion-list>
+</ng-container>
 
     <ion-button class="logout" color="danger" expand="block" (click)="onLogout()">
       <ion-icon slot="start" name="log-out-outline"></ion-icon>

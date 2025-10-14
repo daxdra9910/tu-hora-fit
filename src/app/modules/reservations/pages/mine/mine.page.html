@@ -1,0 +1,101 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mis reservas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <ion-list>
+      @for (n of [0,1,2]; track n) {
+        <ion-item lines="full">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="3" class="ion-text-center">
+                <ion-skeleton-text animated style="width:64px;height:64px;border-radius:12px;"></ion-skeleton-text>
+              </ion-col>
+              <ion-col>
+                <ion-skeleton-text animated style="width:60%;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width:90%;"></ion-skeleton-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      }
+    </ion-list>
+  } @else if (rows.length === 0) {
+    <div class="empty">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <h4>No tienes reservas</h4>
+      <p>Reserva desde “Clases del día”.</p>
+    </div>
+  } @else {
+    <ion-list class="ion-padding-horizontal">
+      @for (r of rows; track r.reservation.id) {
+        <!-- Card deslizable al estilo Browse -->
+        <ion-item-sliding #sliding class="class-card-wrap">
+          <ion-item lines="none" class="class-card" (click)="openSlide(sliding)">
+            <ion-grid class="ion-no-padding">
+              <ion-row class="ion-align-items-center">
+                <!-- thumb -->
+                <ion-col size="auto" class="thumb">
+                  <ion-img
+                    [src]="r.class.imageURL || 'assets/placeholder-class.jpg'"
+                    [alt]="r.class.name">
+                  </ion-img>
+                </ion-col>
+
+                <!-- info -->
+                <ion-col class="info">
+                  <!-- Nombre de la clase -->
+                  <h3 class="title">{{ r.class.name }}</h3>
+
+                  <div class="lines">
+                    <!-- Fecha -->
+                    <div><strong>Fecha:</strong> {{ r.dateLabel }}</div>
+                    <!-- Inicio -->
+                    <div><strong>Inicio:</strong> {{ r.startHour }}</div>
+                    <!-- Fin -->
+                    <div><strong>Fin:</strong> {{ r.endHour }}</div>
+                    <!-- Instructor (si hay) -->
+                    <div *ngIf="r.instructor"><strong>Instructor:</strong> {{ r.instructor }}</div>
+                  </div>
+                </ion-col>
+
+                <!-- badge estado -->
+                <ion-col size="auto" class="badge-col">
+                  <div class="cupos-badge" [class.soldout]="!r.canCancel">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    <span>{{ r.canCancel ? 'Reservada' : 'Bloqueada' }}</span>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+
+          <!-- Slide: botón Cancelar -->
+          <ion-item-options side="end" class="slide-actions">
+            <ion-item-option
+              class="slide-cancelar"
+              [disabled]="!r.canCancel || cancelBusy[r.reservation.id]"
+              (click)="cancel(r)"
+              aria-label="Cancelar"
+            >
+              <ion-icon *ngIf="!cancelBusy[r.reservation.id]" name="close-circle-outline" slot="start"></ion-icon>
+              <ion-spinner *ngIf="cancelBusy[r.reservation.id]" name="crescent" slot="start"></ion-spinner>
+              <span class="slide-btn-label">
+                {{ cancelBusy[r.reservation.id] ? 'Cancelando…' : (r.canCancel ? 'Cancelar' : 'No disponible') }}
+              </span>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <!-- pista “desliza” -->
+  <div class="swipe-hint">
+    <ion-icon name="swap-horizontal-outline"></ion-icon>
+    Desliza para cancelar
+  </div>
+</ion-content>

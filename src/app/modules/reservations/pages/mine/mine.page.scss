@@ -1,0 +1,155 @@
+:host {
+  /* Escala compacta */
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 14px;
+  --text-lg: 16px;
+
+  --thumb-size: 56px;
+  --radius-card: 14px;
+
+  --card-bg: var(--ion-background-color, #fff);
+  --card-border: rgba(0,0,0,.08);
+  --card-shadow: 0 10px 22px -16px rgba(0,0,0,.3);
+  --ok: #22c55e;
+  --ok-ink: #0f5132;
+}
+
+/* Estado vacío */
+.empty {
+  margin: 36px auto 0;
+  padding: 0 20px;
+  text-align: center;
+  max-width: 440px;
+  color: var(--ion-color-medium);
+  font-size: var(--text-md);
+}
+.empty ion-icon { font-size: 44px; opacity: .6; }
+.empty h4 { margin: 10px 0 4px; color: var(--ion-text-color); font-weight: 800; font-size: var(--text-lg); }
+
+/* Card */
+.class-card-wrap { margin: 10px 0; }
+.class-card {
+  --background: transparent;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  position: relative;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+/* Cols */
+.thumb { padding: 10px 8px 10px 12px; }
+.thumb ion-img {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 6px 14px -6px rgba(0,0,0,.28);
+}
+
+.info { padding: 10px 8px; }
+.title {
+  margin: 0 0 6px 0;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.lines {
+  color: var(--ion-color-medium);
+  font-weight: 600;
+  line-height: 1.2;
+  display: grid;
+  gap: 2px;
+  font-size: var(--text-sm);
+}
+.lines strong { color: var(--ion-text-color); }
+
+/* Badge de estado */
+.badge-col { padding: 10px; display: flex; align-items: center; }
+.cupos-badge {
+  display: grid; grid-auto-flow: column; align-items: center; gap: 6px;
+  min-width: 108px; height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: #eaf7ef;
+  color: #0f5132;
+  font-weight: 900;
+  letter-spacing: .2px;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+  font-size: var(--text-sm);
+}
+.cupos-badge ion-icon { font-size: 14px; }
+.cupos-badge strong { font-size: var(--text-md); }
+.cupos-badge.soldout {
+  background: #ffe5e5;
+  color: #b71c1c; /* cuando no se puede cancelar */
+}
+
+/* Botón Cancelar (estilo neon rojo) */
+.slide-cancelar {
+  --background: #ff4d4d; /* rojo vivo */
+  --color: #ffffff;
+  border-radius: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-size: 13px;
+  box-shadow: 0 4px 10px rgba(255,77,77,.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.slide-cancelar:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 6px rgba(255,77,77,.3);
+}
+
+.slide-cancelar[disabled] {
+  --background: #B0B0B0;
+  --color: #fff;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+/* Texto del botón */
+.slide-btn-label {
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: .2px;
+  font-size: 12px;
+}
+
+/* Hint “desliza” */
+.swipe-hint {
+  position: sticky;
+  bottom: 10px;
+  margin: 6px auto 0;
+  width: fit-content;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: var(--text-sm);
+  display: flex; gap: 6px; align-items: center;
+  animation: fadeOut 4s ease 1 forwards;
+}
+.swipe-hint ion-icon { font-size: 14px; }
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(6px); visibility: hidden; }
+}
+
+/* Dark mode */
+:host-context(.ion-color-scheme-dark), :host-context(.dark) {
+  --card-bg: var(--ion-color-step-100, #1f1f1f);
+  --card-border: rgba(255,255,255,.08);
+
+  .cupos-badge { background: #2a3a30; color: #c8f1d8; }
+  .cupos-badge.soldout { background: #442222; color: #ffbdbd; }
+}

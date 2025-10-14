@@ -5,13 +5,14 @@ import { FormsModule } from '@angular/forms';
 import {
   IonButton, IonButtons, IonChip, IonCol, IonContent, IonGrid,
   IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions,
-  IonItemSliding, IonList, IonRow, IonSkeletonText, IonText, IonTitle, IonToolbar, IonSpinner } from '@ionic/angular/standalone';
+  IonItemSliding, IonList, IonRow, IonSkeletonText, IonText, IonTitle, IonToolbar, IonSpinner
+} from '@ionic/angular/standalone';
 
 import { DateTime } from 'luxon';
 
 import { UtilsService } from '../../../shared/services/utils.service';
 import { ClassService } from '../../../core/services/class.service';
-import { ReservationService } from '../../../core/services/reservations.service';
+import { ReservationService, ReservationModel } from '../../../core/services/reservations.service';
 import { ScheduleService } from '../../../core/services/schedule.service';
 
 import type { ScheduleClassModelWithId } from '../../../shared/models/schedule-class.model';
@@ -21,18 +22,31 @@ import { ClassModelWithIdAndImage } from '../../../shared/models/class.model';
 const LOCALE = 'es';
 const TZ = 'America/Bogota';
 
-type Schedule = ScheduleClassModelWithId & { booked?: number; dateKey?: string };
+type AnySchedule = (ScheduleClassModelWithId & {
+  booked?: number;
+  dateKey?: string;
+  start?: string;      // ISO
+  end?: string;        // ISO
+  start_time?: string; // legacy
+  end_time?: string;   // legacy
+  capacity?: number;   // nuevo
+  max_capacity?: number; // legacy
+  idClass?: string;    // nuevo
+  class_id?: string;   // legacy
+  date?: any;          // Timestamp/Date/ISO
+});
 
 type ViewRow = {
-  schedule: Schedule;
+  schedule: AnySchedule;
   class: ClassModelWithIdAndImage;
   startLocal: string;
   endLocal: string;
   capacity: number;
   booked: number;
   free: number;
-  durationText: string;   // para mostrar "45 Minutos"
-  startSort: number;      // ordenar por hora real
+  durationText: string;
+  startSort: number;
+  past: boolean;           // 👈 NUEVO: ya pasó (fin o inicio)
 };
 
 @Component({
@@ -40,7 +54,8 @@ type ViewRow = {
   standalone: true,
   templateUrl: './browse.page.html',
   styleUrls: ['./browse.page.scss'],
-  imports: [IonSpinner,
+  imports: [
+    IonSpinner,
     CommonModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
     IonText, IonList, IonItem, IonItemSliding, IonItemOptions, IonItemOption,
@@ -68,6 +83,9 @@ export class BrowsePage implements OnInit {
   // TODO: reemplazar por el UID real del usuario autenticado
   currentUserId = 'system';
 
+  // 👉 Schedules ya reservados por el usuario (para bloquear UI)
+  private reservedScheduleIds = new Set<string>();
+
   /** Etiqueta de fecha amigable en español */
   get selectedLabel(): string {
     return this.selected
@@ -77,8 +95,25 @@ export class BrowsePage implements OnInit {
 
   async ngOnInit() {
     await this.bootstrap();
+    await this.refreshUserReserved();
     this.buildChipDays();
     await this.loadDay(this.selected);
+  }
+
+  private async refreshUserReserved() {
+    try {
+      const list = await this.reservationSrv.listUserActiveReservations(this.currentUserId, 200);
+      this.reservedScheduleIds.clear();
+      for (const r of list as ReservationModel[]) {
+        if (r.active) this.reservedScheduleIds.add(r.scheduleId);
+      }
+    } catch (e) {
+      console.warn('[browse] no se pudo cargar reservas del usuario', e);
+    }
+  }
+
+  isReserved(scheduleId: string) {
+    return this.reservedScheduleIds.has(scheduleId);
   }
 
   private async bootstrap() {
@@ -117,7 +152,7 @@ export class BrowsePage implements OnInit {
     await this.loadDay(this.selected);
   }
 
-  /** Formateo de hora a “h:mm a” respetando locale (a. m. / p. m.) */
+  /** Am/pm en español (a. m. / p. m.) desde "HH:mm" o "h:mm a" */
   private fmtHmToAmPm(hm: string) {
     const t = hm?.includes('M')
       ? DateTime.fromFormat(hm, 'h:mm a', { zone: TZ, locale: LOCALE })
@@ -125,7 +160,48 @@ export class BrowsePage implements OnInit {
     return t.isValid ? t.setLocale(LOCALE).toFormat('h:mm a') : hm;
   }
 
-  /** Abre las opciones deslizables al tocar la tarjeta */
+  private toDT(d: any): DateTime {
+    if (!d) return DateTime.invalid('empty');
+    if (d instanceof Date) return DateTime.fromJSDate(d, { zone: TZ, locale: LOCALE });
+    if (typeof d?.toDate === 'function') return DateTime.fromJSDate(d.toDate(), { zone: TZ, locale: LOCALE });
+    return DateTime.fromISO(String(d), { zone: TZ, locale: LOCALE });
+  }
+
+  private composeISO(dateLike: any, timeStr?: string): string | undefined {
+    if (!dateLike || !timeStr) return undefined;
+    const base = this.toDT(dateLike);
+    if (!base.isValid) return undefined;
+
+    const parsed = timeStr.includes('M')
+      ? DateTime.fromFormat(timeStr, 'h:mm a', { zone: TZ, locale: LOCALE })
+      : DateTime.fromFormat(timeStr, 'HH:mm',   { zone: TZ, locale: LOCALE });
+
+    if (!parsed.isValid) return undefined;
+
+    return base.set({ hour: parsed.hour, minute: parsed.minute, second: 0, millisecond: 0 }).toISO();
+  }
+
+  private getStartEndISO(s: AnySchedule): { startISO?: string; endISO?: string } {
+    const rawStartISO = s.start || this.composeISO(s.date, s.start_time);
+    const rawEndISO   = s.end   || this.composeISO(s.date, s.end_time);
+
+    if (!rawStartISO && !rawEndISO) return {};
+
+    const day = this.selected;
+    let start = rawStartISO ? DateTime.fromISO(String(rawStartISO), { zone: TZ, locale: LOCALE }) : null;
+    let end   = rawEndISO   ? DateTime.fromISO(String(rawEndISO),   { zone: TZ, locale: LOCALE }) : null;
+
+    if (start?.isValid) start = start.set({ year: day.year, month: day.month, day: day.day });
+    if (end?.isValid)   end   = end.set({   year: day.year, month: day.month, day: day.day });
+
+    if (start?.isValid && end?.isValid && end < start) end = end.plus({ days: 1 });
+
+    return {
+      startISO: start?.toISO(),
+      endISO: end?.toISO(),
+    };
+  }
+
   openSlide(sliding: IonItemSliding) {
     try { sliding.open('end'); } catch {}
   }
@@ -137,12 +213,15 @@ export class BrowsePage implements OnInit {
     try {
       const list = await this.scheduleSrv.getSchedulesByDay(dayKey);
       const rows: ViewRow[] = [];
+      const now = DateTime.now().setZone(TZ).setLocale(LOCALE);
 
-      for (const s of (list ?? []) as Schedule[]) {
-        let cls = this.classesById[s.class_id];
+      for (const s of (list ?? []) as AnySchedule[]) {
+        // ---- Clase
+        const classId = (s as any).idClass || (s as any).class_id;
+        let cls = this.classesById[classId];
         if (!cls) {
           cls = {
-            id: String(s.class_id),
+            id: String(classId ?? ''),
             name: 'Clase',
             description: '',
             imageURL: 'assets/placeholder-class.jpg',
@@ -150,38 +229,64 @@ export class BrowsePage implements OnInit {
           } as any;
         }
 
-        const capacity = Number(s.max_capacity ?? 0);
-        const booked = Number(s.booked ?? 0);
+        // ---- Cupos
+        const capacity = Number((s as any).capacity ?? (s as any).max_capacity ?? 0);
+        const booked = Number((s as any).booked ?? 0);
+        const free = Math.max(0, capacity - booked);
 
-        // Parseo respetando locale y TZ
-        let startT = s.start_time?.includes('M')
-          ? DateTime.fromFormat(s.start_time, 'h:mm a', { zone: TZ, locale: LOCALE })
-          : DateTime.fromFormat(s.start_time, 'HH:mm',   { zone: TZ, locale: LOCALE });
+        // ---- Horarios
+        const { startISO, endISO } = this.getStartEndISO(s);
 
-        let endT = s.end_time?.includes('M')
-          ? DateTime.fromFormat(s.end_time, 'h:mm a', { zone: TZ, locale: LOCALE })
-          : DateTime.fromFormat(s.end_time, 'HH:mm',   { zone: TZ, locale: LOCALE });
+        let startT: DateTime | null = startISO ? DateTime.fromISO(startISO, { zone: TZ, locale: LOCALE }) : null;
+        let endT: DateTime | null   = endISO   ? DateTime.fromISO(endISO,   { zone: TZ, locale: LOCALE }) : null;
 
-        // Anclar al día seleccionado para ordenar y calcular duración
-        startT = startT.set({ year: this.selected.year, month: this.selected.month, day: this.selected.day });
-        endT   = endT.set({   year: this.selected.year, month: this.selected.month, day: this.selected.day });
+        // Legacy fallback
+        if (!startT?.isValid || !endT?.isValid) {
+          let legacyStart = (s as any).start_time?.includes('M')
+            ? DateTime.fromFormat((s as any).start_time || '', 'h:mm a', { zone: TZ, locale: LOCALE })
+            : DateTime.fromFormat((s as any).start_time || '', 'HH:mm',   { zone: TZ, locale: LOCALE });
 
-        if (endT < startT) endT = endT.plus({ days: 1 }); // por si cruza medianoche
+          let legacyEnd = (s as any).end_time?.includes('M')
+            ? DateTime.fromFormat((s as any).end_time || '', 'h:mm a', { zone: TZ, locale: LOCALE })
+            : DateTime.fromFormat((s as any).end_time || '', 'HH:mm',   { zone: TZ, locale: LOCALE });
 
-        const durationMin = startT.isValid && endT.isValid
+          if (legacyStart?.isValid) legacyStart = legacyStart.set({ year: d.year, month: d.month, day: d.day });
+          if (legacyEnd?.isValid)   legacyEnd   = legacyEnd.set({   year: d.year, month: d.month, day: d.day });
+          if (legacyStart?.isValid && legacyEnd?.isValid && legacyEnd < legacyStart) legacyEnd = legacyEnd.plus({ days: 1 });
+
+          startT = legacyStart?.isValid ? legacyStart : startT;
+          endT   = legacyEnd?.isValid   ? legacyEnd   : endT;
+        }
+
+        const durationMin = (startT?.isValid && endT?.isValid)
           ? Math.max(0, Math.round(endT.diff(startT, 'minutes').minutes))
           : 0;
+
+        // Etiquetas
+        const startLocal =
+          startT?.isValid
+            ? startT.toFormat('h:mm a')
+            : this.fmtHmToAmPm((s as any).start_time || '');
+
+        const endLocal =
+          endT?.isValid
+            ? endT.toFormat('h:mm a')
+            : this.fmtHmToAmPm((s as any).end_time || '');
+
+        // 👇 pasado: si existe end usamos end<=now; si no, start<=now
+        const past = endT?.isValid ? endT <= now : (startT?.isValid ? startT <= now : false);
 
         rows.push({
           schedule: s,
           class: cls,
-          startLocal: this.fmtHmToAmPm(s.start_time),
-          endLocal:   this.fmtHmToAmPm(s.end_time),
+          startLocal,
+          endLocal,
           capacity,
           booked,
-          free: Math.max(0, capacity - booked),
+          free,
           durationText: `${durationMin} Minutos`,
-          startSort: startT.toMillis(),
+          startSort: (startT?.isValid ? startT.toMillis() : 0),
+          past,
         });
       }
 
@@ -200,17 +305,43 @@ export class BrowsePage implements OnInit {
     }
   }
 
-  async reservar(s: Schedule) {
+  async reservar(s: AnySchedule) {
+    // UI guards
+    if (this.isReserved(s.id)) {
+      await this.utils.presentToast({
+        message: 'Ya tienes una reserva para este horario.',
+        duration: 2000, color: 'medium', position: 'bottom', icon: 'information-circle-outline',
+      });
+      return;
+    }
+
+    // También bloqueamos si ya pasó (defensivo en UI)
+    const { startISO, endISO } = this.getStartEndISO(s);
+    const now = DateTime.now().setZone(TZ);
+    const start = startISO ? DateTime.fromISO(startISO, { zone: TZ }) : null;
+    const end   = endISO   ? DateTime.fromISO(endISO,   { zone: TZ }) : null;
+    const past = end?.isValid ? end <= now : (start?.isValid ? start <= now : false);
+    if (past) {
+      await this.utils.presentToast({
+        message: 'Este horario ya no está disponible.',
+        duration: 2200, color: 'warning', position: 'bottom', icon: 'alert-circle-outline',
+      });
+      return;
+    }
+
     const loading = await this.utils.loading();
     await loading.present();
     try {
       this.reservingId = s.id;
       await this.reservationSrv.reserve(s.id, this.currentUserId);
 
-      // Actualizar en memoria
+      // Actualizar en memoria (cupos)
       this.viewList = this.viewList.map(v =>
         v.schedule.id === s.id ? { ...v, booked: v.booked + 1, free: Math.max(0, v.free - 1) } : v
       );
+
+      // Marcar como reservada en el set local para bloquear de inmediato
+      this.reservedScheduleIds.add(s.id);
 
       await this.utils.presentToast({
         message: '¡Reserva confirmada!', duration: 2000, color: 'success',

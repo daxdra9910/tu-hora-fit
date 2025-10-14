@@ -6,7 +6,9 @@ import {
   Firestore,
   getDocs,
   setDoc,
-  updateDoc
+  updateDoc,
+  query,          // <-- NUEVO
+  where           // <-- NUEVO
 } from '@angular/fire/firestore';
 
 import { COLLECTIONS, STORAGE } from '../../shared/constants/firebase.constant';
@@ -56,6 +58,33 @@ export class ClassService {
       ...(doc.data() as any),
       id: doc.id
     } as ClassModelWithIdAndImage));
+  }
+
+  /** 🔎 Trae clases por IDs (chunk de 10 por límite del operador `in`) */
+  async getByIds(ids: string[]): Promise<ClassModelWithIdAndImage[]> {
+    if (!ids || ids.length === 0) return [];
+
+    // quitar duplicados y preparar chunks de máximo 10
+    const unique = Array.from(new Set(ids));
+    const chunks: string[][] = [];
+    for (let i = 0; i < unique.length; i += 10) {
+      chunks.push(unique.slice(i, i + 10));
+    }
+
+    const colRef = collection(this.firestore, this.collection);
+    const results: ClassModelWithIdAndImage[] = [];
+
+    for (const part of chunks) {
+      const qy = query(colRef, where('__name__', 'in', part));
+      const snap = await getDocs(qy);
+      results.push(
+        ...snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })) as ClassModelWithIdAndImage[]
+      );
+    }
+
+    // opcional: devolver en el mismo orden solicitado en `ids`
+    const map = new Map(results.map(r => [r.id, r]));
+    return unique.map(id => map.get(id)).filter(Boolean) as ClassModelWithIdAndImage[];
   }
 
   /** Actualiza clase (y opcionalmente reemplaza imagen) */

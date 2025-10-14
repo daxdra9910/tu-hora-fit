@@ -64,7 +64,9 @@
         <!-- Card deslizable -->
         <ion-item-sliding #sliding class="class-card-wrap">
           <ion-item lines="none" class="class-card" (click)="openSlide(sliding)">
-            @if (v.free === 0) { <div class="ribbon">SIN CUPO</div> }
+            <!-- cintas -->
+            @if (v.past) { <div class="ribbon ribbon-gray">FINALIZADA</div> }
+            @else if (v.free === 0) { <div class="ribbon">SIN CUPO</div> }
 
             <ion-grid class="ion-no-padding">
               <ion-row class="ion-align-items-center">
@@ -90,28 +92,48 @@
 
                 <!-- badge de cupos -->
                 <ion-col size="auto" class="badge-col">
-                  <div class="cupos-badge" [class.soldout]="v.free===0">
+                  <div class="cupos-badge" [class.soldout]="v.free===0 || v.past">
                     <ion-icon name="people-outline"></ion-icon>
-                    <strong *ngIf="v.free > 0">{{ v.free }}</strong>
-                    <span>{{ v.free > 0 ? 'libres' : 'sin cupo' }}</span>
+                    <strong *ngIf="!v.past && v.free > 0">{{ v.free }}</strong>
+                    <span>
+                      {{
+                        v.past
+                          ? 'finalizada'
+                          : (v.free > 0 ? 'libres' : 'sin cupo')
+                      }}
+                    </span>
                   </div>
                 </ion-col>
               </ion-row>
             </ion-grid>
           </ion-item>
 
-          <!-- Slide: botón Reservar mejorado -->
+          <!-- Slide: botón Reservar con validación de duplicado + pasado -->
           <ion-item-options side="end" class="slide-actions">
             <ion-item-option
               class="slide-reservar"
-              [disabled]="v.free === 0 || reservingId === v.schedule.id"
+              [disabled]="v.past || v.free === 0 || isReserved(v.schedule.id) || reservingId === v.schedule.id"
               (click)="reservar(v.schedule)"
               aria-label="Reservar"
             >
-              <ion-icon *ngIf="reservingId !== v.schedule.id" name="checkmark-circle-outline" slot="start"></ion-icon>
-              <ion-spinner *ngIf="reservingId === v.schedule.id" name="crescent" slot="start"></ion-spinner>
+              <ion-icon
+                *ngIf="!v.past && !isReserved(v.schedule.id) && reservingId !== v.schedule.id"
+                name="checkmark-circle-outline"
+                slot="start">
+              </ion-icon>
+              <ion-spinner
+                *ngIf="reservingId === v.schedule.id"
+                name="crescent"
+                slot="start">
+              </ion-spinner>
               <span class="slide-btn-label">
-                {{ reservingId === v.schedule.id ? 'Reservando…' : 'Reservar' }}
+                {{
+                  v.past
+                    ? 'No disponible'
+                    : (isReserved(v.schedule.id)
+                        ? 'Ya reservada'
+                        : (reservingId === v.schedule.id ? 'Reservando…' : 'Reservar'))
+                }}
               </span>
             </ion-item-option>
           </ion-item-options>
