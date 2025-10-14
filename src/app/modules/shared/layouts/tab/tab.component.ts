@@ -15,8 +15,7 @@ import {
   IonLabel,
   IonMenuToggle,
   MenuController,
-  NavController
-} from '@ionic/angular/standalone';
+  NavController, IonRouterOutlet } from '@ionic/angular/standalone';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
