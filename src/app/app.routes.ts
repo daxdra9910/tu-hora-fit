@@ -1,4 +1,4 @@
-// app.routes.ts
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { antiAuthGuard, authGuard } from './modules/core/guards/auth.guard';
 import { roleGuard } from './modules/core/guards/role.guard';
@@ -28,17 +28,17 @@ export const routes: Routes = [
           import('./modules/home/home.routes').then((m) => m.default),
       },
 
-      // 👇 Cliente: SOLO clientes
+      // 👇 Reservations: SOLO autenticado (los roles se validan en las rutas hijas)
       {
         path: 'reservations',
-        canActivate: [authGuard, roleGuard([RoleEnum.CLIENT])],
+        canActivate: [authGuard], // ⬅️ quitado roleGuard([CLIENT])
         loadChildren: () =>
           import('./modules/reservations/reservations.routes').then(
             (m) => m.default
           ),
       },
 
-      // 👇 Admin: SOLO admin
+      // 👇 Admin: SOLO admin (esto es correcto)
       {
         path: 'admin',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
@@ -60,10 +60,10 @@ export const routes: Routes = [
           ),
       },
 
-      // Chatbot: decide si debe requerir login
+      // Chatbot (ajusta si debe ser público)
       {
         path: 'chatbot',
-        canActivate: [authGuard], // <-- quítalo si quieres público
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./modules/chatbot/chatbot.page').then((m) => m.ChatbotPage),
       },

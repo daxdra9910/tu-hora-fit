@@ -1,3 +1,4 @@
+// src/app/modules/shared/layouts/tab/tab.component.ts
 import { Component, inject } from '@angular/core';
 import {
   IonButton,
@@ -15,7 +16,8 @@ import {
   IonLabel,
   IonMenuToggle,
   MenuController,
-  NavController, IonRouterOutlet } from '@ionic/angular/standalone';
+  NavController,
+} from '@ionic/angular/standalone';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -39,24 +41,23 @@ export class TabComponent {
   private readonly navCtrl = inject(NavController);
   private readonly router = inject(Router);
 
-  // Rol
-  get isAdmin()  { return this.authService.hasRole('admin'); }
-  get isClient() { return this.authService.hasRole('client'); }
-
-  // Usuario (para foto/nombre en el header)
+  /** Usuario (para foto/nombre en el header) */
   user$ = this.authService.authState$;
 
-  // Marca activo comparando por prefijo
+  /** Rol (usa helpers del AuthService) */
+  get isAdmin(): boolean  { return this.authService.hasRole('admin'); }
+  get isClient(): boolean { return this.authService.hasRole('client'); }
+
+  /** Marca activo comparando por prefijo (tolerante a subrutas y querystrings) */
   isActivePrefix(prefix: string): boolean {
-    const url = this.router.url || '';
+    const url = (this.router.url || '').split('?')[0];
     return url === prefix || url.startsWith(prefix + '/');
   }
 
-  onLogout() {
-    this.authService.logout().then(async () => {
-      await this.menuCtrl.close('optionsMenu');
-      await this.navCtrl.navigateBack('/auth/login');
-    });
+  async onLogout() {
+    await this.authService.logout();
+    await this.menuCtrl.close('optionsMenu');
+    await this.navCtrl.navigateBack('/auth/login');
   }
 
   navigateTo(path: string) {
