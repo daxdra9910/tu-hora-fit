@@ -20,6 +20,8 @@ import {
 } from '@ionic/angular/standalone';
 import { Inventory } from '../../../shared/models/inventory.model';
 
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+
 @Component({
   selector: 'app-create-inventory',
   standalone: true,
@@ -47,6 +49,7 @@ export class CreateInventoryComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly inventoryService = inject(InventoryService);
   private readonly utilsService = inject(UtilsService);
+  private readonly storage = inject(Storage);
 
   @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<void>();
@@ -54,6 +57,7 @@ export class CreateInventoryComponent implements OnInit {
   form: FormGroup;
   selectedFile: File | null = null;
   selectedFileError = false;
+  imagePreview: string | ArrayBuffer | null = null;
 
   ngOnInit() {
     this.setupForm();
@@ -75,6 +79,13 @@ export class CreateInventoryComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
       this.selectedFileError = false;
+
+      // Mostrar vista previa
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
     }
   }
 
@@ -83,39 +94,61 @@ export class CreateInventoryComponent implements OnInit {
       this.form.markAllAsTouched();
       if (!this.selectedFile) {
         this.selectedFileError = true;
-      }
-      return;
-    }
-
-    const inventoryData: Inventory = {
-      ...this.form.value,
-      photoURL: '', // 🔵 más adelante, cuando subamos la imagen a Firebase
-      createdAt: new Date()
-    };
-
-    const loading = await this.utilsService.loading();
-    await loading.present();
-
-    this.inventoryService.createInventory(inventoryData)
-      .then(async () => {
         await this.utilsService.presentToast({
-          message: 'Inventario creado correctamente (sin imagen subida aún)',
-          duration: 2500,
-          position: 'bottom',
-          color: 'success',
-          icon: 'checkmark-circle'
-        });
-        this.toggleOpen();
-      })
-      .catch(async (error) => {
-        await this.utilsService.presentToast({
-          message: error.message,
+          message: 'Debe seleccionar una imagen',
           duration: 2500,
           color: 'danger',
           position: 'bottom',
           icon: 'alert-circle-outline'
         });
-      })
-      .finally(() => loading.dismiss());
+      }
+      return;
+    }
+
+    const loading = await this.utilsService.loading();
+    await loading.present();
+
+    try {
+      // Subir la imagen
+      const path = `inventory-images/${Date.now()}-${this.selectedFile.name}`;
+      const storageRef = ref(this.storage, path);
+      await uploadBytes(storageRef, this.selectedFile);
+      const photoURL = await getDownloadURL(storageRef);
+
+      // Guardar en Firestore
+      const inventoryData: Inventory = {
+        ...this.form.value,
+        photoURL,
+        createdAt: new Date()
+      };
+
+      await this.inventoryService.createInventory(inventoryData);
+
+      await this.utilsService.presentToast({
+        message: 'Inventario creado correctamente',
+        duration: 2500,
+        position: 'bottom',
+        color: 'success',
+        icon: 'checkmark-circle'
+      });
+
+      // Resetear
+      this.toggleOpen();
+      this.form.reset();
+      this.setupForm();
+      this.selectedFile = null;
+      this.imagePreview = null;
+
+    } catch (error: any) {
+      await this.utilsService.presentToast({
+        message: error.message || 'Error al crear inventario',
+        duration: 2500,
+        color: 'danger',
+        position: 'bottom',
+        icon: 'alert-circle-outline'
+      });
+    } finally {
+      loading.dismiss();
+    }
   }
 }

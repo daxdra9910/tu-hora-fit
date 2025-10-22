@@ -1,12 +1,22 @@
 import { StateEnum } from "../enums/state.enum";
 import { AuditModel } from "./audit.model";
 
-export interface PlanModel extends AuditModel {
-  id: string;
+/** Campos comunes del plan (sin id ni auditoría) */
+export interface PlanBase {
   name: string;
-  duration: number;
+  creditsTotal: number;        // ← reemplaza duration
   price: number;
-  description: string
+  description?: string;
   state: StateEnum;
+}
 
+/** Para crear */
+export type PlanCreateDTO = PlanBase;
+
+/** Para actualizar (parcial) */
+export type PlanUpdateDTO = Partial<PlanBase>;
+
+/** Documento completo guardado */
+export interface PlanModel extends AuditModel, PlanBase {
+  id: string;
 }

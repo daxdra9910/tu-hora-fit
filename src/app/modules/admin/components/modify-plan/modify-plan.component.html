@@ -5,7 +5,7 @@
         <ion-title>Editar Plan</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="toggleOpen()">
-            <ion-icon icon="close" slot="icon-only"></ion-icon>
+            <ion-icon name="close" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -29,18 +29,20 @@
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
 
-          <!-- Duración -->
+          <!-- Créditos totales (antes: Duración) -->
           <ion-item>
             <ion-input
-              label="Duración (días)"
+              label="Créditos totales"
               labelPlacement="floating"
-              formControlName="duration"
+              formControlName="creditsTotal"
               type="number"
-              placeholder="Ej: 30">
+              inputmode="numeric"
+              min="1"
+              placeholder="Ej: 8">
             </ion-input>
           </ion-item>
-          <ion-text color="danger" *ngIf="form.get('duration')?.touched && form.get('duration')?.invalid">
-            <small class="ion-padding-start">Duración requerida</small>
+          <ion-text color="danger" *ngIf="form.get('creditsTotal')?.touched && form.get('creditsTotal')?.invalid">
+            <small class="ion-padding-start">Debes ingresar al menos 1 crédito</small>
           </ion-text>
 
           <!-- Precio -->
@@ -50,6 +52,8 @@
               labelPlacement="floating"
               formControlName="price"
               type="number"
+              inputmode="decimal"
+              min="0"
               placeholder="Ej: 50000">
             </ion-input>
           </ion-item>

@@ -41,8 +41,8 @@ export class DeleteUserComponent {
     const loading = await this.utilsService.loading();
     await loading.present();
     this.usersService.deleteUser(this.user)
-      .then(async () => {
-        await this.utilsService.presentToast({
+      .then(() => {
+        this.utilsService.presentToast({
           message: "Usuario eliminado correctamente",
           duration: 2500,
           position: "bottom",
@@ -51,8 +51,8 @@ export class DeleteUserComponent {
         })
         this.toggleOpen();
       })
-      .catch(async (error) => {
-        await this.utilsService.presentToast({
+      .catch((error) => {
+        this.utilsService.presentToast({
           message: error.message,
           duration: 2500,
           color: 'danger',
