@@ -1,7 +1,6 @@
-import { inject, Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {
-  collection,
-  deleteDoc,
+  collection, deleteDoc,
   doc,
   endAt,
   Firestore,
@@ -11,31 +10,31 @@ import {
   setDoc,
   startAt,
   updateDoc
-} from '@angular/fire/firestore';
-import { UserModel } from '../../shared/models/user.model';
-import { COLLECTIONS, STORAGE } from '../../shared/constants/firebase.constant';
-import { StorageService } from '../../shared/services/storage.service';
+} from "@angular/fire/firestore";
+import {UserModel} from "../../shared/models/user.model";
+import {COLLECTIONS} from "../../shared/constants/firebase.constant";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private readonly firestore = inject(Firestore);
-  private readonly storageService = inject(StorageService);
 
-  async createUser(user: UserModel) {
+  createUser(user: UserModel) {
     const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);
     return setDoc(userRef, user);
   }
 
-  async getAllUsers(): Promise<UserModel[]> {
+  async getAllUsers() {
     const usersRef = collection(this.firestore, COLLECTIONS.USERS);
     const snapshot = await getDocs(usersRef);
 
-    return snapshot.docs.map(doc => ({
-      ...doc.data(),
-      uid: doc.id
-    })) as UserModel[];
+    return snapshot.docs.map(doc => {
+      return {
+        ...doc.data(),
+        uid: doc.id
+      } as UserModel;
+    });
   }
 
   async searchUsers(search: string): Promise<UserModel[]> {
@@ -79,7 +78,8 @@ export class UserService {
 
   async updateUser(user: UserModel): Promise<void> {
     const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);
-    const { uid, ...userData } = user;
+    const { uid, ...userData } = user; // quitamos el uid para no guardarlo dos veces
+
     await updateDoc(userRef, userData);
   }
 
@@ -87,4 +87,5 @@ export class UserService {
     const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);
     await deleteDoc(userRef);
   }
+
 }

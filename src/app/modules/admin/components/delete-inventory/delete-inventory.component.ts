@@ -3,7 +3,17 @@ import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { UtilsService } from '../../../shared/services/utils.service';
 import {
-  IonAlert
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonModal,
+  IonRow,
+  IonTitle,
+  IonToolbar
 } from '@ionic/angular/standalone';
 import { Inventory } from '../../../shared/models/inventory.model';
 
@@ -12,7 +22,17 @@ import { Inventory } from '../../../shared/models/inventory.model';
   standalone: true,
   imports: [
     CommonModule,
-    IonAlert
+    IonModal,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol
   ],
   templateUrl: './delete-inventory.component.html',
   styleUrls: ['./delete-inventory.component.scss']
@@ -24,21 +44,7 @@ export class DeleteInventoryComponent {
   @Input() isOpen = false;
   @Output() isOpenChange = new EventEmitter<void>();
 
-  @Input() inventory: Inventory | null = null;
-
-
-  alertButtons = [
-    {
-      text: 'Cancelar',
-      role: 'cancel',
-      handler: () => { }
-    },
-    {
-      text: 'Aceptar',
-      role: 'confirm',
-      handler: async () => await this.onDelete()
-    }
-  ];
+  @Input() inventory: Inventory; // El inventario a eliminar
 
   toggleOpen(): void {
     this.isOpenChange.emit();
@@ -71,12 +77,5 @@ export class DeleteInventoryComponent {
         });
       })
       .finally(() => loading.dismiss());
-  }
-
-  get message(): string {
-    if (this.inventory) {
-      return `¿Estás seguro que desea eliminar el equipo ${this.inventory.name}?`;
-    }
-    return '';
   }
 }

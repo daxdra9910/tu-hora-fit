@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
-  IonAvatar,
   IonButton,
   IonButtons,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
   IonIcon,
   IonItem,
@@ -13,26 +14,28 @@ import {
   IonItemSliding,
   IonLabel,
   IonList,
+  IonRow,
   IonSearchbar,
   IonText,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonAvatar
 } from '@ionic/angular/standalone';
 
 import { FormsModule } from '@angular/forms';
 
 import { ClassService } from '../../../core/services/class.service';
-import { ClassModelWithIdAndImage } from '../../../shared/models/class.model';
 import { UtilsService } from '../../../shared/services/utils.service';
+import { ClassModel } from '../../../shared/models/class.model';
 
 import { CreateClassComponent } from '../../components/create-class/create-class.component';
-import { DeleteClassComponent } from '../../components/delete-class/delete-class.component';
 import { ModifyClassComponent } from '../../components/modify-class/modify-class.component';
+import { DeleteClassComponent } from '../../components/delete-class/delete-class.component';
 
 @Component({
   selector: 'app-class-page',
-  templateUrl: './class.page.html',
-  styleUrls: ['./class.page.scss'],
+  templateUrl: './class-page.page.html',
+  styleUrls: ['./class-page.page.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -64,9 +67,20 @@ export class ClassPage implements OnInit {
 
   @ViewChild('classList') classList!: IonList;
 
-  classes: ClassModelWithIdAndImage[] = [];
+  classes: ClassModel[] = [];
 
-  selectedClass: ClassModelWithIdAndImage | null = null;
+  instructors = [
+    { uid: 'inst-001', displayName: 'Carlos Pérez' },
+    { uid: 'inst-002', displayName: 'Laura Gómez' },
+    { uid: 'inst-003', displayName: 'Andrés Ruiz' }
+  ];
+
+  getInstructorName(uid: string): string {
+    const found = this.instructors.find(inst => inst.uid === uid);
+    return found ? found.displayName : uid;
+  }
+
+  selectedClass: ClassModel | null = null;
 
   isCreating = false;
   isEditing = false;
@@ -117,7 +131,7 @@ export class ClassPage implements OnInit {
     this.getClasses();
   }
 
-  openEdit(cls: ClassModelWithIdAndImage) {
+  openEdit(cls: ClassModel) {
     this.classList?.closeSlidingItems().then(() => {
       this.selectedClass = cls;
       this.isEditing = true;
@@ -130,7 +144,7 @@ export class ClassPage implements OnInit {
     this.getClasses();
   }
 
-  openDelete(cls: ClassModelWithIdAndImage) {
+  openDelete(cls: ClassModel) {
     this.classList?.closeSlidingItems().then(() => {
       this.selectedClass = cls;
       this.isDeleting = true;
@@ -143,7 +157,7 @@ export class ClassPage implements OnInit {
     this.getClasses();
   }
 
-  trackById(index: number, item: ClassModelWithIdAndImage): string {
+  trackById(index: number, item: ClassModel): string {
     return item.id;
   }
 }

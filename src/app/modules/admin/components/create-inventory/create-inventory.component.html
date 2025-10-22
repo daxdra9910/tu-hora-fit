@@ -11,63 +11,50 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
+    <ion-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <ion-list lines="none">
 
           <!-- 📷 Campo para subir imagen -->
-          <ion-item>
+
+          <ion-item lines="none">
             <ion-label>Foto del equipo</ion-label>
           </ion-item>
 
-          <ion-item lines="none">
-            <ion-button expand="block" (click)="fileInput.click()">Seleccionar Imagen</ion-button>
+          <ion-item lines="none" class="ion-justify-content-center ion-text-center">
+            <ion-button expand="block" color="primary" (click)="fileInput.click()">
+              Seleccionar Imagen
+            </ion-button>
             <input type="file" hidden #fileInput (change)="onFileSelected($event)" accept="image/*" />
           </ion-item>
 
-          <ion-item *ngIf="selectedFile">
+          <ion-item lines="none" *ngIf="selectedFile">
             <ion-text color="medium">
               <p class="ion-padding-start">{{ selectedFile?.name }}</p>
             </ion-text>
           </ion-item>
 
-          <ion-item *ngIf="selectedFileError">
+          <ion-item lines="none" *ngIf="selectedFileError">
             <ion-text color="danger">
               <small class="ion-padding-start">Imagen requerida</small>
             </ion-text>
           </ion-item>
 
-          <!-- Vista previa de la imagen -->
-          <ion-item *ngIf="selectedFile">
-            <img
-              [src]="selectedFile ? imagePreview : ''"
-              alt="Vista previa"
-              style="max-height: 150px; object-fit: contain; margin: auto;" />
-          </ion-item>
 
-          <!-- Nombre -->
+          <!-- 📝 Campo Nombre del Equipo -->
           <ion-item>
-            <ion-input
-              label="Nombre del equipo"
-              labelPlacement="floating"
-              formControlName="name"
-              type="text"
-              placeholder="Ej: Caminadora Pro 3000">
+            <ion-input label="Nombre del equipo" labelPlacement="floating" formControlName="name" type="text"
+              autocomplete="off" placeholder="Ingresa el nombre del equipo">
             </ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
 
-          <!-- Cantidad -->
+          <!-- 🔢 Campo Cantidad -->
           <ion-item>
-            <ion-input
-              label="Cantidad"
-              labelPlacement="floating"
-              formControlName="quantity"
-              type="number"
-              min="1"
-              placeholder="Ej: 5">
+            <ion-input label="Cantidad" labelPlacement="floating" formControlName="quantity" type="number" min="1"
+              autocomplete="off" placeholder="Ingresa la cantidad disponible">
             </ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="form.get('quantity')?.touched && form.get('quantity')?.invalid">
@@ -76,7 +63,7 @@
 
         </ion-list>
 
-        <ion-button expand="block" type="submit" color="primary" [disabled]="form.invalid">
+        <ion-button color="primary" expand="block" type="submit" [disabled]="form.invalid">
           Guardar
         </ion-button>
       </form>

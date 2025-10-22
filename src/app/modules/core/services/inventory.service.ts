@@ -11,14 +11,11 @@ import {
 import { Inventory } from '../../shared/models/inventory.model';
 import { COLLECTIONS } from '../../shared/constants/firebase.constant';
 
-import { Storage, ref as storageRef, deleteObject } from '@angular/fire/storage'; // 👈 añadimos
-
 @Injectable({
   providedIn: 'root'
 })
 export class InventoryService {
   private readonly firestore = inject(Firestore);
-  private readonly storage = inject(Storage); // 👈 inyectamos Storage
 
   createInventory(inventory: Inventory) {
     const inventoryRef = doc(collection(this.firestore, COLLECTIONS.INVENTORIES));
@@ -39,23 +36,12 @@ export class InventoryService {
 
   async updateInventory(inventory: Inventory): Promise<void> {
     const inventoryRef = doc(this.firestore, COLLECTIONS.INVENTORIES, inventory.id!);
-    const { id, ...inventoryData } = inventory;
+    const { id, ...inventoryData } = inventory; // quitamos el id para no duplicarlo
     await updateDoc(inventoryRef, inventoryData);
   }
 
   async deleteInventory(inventory: Inventory): Promise<void> {
     const inventoryRef = doc(this.firestore, COLLECTIONS.INVENTORIES, inventory.id!);
     await deleteDoc(inventoryRef);
-
-    // 🔥 Eliminar imagen del Storage si existe
-    if (inventory.photoURL) {
-      try {
-        const imageRef = storageRef(this.storage, inventory.photoURL);
-        await deleteObject(imageRef);
-        console.log('✅ Imagen eliminada del Storage');
-      } catch (error) {
-        console.warn('⚠️ No se pudo eliminar la imagen del Storage:', error);
-      }
-    }
   }
 }

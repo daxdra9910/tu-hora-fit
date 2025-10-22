@@ -26,14 +26,61 @@
             </ion-input>
           </ion-item>
 
-          <!-- Descripción -->
+          <!-- Instructor -->
+          <ion-item>
+            <ion-select
+              label="Instructor"
+              labelPlacement="floating"
+              formControlName="instructor"
+              placeholder="Selecciona un instructor"
+              interface="popover">
+              <ion-select-option *ngFor="let instructor of instructors" [value]="instructor.uid">
+                {{ instructor.displayName }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Capacidad -->
           <ion-item>
             <ion-input
-              label="Descripción"
+              label="Capacidad"
               labelPlacement="floating"
-              formControlName="description"
+              formControlName="capacity"
+              type="number"
+              min="1"
+              placeholder="Cantidad máxima de cupos">
+            </ion-input>
+          </ion-item>
+
+          <!-- Hora de inicio -->
+          <ion-item>
+            <ion-input
+              label="Hora de inicio"
+              labelPlacement="floating"
+              formControlName="startTime"
+              type="time">
+            </ion-input>
+          </ion-item>
+
+          <!-- Hora de fin -->
+          <ion-item>
+            <ion-input
+              label="Hora de fin"
+              labelPlacement="floating"
+              formControlName="endTime"
+              type="time">
+            </ion-input>
+          </ion-item>
+
+          <!-- Duración -->
+          <ion-item>
+            <ion-input
+              label="Duración"
+              labelPlacement="floating"
+              formControlName="duration"
               type="text"
-              placeholder="Descripción de la clase">
+              readonly
+              placeholder="Se calcula automáticamente">
             </ion-input>
           </ion-item>
 
@@ -44,9 +91,9 @@
           </ion-item>
 
           <!-- Vista previa -->
-          <ion-item *ngIf="imagePreview">
+          <ion-item *ngIf="formGroup.get('imageURL')?.value">
             <ion-avatar slot="start">
-              <img [src]="imagePreview" alt="Vista previa de la clase" />
+              <img [src]="formGroup.get('imageURL')?.value" alt="Vista previa de la clase" />
             </ion-avatar>
           </ion-item>
 

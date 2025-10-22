@@ -11,17 +11,18 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
+    <ion-content>
       <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <ion-list lines="none">
 
-          <!-- Nombre -->
+          <!-- Campo Nombre -->
           <ion-item>
             <ion-input
               label="Nombre del equipo"
               labelPlacement="floating"
               formControlName="name"
               type="text"
+              autocomplete="off"
               placeholder="Ingresa el nombre del equipo">
             </ion-input>
           </ion-item>
@@ -29,7 +30,7 @@
             <small class="ion-padding-start">Nombre requerido</small>
           </ion-text>
 
-          <!-- Cantidad -->
+          <!-- Campo Cantidad -->
           <ion-item>
             <ion-input
               label="Cantidad"
@@ -37,30 +38,17 @@
               formControlName="quantity"
               type="number"
               min="1"
-              placeholder="Cantidad disponible">
+              autocomplete="off"
+              placeholder="Ingresa la cantidad disponible">
             </ion-input>
           </ion-item>
           <ion-text color="danger" *ngIf="formGroup.get('quantity')?.touched && formGroup.get('quantity')?.invalid">
             <small class="ion-padding-start">Cantidad requerida</small>
           </ion-text>
 
-          <!-- Imagen actual -->
-          <ion-item *ngIf="formGroup.get('photoURL')?.value">
-            <ion-label>Imagen actual</ion-label>
-            <ion-avatar slot="end">
-              <img [src]="formGroup.get('photoURL')?.value" alt="Imagen actual" />
-            </ion-avatar>
-          </ion-item>
-
-          <!-- Cargar nueva imagen -->
-          <ion-item>
-            <ion-label>Reemplazar imagen</ion-label>
-            <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-          </ion-item>
-
         </ion-list>
 
-        <ion-button expand="block" type="submit" [disabled]="formGroup.invalid">
+        <ion-button color="primary" expand="block" type="submit" [disabled]="formGroup.invalid">
           Guardar cambios
         </ion-button>
       </form>

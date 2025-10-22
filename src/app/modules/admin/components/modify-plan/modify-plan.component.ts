@@ -4,12 +4,24 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {
-  IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
-  IonContent, IonInput, IonItem, IonList, IonSelect, IonSelectOption, IonText
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonInput,
+  IonItem,
+  IonList,
+  IonSelect,
+  IonSelectOption,
+  IonText
 } from '@ionic/angular/standalone';
 
 import { StateEnum } from '../../../shared/enums/state.enum';
-import { PlanModel, PlanUpdateDTO } from '../../../shared/models/plan.model';
+import { PlanModel } from '../../../shared/models/plan.model';
 import { PlansService } from '../../../core/services/plans.service';
 import { UtilsService } from '../../../shared/services/utils.service';
 
@@ -19,9 +31,25 @@ import { UtilsService } from '../../../shared/services/utils.service';
   templateUrl: './modify-plan.component.html',
   styleUrls: ['./modify-plan.component.scss'],
   imports: [
-    IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
-    IonContent, IonInput, IonItem, IonList, IonSelect, IonSelectOption, IonText,
-    CommonModule, ReactiveFormsModule
+    // Ionic components
+    IonModal,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonInput,
+    IonItem,
+    IonList,
+    IonSelect,
+    IonSelectOption,
+    IonText,
+
+    // Angular modules
+    CommonModule,
+    ReactiveFormsModule
   ]
 })
 export class ModifyPlanComponent implements OnInit, OnChanges {
@@ -33,66 +61,76 @@ export class ModifyPlanComponent implements OnInit, OnChanges {
   StateEnum = StateEnum;
 
   constructor(
-    private readonly fb: FormBuilder,
+    private readonly formBuilder: FormBuilder,
     private readonly plansService: PlansService,
-    private readonly utils: UtilsService
+    private readonly utilsService: UtilsService
   ) {}
 
   ngOnInit() {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(80)]],
-      creditsTotal: [1, [Validators.required, Validators.min(1)]], // ← reemplaza duration
-      price: [0, [Validators.required, Validators.min(0)]],
-      description: [''],
-      state: [StateEnum.ACTIVE, [Validators.required]]
-    });
+    this.setupForm();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['plan']?.currentValue && this.form) {
-      const p = changes['plan'].currentValue as PlanModel;
-      this.form.reset({
-        name: p.name ?? '',
-        creditsTotal: p.creditsTotal ?? 1,
-        price: p.price ?? 0,
-        description: p.description ?? '',
-        state: p.state ?? StateEnum.ACTIVE
+    if (changes['plan'] && this.plan && this.form) {
+      this.form.patchValue({
+        name: this.plan.name,
+        duration: this.plan.duration,
+        price: this.plan.price,
+        description: this.plan.description,
+        state: this.plan.state
       });
     }
   }
 
-  toggleOpen() { this.isOpenChange.emit(); }
+  setupForm() {
+    this.form = this.formBuilder.group({
+      name: ['', Validators.required],
+      duration: ['', Validators.required],
+      price: ['', Validators.required],
+      description: ['', Validators.required],
+      state: ['', Validators.required]
+    });
+  }
+
+  toggleOpen() {
+    this.isOpenChange.emit();
+  }
 
   async onSubmit() {
-    if (!this.plan?.id || this.form.invalid) {
+    if (!this.plan || this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const { name, creditsTotal, price, description, state } = this.form.value;
-    const patch: PlanUpdateDTO = {
-      name: String(name).trim(),
-      creditsTotal: Number(creditsTotal),
-      price: Number(price),
-      description: String(description ?? '').trim(),
-      state
+    const updatedPlan: PlanModel = {
+      ...this.plan,
+      ...this.form.value,
+      updatedAt: new Date()
     };
 
-    const loading = await this.utils.loading(); await loading?.present?.();
-    try {
-      await this.plansService.updatePlan(this.plan.id, patch);
-      await this.utils.presentToast({
-        message: 'Plan actualizado correctamente',
-        duration: 2500, position: 'bottom', color: 'success', icon: 'checkmark-circle'
-      });
-      this.toggleOpen();
-    } catch (err: any) {
-      await this.utils.presentToast({
-        message: err?.message ?? 'Error al actualizar el plan',
-        duration: 2500, position: 'bottom', color: 'danger', icon: 'alert-circle-outline'
-      });
-    } finally {
-      loading?.dismiss?.();
-    }
+    const loading = await this.utilsService.loading();
+    await loading.present();
+
+    this.plansService.updatePlan(updatedPlan)
+      .then(async () => {
+        await this.utilsService.presentToast({
+          message: 'Plan actualizado correctamente',
+          duration: 2500,
+          position: 'bottom',
+          color: 'success',
+          icon: 'checkmark-circle'
+        });
+        this.toggleOpen();
+      })
+      .catch(async error => {
+        await this.utilsService.presentToast({
+          message: error.message,
+          duration: 2500,
+          position: 'bottom',
+          color: 'danger',
+          icon: 'alert-circle-outline'
+        });
+      })
+      .finally(() => loading.dismiss());
   }
 }
