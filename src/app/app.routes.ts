@@ -28,17 +28,17 @@ export const routes: Routes = [
           import('./modules/home/home.routes').then((m) => m.default),
       },
 
-      // 👇 Reservations: SOLO autenticado (los roles se validan en las rutas hijas)
+      // Reservations (roles se validan dentro del feature)
       {
         path: 'reservations',
-        canActivate: [authGuard], // ⬅️ quitado roleGuard([CLIENT])
+        canActivate: [authGuard],
         loadChildren: () =>
           import('./modules/reservations/reservations.routes').then(
             (m) => m.default
           ),
       },
 
-      // 👇 Admin: SOLO admin (esto es correcto)
+      // Admin (área completa solo admin)
       {
         path: 'admin',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
@@ -51,16 +51,18 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./modules/reports/reports.routes').then((m) => m.default),
       },
+
+      // ✅ NOTIFICATIONS como FEATURE (auth en base; admin se valida adentro)
       {
         path: 'notifications',
-        canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
-        loadComponent: () =>
-          import('./modules/notifications/notifications.component').then(
-            (m) => m.NotificationsComponent
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./modules/notifications/notifications.routes').then(
+            (m) => m.default
           ),
       },
 
-      // Chatbot (ajusta si debe ser público)
+      // Chatbot
       {
         path: 'chatbot',
         canActivate: [authGuard],
@@ -68,11 +70,9 @@ export const routes: Routes = [
           import('./modules/chatbot/chatbot.page').then((m) => m.ChatbotPage),
       },
 
-      // redirección por defecto dentro del layout
       { path: '', pathMatch: 'full', redirectTo: 'home' },
     ],
   },
 
-  // wildcard ABSOLUTO
   { path: '**', redirectTo: '/home' },
 ];

@@ -84,7 +84,7 @@
           </ion-item>
         </ion-menu-toggle>
 
-        <!-- 👉 NUEVO: Browse Admin -->
+        <!-- Browse Admin -->
         <ion-menu-toggle auto-hide="true">
           <ion-item
             button
@@ -104,6 +104,18 @@
           >
             <ion-icon slot="start" name="card-outline"></ion-icon>
             <ion-label>Planes</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <!-- 👉 NUEVO: Notificaciones (Admin) -->
+        <ion-menu-toggle auto-hide="true">
+          <ion-item
+            button
+            (click)="navigateTo('/notifications/admin')"
+            [class.active]="isActivePrefix('/notifications/admin')"
+          >
+            <ion-icon slot="start" name="megaphone-outline"></ion-icon>
+            <ion-label>Notificaciones</ion-label>
           </ion-item>
         </ion-menu-toggle>
       </ion-list>
@@ -135,6 +147,18 @@
           >
             <ion-icon slot="start" name="ticket-outline"></ion-icon>
             <ion-label>Reservas</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <!-- 👉 NUEVO: Mis notificaciones (Cliente) -->
+        <ion-menu-toggle auto-hide="true">
+          <ion-item
+            button
+            (click)="navigateTo('/notifications/mine')"
+            [class.active]="isActivePrefix('/notifications/mine')"
+          >
+            <ion-icon slot="start" name="notifications-outline"></ion-icon>
+            <ion-label>Notificaciones</ion-label>
           </ion-item>
         </ion-menu-toggle>
 

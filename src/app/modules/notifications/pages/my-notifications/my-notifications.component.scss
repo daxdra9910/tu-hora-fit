@@ -1,0 +1,127 @@
+:root {
+  --notif-min-h: 90px;
+}
+
+/* ----- LISTA GENERAL ----- */
+ion-list {
+  background: transparent;
+  padding-top: 0.4rem;
+}
+
+/* ----- TARJETA DE NOTIFICACIÓN ----- */
+.notif-card {
+  --padding-start: 12px;
+  --padding-end: 10px;
+  min-height: var(--notif-min-h);
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.notif-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.06);
+}
+
+/* ----- AVATAR / ICONO ----- */
+.notif-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(38, 220, 99, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22c55e;
+
+  ion-icon {
+    font-size: 1.4rem;
+  }
+}
+
+/* ----- CONTENIDO DE TEXTO ----- */
+.notif-label {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notif-body {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  display: box;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+  -webkit-line-clamp: 8S; /* máximo 4 líneas */
+  line-clamp: 8; /* propiedad estándar */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: calc(1.35em * 14);
+}
+
+.notif-meta {
+  display: block;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 6px;
+}
+
+/* ----- BOTÓN DESLIZABLE (ELIMINAR) ----- */
+ion-item-sliding {
+  overflow: visible;
+  border-radius: 14px;
+  position: relative;
+}
+
+ion-item-options {
+  border-radius: 0 14px 14px 0;
+  z-index: 1;
+}
+
+.notif-option-btn {
+  --background: #dc2626;
+  --color: #fff;
+  font-weight: 600;
+  border-radius: 0 14px 14px 0;
+  min-width: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.2s ease;
+
+  ion-icon {
+    font-size: 1.1rem;
+    margin-right: 6px;
+  }
+
+  &:active {
+    filter: brightness(0.9);
+  }
+}
+
+/* ----- PLACEHOLDER (SIN NOTIFICACIONES) ----- */
+.empty-wrap {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #9ca3af;
+
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+}
