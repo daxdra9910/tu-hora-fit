@@ -1,0 +1,211 @@
+.profile-container {
+  padding: 0;
+}
+
+.profile-card {
+  background: white;
+  min-height: 100vh;
+}
+
+// HEADER COMPACTO
+.profile-header-card {
+  background: linear-gradient(135deg, #3880ff 0%, #2dd36f 100%);
+  color: white;
+  padding: 20px 16px;
+  border-radius: 0 0 24px 24px;
+}
+
+.profile-main-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  --border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.default-avatar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.default-icon {
+  font-size: 2.5rem;
+  color: white;
+  opacity: 0.9;
+}
+
+.profile-name-section {
+  flex: 1;
+}
+
+.greeting {
+  margin: 0 0 4px 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.user-role {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+// SECCIONES DE INFORMACIÓN
+.info-section {
+  padding: 20px 16px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+.info-title {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #3880ff;
+  }
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.info-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+  }
+}
+
+.info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-weight: 500;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+}
+
+.value {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+
+  &.status {
+    font-weight: 700;
+
+    &.active {
+      color: #2dd36f;
+    }
+
+    &.inactive {
+      color: #eb445a;
+    }
+  }
+}
+
+// ESTADOS DE CARGA Y SIN USUARIO
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  text-align: center;
+}
+
+.no-user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  text-align: center;
+  padding: 20px;
+
+  .no-user-icon {
+    font-size: 4rem;
+    color: #7f8c8d;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 1rem;
+  }
+}
+
+// MEJORAS PARA MÓVIL
+@media (max-width: 380px) {
+  .profile-main-info {
+    gap: 12px;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .greeting {
+    font-size: 1.2rem;
+  }
+
+  .user-role {
+    font-size: 0.8rem;
+  }
+
+  .info-section {
+    padding: 16px 12px;
+  }
+}

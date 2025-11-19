@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mis notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list *ngIf="items?.length; else empty">
+    <ion-item-sliding *ngFor="let n of items; let i = index" #slide>
+
+      <!-- Tarjeta principal -->
+      <ion-item lines="none" class="notif-card">
+        <ion-avatar slot="start" class="notif-avatar" aria-hidden="true">
+          <ion-icon name="megaphone-outline"></ion-icon>
+        </ion-avatar>
+
+        <ion-label class="notif-label">
+          <h3 class="notif-title">{{ n.title }}</h3>
+          <p class="notif-body">{{ n.message || 'Sin contenido' }}</p>
+          <small class="notif-meta">{{ n.date | date:'medium' }}</small>
+        </ion-label>
+      </ion-item>
+
+      <!-- Botón deslizable -->
+      <ion-item-options side="end" class="notif-options">
+        <ion-item-option
+          color="danger"
+          (click)="remove(n, slide)"
+          class="notif-option-btn"
+        >
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          ELIMINAR
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ng-template #empty>
+    <div class="empty-wrap">
+      <p class="muted">No tienes notificaciones.</p>
+    </div>
+  </ng-template>
+</ion-content>

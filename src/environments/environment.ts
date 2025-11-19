@@ -21,6 +21,14 @@ export const environment = {
     ACTIVATION_POLICY: 'purchase' as 'purchase' | 'first_use',
   },
 
+  wompi: {
+    publicKey: 'pub_test_Zg61IMJ5rUhDQ72BsJqsmQwzr8j47d4D',
+    privateKey: 'prv_test_EEIVgf2C0jdbV5ocqgyyjzgQiCyj1Mgc',
+    baseUrl: 'https://sandbox.wompi.co/v1',
+    currency: 'COP',
+    acceptanceToken: 'eyJhbGciOiJIUzI1NiJ9.eyJjb250cmFjdF9pZCI6MSwicGVybWFsaW5rIjoiaHR0cHM6Ly93b21waS5jby93cC1jb250ZW50L3VwbG9hZHMvMjAxOS8wOS9URVJNSU5PUy1ZLUNPTkRJQ0lPTkVTLURFLVVTTy1ERVAtV09NUEkuUERGIn0.lSmnkljbeycOeu2c1n-uhyfc2P7pe8JYMiXl-cYiD0M'
+  },
+
   // de develop
   geminiApiKey: 'AIzaSyAgVy1TcmHqOubjyS7_CHMt5V0gPPr4apg'
 };

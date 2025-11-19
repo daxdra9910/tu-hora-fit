@@ -1,0 +1,284 @@
+/* =====================  Estilo visual refinado  ===================== */
+:host {
+  /* Tipografía y layout */
+  --text-xs: 11px;
+  --text-sm: 12.5px;
+  --text-md: 14.5px;
+  --text-lg: 16.5px;
+  --line: 1.35;
+
+  /* Radios y sombras */
+  --radius-chip: 10px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 8px 20px -14px rgba(0, 0, 0, .28);
+  --shadow-hover: 0 14px 28px -18px rgba(0, 0, 0, .42);
+
+  /* Colores base */
+  --surface-1: color-mix(in srgb, var(--ion-background-color) 97%, #000);
+  --surface-2: color-mix(in srgb, var(--ion-background-color) 92%, #000);
+  --hairline: color-mix(in srgb, var(--ion-text-color) 10%, transparent);
+  --accent: var(--ion-color-primary);
+  --accent-weak: color-mix(in srgb, var(--ion-color-primary) 15%, transparent);
+
+  --t-fast: 140ms;
+  --t-med: 220ms;
+}
+
+/* =====================  Chips de días  ===================== */
+.day-chip {
+  --background: var(--surface-2);
+  --color: var(--ion-text-color);
+  --padding-start: 10px;
+  --padding-end: 10px;
+  min-width: 42px;
+  height: 34px;
+  font-weight: 800;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-chip);
+  transition: all var(--t-fast) ease;
+  will-change: transform, box-shadow;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 4px var(--accent-weak);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 4px var(--accent-weak);
+  }
+}
+
+ion-chip[color="primary"] {
+  --background: var(--accent);
+  --color: #fff;
+  box-shadow: 0 0 0 5px var(--accent-weak);
+}
+
+/* =====================  Estados  ===================== */
+.state {
+  padding: 28px 20px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  color: var(--ion-color-medium);
+}
+
+.empty {
+  margin: 40px auto 0;
+  padding: 0 20px;
+  text-align: center;
+  max-width: 460px;
+  color: var(--ion-color-medium);
+  font-size: var(--text-md);
+  line-height: var(--line);
+
+  ion-icon { font-size: 48px; opacity: .55; }
+  h4 { margin: 10px 0 6px; color: var(--ion-text-color); font-weight: 800; font-size: 17px; }
+}
+
+/* =====================  Card principal  ===================== */
+.class-card-wrap { margin: 12px 0; }
+
+.class-card {
+  --background: transparent;
+  width: 100%;
+  background: var(--surface-1);
+  border: 2px solid color-mix(in srgb, var(--accent) 40%, var(--hairline));
+  border-radius: var(--radius-card);
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  transition: box-shadow var(--t-med) ease, transform var(--t-med) ease, border-color var(--t-fast) ease;
+
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 8%, transparent) 0%,
+    transparent 90%
+  );
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent) 60%, var(--hairline));
+    box-shadow:
+      0 12px 24px -14px rgba(0, 0, 0, .5),
+      0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  font-size: var(--text-sm);
+}
+
+.title {
+  margin: 6px 0 2px;
+  font-size: 15.5px;
+  font-weight: 900;
+}
+
+.subtitle {
+  color: var(--ion-color-medium);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* =====================  KPIs  ===================== */
+.kpis {
+  margin-top: 10px;
+  display: grid;
+  grid-auto-flow: column;
+  gap: 10px;
+  width: max-content;
+  align-items: center;
+
+  @media (max-width: 380px) {
+    grid-auto-flow: row;
+    width: 100%;
+  }
+}
+
+.kpi {
+  background: var(--surface-2);
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 6px;
+  align-items: baseline;
+  transition: background var(--t-fast) ease, border-color var(--t-fast) ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 5%, var(--surface-2));
+    border-color: color-mix(in srgb, var(--accent) 25%, var(--hairline));
+  }
+
+  .label {
+    font-size: 10px;
+    color: var(--ion-color-medium);
+    text-transform: uppercase;
+  }
+  .val {
+    font-weight: 900;
+    font-size: 13px;
+  }
+}
+
+/* =====================  Botón outline estético  ===================== */
+ion-button.btn-outline-accent {
+  --border-color: color-mix(in srgb, var(--accent) 85%, #00ffaa);
+  --color: color-mix(in srgb, var(--accent) 95%, #00ffd9);
+  --border-radius: 12px;
+  --border-width: 1.5px;
+  font-weight: 900;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  box-shadow: 0 6px 16px -12px color-mix(in srgb, var(--accent) 55%, transparent);
+  transition: all var(--t-fast) ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -14px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* =====================  Panel resumen  ===================== */
+.summary-card {
+  margin: 10px 12px 18px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-soft);
+
+  ion-card-header {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 80%
+    );
+  }
+}
+
+.summary-grid {
+  display: grid;
+  gap: 8px;
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    border-bottom: 1px dashed var(--hairline);
+    padding: 8px 0;
+    &:last-child { border-bottom: none; }
+  }
+  .label { opacity: .75; font-size: var(--text-sm); }
+  .value { font-weight: 800; }
+}
+
+/* =====================  Modal  ===================== */
+ion-modal {
+  --border-radius: 16px;
+  ion-header { border-bottom: 1px solid var(--hairline); }
+}
+
+/* =====================  Dark mode  ===================== */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --surface-1: color-mix(in srgb, var(--ion-background-color) 98%, #000);
+    --surface-2: color-mix(in srgb, var(--ion-background-color) 93%, #000);
+    --hairline: color-mix(in srgb, var(--ion-text-color) 20%, transparent);
+  }
+  .class-card {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--hairline));
+  }
+}
+
+/* =====================  Animación sutil de color (barra etc)  ===================== */
+@keyframes pulseGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =====================  "Ver más / Ver menos" — verde brillante, texto blanco, bordes semi-curvos ===================== */
+.class-card-wrap ion-item-options {
+  padding-right: 6px;
+}
+
+ion-item-option.ver-mas {
+  --background: #00f37a; /* verde brillante */
+  --color: #ffffff !important; /* fuerza el texto blanco */
+  color: #ffffff !important;   /* asegura color incluso si ionic aplica override */
+
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+  display: grid;
+  place-items: center;
+  min-width: 120px;
+  margin: 6px 4px;
+
+  /* semi-curvo: esquinas suavemente redondeadas */
+  border-radius: 10px;
+
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .35);
+  transition: transform var(--t-fast) ease, filter var(--t-fast) ease;
+}
+
+/* fuerza el color dentro del shadow DOM */
+ion-item-option.ver-mas::part(native) {
+  border-radius: 10px;
+  color: #ffffff !important;
+}
+
+/* feedback visual */
+ion-item-option.ver-mas:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+ion-item-option.ver-mas:active {
+  transform: scale(.97);
+}

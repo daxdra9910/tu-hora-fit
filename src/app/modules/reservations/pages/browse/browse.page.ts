@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChildren, QueryList, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router'; // 👈 AÑADIR ESTO
 
 import {
   IonButton, IonButtons, IonChip, IonCol, IonContent, IonGrid,
@@ -67,6 +68,7 @@ export class BrowsePage implements OnInit {
   private readonly classesSrv = inject(ClassService);
   private readonly scheduleSrv = inject(ScheduleService);
   private readonly reservationSrv = inject(ReservationService);
+  private readonly route = inject(ActivatedRoute); // 👈 AÑADIR ESTO
 
   @ViewChildren(IonItemSliding) slidings!: QueryList<IonItemSliding>;
 
@@ -94,6 +96,18 @@ export class BrowsePage implements OnInit {
   }
 
   async ngOnInit() {
+    // 👇 PRIMERO: Leer parámetros de la URL antes de cargar datos
+    this.route.queryParams.subscribe(params => {
+      if (params['fecha']) {
+        // Si viene una fecha específica desde el home, usarla
+        const fechaDesdeHome = DateTime.fromISO(params['fecha'], { zone: TZ, locale: LOCALE });
+        if (fechaDesdeHome.isValid) {
+          this.selected = fechaDesdeHome.startOf('day');
+          console.log('Fecha recibida desde home:', this.selected.toISODate());
+        }
+      }
+    });
+
     await this.bootstrap();
     await this.refreshUserReserved();
     this.buildChipDays();

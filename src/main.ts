@@ -1,17 +1,24 @@
-import { LogLevel, setLogLevel } from "@angular/fire";
+import { LogLevel, setLogLevel } from '@angular/fire';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { PreloadAllModules, provideRouter, RouteReuseStrategy, withPreloading } from '@angular/router';
+import {
+  PreloadAllModules,
+  provideRouter,
+  RouteReuseStrategy,
+  withPreloading,
+} from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient } from '@angular/common/http';
 import { addIcons } from 'ionicons';
+
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
 
+// 🔹 Importamos todos los íconos necesarios
 import {
   addOutline,
   alertCircleOutline,
@@ -34,11 +41,20 @@ import {
   timeOutline,
   trashOutline,
   chatbubblesOutline,
-  // 👇 NUEVO: ícono para “Reservas”
-  ticketOutline,
-  // listOutline, // ← alternativa si tu versión no tiene “ticket-outline”
+  ticketOutline, // Reservas
+  // 👇 NUEVOS: notificaciones
+  notificationsOutline,
+  megaphoneOutline,
+  flashOutline,
+  // 👇 NUEVOS ICONOS PARA EL PERFIL Y MENÚ
+  personCircleOutline,    // Para "Mi Perfil"
+  calendarNumberOutline,  // Para fechas
+  callOutline,            // Para teléfono
+  mailOutline,            // Para correo
+  starOutline,            // Para plan
 } from 'ionicons/icons';
 
+// 🔹 Registramos todos los íconos
 addIcons({
   'add-outline': addOutline,
   'alert-circle-outline': alertCircleOutline,
@@ -61,13 +77,26 @@ addIcons({
   'time-outline': timeOutline,
   'trash-outline': trashOutline,
   'chatbubbles-outline': chatbubblesOutline,
-  // 👇 NUEVO: Registro del ícono de Reservas
   'ticket-outline': ticketOutline,
-  // 'list-outline': listOutline, // ← usa este si el anterior no existe
+  'flash-outline': flashOutline,
+
+  // 🔹 NUEVOS ICONOS PARA NOTIFICACIONES
+  'notifications-outline': notificationsOutline, // Cliente: Mis notificaciones
+  'megaphone-outline': megaphoneOutline,         // Admin: Enviar notificación
+
+  // 🔹 NUEVOS ICONOS PARA EL PERFIL Y MENÚ
+  'person-circle-outline': personCircleOutline,    // Para "Mi Perfil"
+  'calendar-number-outline': calendarNumberOutline, // Para fechas en el perfil
+  'call-outline': callOutline,                     // Para teléfono en el perfil
+  'mail-outline': mailOutline,                     // Para correo en el perfil
+  'star-outline': starOutline,                     // Para plan en el perfil
+  'pencil': pencilOutline,                         // Para editar (puede ser el mismo que pencil-outline)
 });
 
+// 🔹 Configuración del log
 setLogLevel(LogLevel.SILENT);
 
+// 🔹 Bootstrap principal
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -77,6 +106,6 @@ bootstrapApplication(AppComponent, {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
-    provideHttpClient()
+    provideHttpClient(),
   ],
 });

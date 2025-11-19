@@ -1,0 +1,425 @@
+/* payment.page.scss - Fixed Scroll */
+.payment-container {
+  padding: 16px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(135deg, var(--ion-color-light) 0%, #f8f9fa 100%);
+  /* REMOVED: min-height: 100%; - Esto bloqueaba el scroll */
+}
+
+/* Loading State Elegante */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh; /* Reducido para permitir scroll */
+  text-align: center;
+
+  ion-spinner {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 20px;
+    --color: var(--ion-color-primary);
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+/* Plan Summary Card - Premium */
+.plan-summary {
+  margin-bottom: 24px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--ion-color-primary) 0%, #5cd588 100%);
+  }
+
+  ion-card-header {
+    padding: 24px 20px 16px;
+
+    .plan-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--ion-color-dark);
+      text-align: center;
+      background: linear-gradient(135deg, var(--ion-color-dark) 0%, #2c3e50 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  ion-card-content {
+    padding: 0 20px 24px;
+  }
+
+  .price-section {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px 0;
+    background: linear-gradient(135deg, rgba(92, 213, 136, 0.05) 0%, rgba(76, 175, 80, 0.05) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(92, 213, 136, 0.1);
+
+    .amount {
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--ion-color-primary) 0%, #4caf50 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .credits {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ion-color-primary);
+      background: rgba(92, 213, 136, 0.1);
+      padding: 10px 20px;
+      border-radius: 25px;
+      display: inline-block;
+      border: 1px solid rgba(92, 213, 136, 0.2);
+      backdrop-filter: blur(10px);
+    }
+  }
+
+  .description {
+    text-align: center;
+    color: var(--ion-color-medium);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 16px 0 0;
+    font-style: italic;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Benefits Card - Mejorado */
+.benefits-card {
+  margin-bottom: 24px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  ion-card-header {
+    padding: 20px 20px 12px;
+
+    ion-card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ion-color-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::before {
+        content: '✨';
+        margin-right: 8px;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  ion-list {
+    background: transparent;
+    padding: 0 8px;
+
+    ion-item {
+      --background: transparent;
+      --padding-start: 12px;
+      --inner-padding-end: 12px;
+      --min-height: 56px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      ion-icon {
+        font-size: 1.3rem;
+        margin-right: 12px;
+        color: var(--ion-color-success);
+        filter: drop-shadow(0 2px 4px rgba(76, 175, 80, 0.3));
+      }
+
+      ion-label {
+        font-size: 0.95rem;
+        color: var(--ion-color-dark);
+        line-height: 1.4;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* Payment Info Card - Premium */
+.payment-info {
+  margin-bottom: 28px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffc107 0%, #ffd54f 100%);
+  }
+
+  ion-card-header {
+    padding: 20px 20px 12px;
+
+    ion-card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #856404;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      ion-icon {
+        margin-right: 10px;
+        color: #856404;
+        font-size: 1.3rem;
+        filter: drop-shadow(0 2px 4px rgba(133, 100, 4, 0.2));
+      }
+    }
+  }
+
+  .security-notice {
+    text-align: center;
+    padding: 0 8px 16px;
+
+    p {
+      margin: 0 0 10px 0;
+      color: #856404;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .small-text {
+      font-size: 0.82rem;
+      color: #b38b00;
+      opacity: 0.8;
+    }
+  }
+}
+
+/* Action Buttons - Premium */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 0 8px;
+  margin-bottom: 40px; /* Espacio para scroll */
+
+  .pay-button {
+    --border-radius: 16px;
+    --padding-top: 22px;
+    --padding-bottom: 22px;
+    --background: linear-gradient(135deg, var(--ion-color-primary) 0%, #4caf50 100%);
+    --background-hover: linear-gradient(135deg, #4caf50 0%, var(--ion-color-primary) 100%);
+    --background-activated: linear-gradient(135deg, #45a049 0%, #4caf50 100%);
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0;
+    box-shadow: 0 8px 25px rgba(92, 213, 136, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    &:active::before {
+      left: 100%;
+    }
+
+    ion-icon {
+      font-size: 1.3rem;
+      margin-right: 8px;
+    }
+  }
+
+  ion-button[fill="outline"] {
+    --border-radius: 16px;
+    --padding-top: 18px;
+    --padding-bottom: 18px;
+    --border-width: 2px;
+    --border-color: var(--ion-color-medium);
+    --color: var(--ion-color-medium);
+    font-weight: 600;
+    margin: 0;
+    transition: all 0.3s ease;
+  }
+}
+
+/* Error State - Mejorado */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh; /* Reducido para permitir scroll */
+  padding: 0 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #ffe6e6 0%, #ffcccc 100%);
+  border-radius: 20px;
+  margin: 20px;
+
+  ion-icon {
+    font-size: 5rem;
+    color: var(--ion-color-danger);
+    margin-bottom: 24px;
+    filter: drop-shadow(0 4px 8px rgba(244, 67, 54, 0.3));
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ion-color-danger);
+    margin: 0 0 16px 0;
+    background: linear-gradient(135deg, var(--ion-color-danger) 0%, #d32f2f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    color: var(--ion-color-danger-shade);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0 0 28px 0;
+    font-weight: 500;
+  }
+
+  ion-button {
+    --border-radius: 16px;
+    --padding-top: 18px;
+    --padding-bottom: 18px;
+    font-weight: 600;
+    max-width: 200px;
+    --background: var(--ion-color-danger);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.3);
+  }
+}
+
+/* Estados de deshabilitado mejorados */
+ion-button[disabled] {
+  opacity: 0.6;
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Animaciones y transiciones */
+ion-card {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Responsive para tablets */
+@media (min-width: 768px) {
+  .payment-container {
+    max-width: 480px;
+    padding: 24px;
+  }
+
+  .plan-summary {
+    .price-section {
+      .amount {
+        font-size: 3.2rem;
+      }
+    }
+  }
+
+  .action-buttons {
+    gap: 20px;
+
+    .pay-button {
+      --padding-top: 24px;
+      --padding-bottom: 24px;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+/* Modo oscuro mejorado */
+@media (prefers-color-scheme: dark) {
+  .payment-container {
+    background: linear-gradient(135deg, var(--ion-color-step-50) 0%, var(--ion-color-step-100) 100%);
+  }
+
+  .plan-summary,
+  .benefits-card {
+    background: linear-gradient(145deg, var(--ion-color-step-100) 0%, var(--ion-color-step-150) 100%);
+    border-color: var(--ion-color-step-200);
+  }
+
+  .benefits-card ion-item {
+    background: var(--ion-color-step-150);
+    border-color: var(--ion-color-step-200);
+  }
+
+  .payment-info {
+    background: linear-gradient(135deg, #332900 0%, #4d3800 100%);
+  }
+}
+
+/* Micro-interacciones */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(92, 213, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(92, 213, 136, 0.8);
+  }
+}
+
+.pay-button:not([disabled]) {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* REMOVIDO: perspective y efectos que podían interferir con scroll */

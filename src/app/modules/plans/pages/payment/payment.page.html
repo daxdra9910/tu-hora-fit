@@ -1,0 +1,145 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelPayment()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      @if (showWompiCheckout) {
+        Pago Seguro
+      } @else {
+        Procesar Pago
+      }
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Checkout de Wompi -->
+  @if (showWompiCheckout && plan) {
+    <app-wompi-checkout
+      [amount]="plan.price"
+      [userEmail]="currentUser.email"
+      [userFullName]="currentUser.fullName"
+      [userPhone]="currentUser.phone"
+      (paymentSuccess)="onWompiPaymentSuccess($event)"
+      (paymentError)="onWompiPaymentError($event)"
+      (paymentCancel)="onWompiPaymentCancel()"
+    ></app-wompi-checkout>
+  }
+
+  <!-- Vista Normal del Plan -->
+  @if (!showWompiCheckout) {
+
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando información del plan...</p>
+      </div>
+    }
+
+    <!-- Plan Details -->
+    @if (!loading && plan) {
+      <div class="payment-container">
+
+        <!-- Resumen del Plan -->
+        <ion-card class="plan-summary">
+          <ion-card-header>
+            <ion-card-title class="plan-title">
+              {{ plan.name }}
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="price-section">
+              <div class="amount">{{ formatPrice(plan.price) }}</div>
+              <div class="credits">{{ plan.creditsTotal }} créditos</div>
+            </div>
+
+            @if (plan.description) {
+              <div class="description">
+                {{ plan.description }}
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Beneficios -->
+        <ion-card class="benefits-card">
+          <ion-card-header>
+            <ion-card-title>Beneficios incluidos</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="none">
+              @for (benefit of getPlanBenefits(plan); track benefit) {
+                <ion-item>
+                  <ion-icon slot="start" name="checkmark-circle" color="success"></ion-icon>
+                  <ion-label>{{ benefit }}</ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Información de Pago -->
+        <ion-card class="payment-info">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="lock-closed" slot="start"></ion-icon>
+              Información de pago seguro
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="security-notice">
+              <p>Tu pago está protegido con encriptación de alta seguridad.</p>
+              <p class="small-text">No almacenamos los datos de tu tarjeta.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Botones de Acción -->
+        <div class="action-buttons">
+          <ion-button
+            expand="block"
+            size="large"
+            (click)="processPayment()"
+            [disabled]="processing"
+            class="pay-button"
+          >
+            @if (processing) {
+              <ion-spinner slot="start" name="crescent"></ion-spinner>
+              Procesando...
+            } @else {
+              <ion-icon name="card" slot="start"></ion-icon>
+              Pagar {{ formatPrice(plan.price) }}
+            }
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            fill="outline"
+            (click)="cancelPayment()"
+            [disabled]="processing"
+          >
+            Cancelar
+          </ion-button>
+        </div>
+
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (!loading && !plan) {
+      <div class="error-container">
+        <ion-icon name="alert-circle"></ion-icon>
+        <h3>Plan no disponible</h3>
+        <p>El plan seleccionado no está disponible o no existe.</p>
+        <ion-button expand="block" (click)="cancelPayment()">
+          Volver a planes
+        </ion-button>
+      </div>
+    }
+  }
+</ion-content>

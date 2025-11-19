@@ -1,4 +1,3 @@
-// app.routes.ts
 import { Routes } from '@angular/router';
 import { antiAuthGuard, authGuard } from './modules/core/guards/auth.guard';
 import { roleGuard } from './modules/core/guards/role.guard';
@@ -28,17 +27,23 @@ export const routes: Routes = [
           import('./modules/home/home.routes').then((m) => m.default),
       },
 
-      // 👇 Cliente: SOLO clientes
       {
         path: 'reservations',
-        canActivate: [authGuard, roleGuard([RoleEnum.CLIENT])],
+        canActivate: [authGuard],
         loadChildren: () =>
           import('./modules/reservations/reservations.routes').then(
             (m) => m.default
           ),
       },
 
-      // 👇 Admin: SOLO admin
+      // 👉 NUEVA RUTA: Planes para clientes
+      {
+        path: 'plans',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./modules/plans/plans.routes').then((m) => m.routes),
+      },
+
       {
         path: 'admin',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
@@ -53,26 +58,30 @@ export const routes: Routes = [
       },
       {
         path: 'notifications',
-        canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
-        loadComponent: () =>
-          import('./modules/notifications/notifications.component').then(
-            (m) => m.NotificationsComponent
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./modules/notifications/notifications.routes').then(
+            (m) => m.default
           ),
       },
-
-      // Chatbot: decide si debe requerir login
       {
         path: 'chatbot',
-        canActivate: [authGuard], // <-- quítalo si quieres público
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./modules/chatbot/chatbot.page').then((m) => m.ChatbotPage),
       },
+      // NUEVA RUTA DEL PERFIL
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./modules/profile/profile.routes').then((m) => m.profileRoutes),
+      },
 
-      // redirección por defecto dentro del layout
+
       { path: '', pathMatch: 'full', redirectTo: 'home' },
     ],
   },
 
-  // wildcard ABSOLUTO
   { path: '**', redirectTo: '/home' },
 ];
