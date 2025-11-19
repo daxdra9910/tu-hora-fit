@@ -17,6 +17,7 @@ import {
   IonMenuToggle,
   MenuController,
   NavController,
+  IonRouterOutlet
 } from '@ionic/angular/standalone';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';

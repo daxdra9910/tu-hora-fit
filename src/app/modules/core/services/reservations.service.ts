@@ -90,9 +90,9 @@ export class ReservationService {
     const base = this.toDT(dateLike);
     if (!base.isValid) return undefined;
 
-    const parsed = timeStr?.includes?.('M')
+    const parsed = timeStr.includes('M')
       ? DateTime.fromFormat(timeStr, 'h:mm a', { zone: TZ, locale: LOCALE })
-      : DateTime.fromFormat(timeStr ?? '', 'HH:mm', { zone: TZ, locale: LOCALE });
+      : DateTime.fromFormat(timeStr, 'HH:mm',   { zone: TZ, locale: LOCALE });
 
     if (!parsed.isValid) return undefined;
 
@@ -186,6 +186,7 @@ export class ReservationService {
 
       if (!start.isValid) throw new Error('Horario inválido.');
       if (end?.isValid ? end <= now : start <= now) {
+        // si hay end, pasó si end<=now; si no hay end, pasó si start<=now
         throw new Error('Este horario ya no está disponible.');
       }
 
@@ -331,7 +332,7 @@ export class ReservationService {
     return count;
   }
 
-  /* ========== DETALLE PARA “MIS RESERVAS” (facade listo para UI) ========== */
+  /* ========== DETALLE PARA "MIS RESERVAS" (facade listo para UI) ========== */
   async listUserActiveReservationsDetailed(userId: string): Promise<DetailedUserReservation[]> {
     const reservations = await this.listUserActiveReservations(userId);
     if (reservations.length === 0) return [];
@@ -339,12 +340,12 @@ export class ReservationService {
     const scheduleIds = [...new Set(reservations.map(r => r.scheduleId))];
     const schedules = await this.getSchedulesByIds(scheduleIds);
     const scheduleMap: Record<string, ScheduleMinimal> = {};
-    schedules.forEach(s => (scheduleMap[s.id] = s));
+    schedules.forEach(s => scheduleMap[s.id] = s);
 
     const classIds = [...new Set(schedules.map(s => s.idClass))];
     const classes = await this.getClassesByIds(classIds);
     const classMap: Record<string, ClassModelMin> = {};
-    classes.forEach(c => (classMap[c.id] = c));
+    classes.forEach(c => classMap[c.id] = c);
 
     const rows: DetailedUserReservation[] = reservations
       .map(r => {
@@ -352,16 +353,14 @@ export class ReservationService {
         if (!s) return null;
         const startISO = s.start;
         const endISO = s.end;
-
-        // ✅ Mapeo correcto por idClass (antes s.id)
-        const cls = classMap[s.idClass] ?? { id: s.idClass, name: 'Clase' };
+        const cls = classMap[s.id] ?? classMap[s.idClass] ?? { id: s.idClass, name: 'Clase' };
 
         return {
           reservation: r,
           schedule: { id: s.id, idClass: s.idClass, start: startISO, end: endISO },
           class: {
             id: cls.id,
-            name: cls.name || 'Clase',
+            name: cls.name,
             description: cls.description ?? '',
             imageURL: (cls as any).imageURL ?? 'assets/placeholder-class.jpg'
           },
