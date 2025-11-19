@@ -52,7 +52,6 @@ import {
   callOutline,            // Para teléfono
   mailOutline,            // Para correo
   starOutline,            // Para plan
-  logOutOutline as logOut // Para salir (ya existe pero por si acaso)
 } from 'ionicons/icons';
 
 // 🔹 Registramos todos los íconos
