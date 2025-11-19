@@ -1,0 +1,87 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="header-toolbar">
+    <ion-title class="app-title">
+      <ion-icon name="barbell-outline" class="title-icon"></ion-icon>
+      Tu Hora Fit
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding home-content">
+  <!-- 👋 Sección de Bienvenida -->
+  <div class="welcome-section">
+    <h1 class="welcome-title">
+      {{ obtenerSaludo() }}, <span class="user-name">{{ nombreUsuario | uppercase }}</span>!
+    </h1>
+  </div>
+
+  <!-- 🖼️ Banner -->
+  <app-banner class="banner-section"></app-banner>
+
+  <!-- ⚡ Acciones -->
+  <ion-grid class="actions-grid">
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="action-card primary-card" (click)="irAClasesDelDia()" button>
+          <ion-card-content class="card-content">
+            <ion-icon name="time-outline" class="action-icon"></ion-icon>
+            <h3 class="action-title">Clases del Día</h3>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="action-card secondary-card" (click)="irAEnergIA()" button>
+          <ion-card-content class="card-content">
+            <ion-icon name="flash-outline" class="action-icon"></ion-icon>
+            <h3 class="action-title">EnergIA</h3>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 🎟️ Mis Reservas -->
+  <ion-card class="reservations-card" (click)="irAMisReservas()" button>
+    <ion-card-header class="reservations-header">
+      <ion-icon name="ticket-outline" class="title-icon"></ion-icon>
+      <div class="reservations-info">
+        <h3 class="reservations-title">Mis Reservas</h3>
+        <p class="reservations-text" *ngIf="reservasPendientes > 0">
+          {{ reservasPendientes }} activa{{ reservasPendientes > 1 ? 's' : '' }}
+        </p>
+        <p class="reservations-text" *ngIf="reservasPendientes === 0">Sin reservas activas</p>
+      </div>
+      <ion-badge color="primary" *ngIf="reservasPendientes > 0">{{ reservasPendientes }}</ion-badge>
+    </ion-card-header>
+  </ion-card>
+
+  <!-- 📆 Calendario -->
+  <div class="calendar-section">
+    <h2 class="month-title">{{ mesActual }}</h2>
+    <ion-card class="calendar-card">
+      <ion-card-content class="calendar-content">
+        <ion-grid class="calendar-grid">
+          <ion-row class="week-days-row">
+            <ion-col *ngFor="let dia of diasSemana" class="week-day-col">
+              <span class="week-day">{{ dia }}</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="month-days-row">
+            <ion-col
+              *ngFor="let dia of diasMes"
+              class="month-day-col"
+              [class.current-day]="esHoy(dia)"
+              [class.selected-day]="esSeleccionado(dia)"
+            >
+              <div class="day-number" (click)="seleccionarDia(dia)">
+                {{ dia }}
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

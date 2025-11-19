@@ -45,6 +45,14 @@ import {
   // 👇 NUEVOS: notificaciones
   notificationsOutline,
   megaphoneOutline,
+  flashOutline,
+  // 👇 NUEVOS ICONOS PARA EL PERFIL Y MENÚ
+  personCircleOutline,    // Para "Mi Perfil"
+  calendarNumberOutline,  // Para fechas
+  callOutline,            // Para teléfono
+  mailOutline,            // Para correo
+  starOutline,            // Para plan
+  logOutOutline as logOut // Para salir (ya existe pero por si acaso)
 } from 'ionicons/icons';
 
 // 🔹 Registramos todos los íconos
@@ -71,10 +79,19 @@ addIcons({
   'trash-outline': trashOutline,
   'chatbubbles-outline': chatbubblesOutline,
   'ticket-outline': ticketOutline,
+  'flash-outline': flashOutline,
 
   // 🔹 NUEVOS ICONOS PARA NOTIFICACIONES
   'notifications-outline': notificationsOutline, // Cliente: Mis notificaciones
   'megaphone-outline': megaphoneOutline,         // Admin: Enviar notificación
+
+  // 🔹 NUEVOS ICONOS PARA EL PERFIL Y MENÚ
+  'person-circle-outline': personCircleOutline,    // Para "Mi Perfil"
+  'calendar-number-outline': calendarNumberOutline, // Para fechas en el perfil
+  'call-outline': callOutline,                     // Para teléfono en el perfil
+  'mail-outline': mailOutline,                     // Para correo en el perfil
+  'star-outline': starOutline,                     // Para plan en el perfil
+  'pencil': pencilOutline,                         // Para editar (puede ser el mismo que pencil-outline)
 });
 
 // 🔹 Configuración del log

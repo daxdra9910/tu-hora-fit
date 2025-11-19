@@ -1,0 +1,294 @@
+:host {
+  --radius-card: 14px;
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.08);
+  --shadow-active: 0 1px 6px rgba(0, 0, 0, 0.12);
+  --transition: all 0.15s ease-in-out;
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --bg-light: #f8f9fa;
+  --text-dark: #2c3e50;
+  --text-medium: var(--ion-color-medium);
+}
+
+/* 🏠 Contenedor principal */
+.home-content {
+  --background: var(--bg-light);
+  padding: 8px 12px;
+}
+
+/* 🧭 Header */
+.header-toolbar {
+  --background: #fff;
+  --border-color: #e0e0e0;
+  --min-height: 50px;
+
+  .app-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-dark);
+
+    .title-icon {
+      margin-right: 6px;
+      color: var(--ion-color-primary);
+      font-size: 1.3rem;
+    }
+  }
+}
+
+/* 👋 Bienvenida */
+.welcome-section {
+  margin-bottom: 8px;
+
+  .welcome-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-dark);
+
+    .user-name {
+      color: var(--ion-color-primary);
+      font-weight: 700;
+    }
+  }
+}
+
+/* 🖼️ Banner */
+.banner-section {
+  margin-bottom: 8px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ⚡ Acciones */
+.actions-grid {
+  margin-bottom: 8px;
+}
+
+.action-card {
+  margin: 3px;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: none;
+  height: 88px;
+  transition: var(--transition);
+
+  &:active {
+    transform: scale(0.96);
+    box-shadow: var(--shadow-active);
+  }
+
+  &.primary-card {
+    --background: var(--gradient-primary);
+  }
+
+  &.secondary-card {
+    --background: var(--gradient-secondary);
+  }
+
+  .card-content {
+    padding: 8px 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .action-icon {
+      font-size: 2.1rem;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .action-title {
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+  }
+}
+
+/* 🎟️ Mis Reservas */
+.reservations-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  --background: #fff;
+  transition: var(--transition);
+  margin-bottom: 8px;
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-active);
+  }
+
+  .reservations-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+
+    .title-icon {
+      color: var(--ion-color-primary);
+      font-size: 1.8rem;
+      margin-right: 10px;
+      order: -1;
+    }
+
+    .reservations-info {
+      flex-grow: 1;
+
+      .reservations-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+      }
+
+      .reservations-text {
+        font-size: 0.78rem;
+        color: var(--text-medium);
+        margin: 1px 0 0 0;
+      }
+    }
+
+    ion-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-left: auto;
+    }
+  }
+}
+
+/* 📆 Calendario Mejorado (fecha alineada a la izquierda) */
+.calendar-section {
+  margin-top: 10px;
+  padding: 2px;
+
+  .month-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+    margin-bottom: 6px;
+    letter-spacing: 0.4px;
+    text-align: left; /* 👈 Alineado a la izquierda */
+    padding-left: 4px;
+  }
+}
+
+.calendar-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  --background: #fff;
+  padding: 6px 4px;
+  transition: var(--transition);
+
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.calendar-content {
+  padding: 0;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .week-days-row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 2px;
+  }
+
+  .week-day-col {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .month-days-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .month-day-col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .day-number {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: var(--transition);
+    background: transparent;
+
+    &:hover {
+      background: rgba(var(--ion-color-primary-rgb), 0.08);
+      transform: scale(1.05);
+    }
+
+    &.current-day {
+      background: var(--ion-color-primary);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.3);
+    }
+
+    &.selected-day {
+      background: var(--ion-color-secondary);
+      color: #fff;
+      font-weight: 700;
+      transform: scale(1.05);
+      box-shadow: 0 0 0 2px rgba(var(--ion-color-secondary-rgb), 0.3);
+    }
+  }
+}
+
+/* 📱 Ajustes pequeños */
+@media (max-width: 360px) {
+  .home-content {
+    padding: 6px;
+  }
+
+  .action-card {
+    height: 80px;
+
+    .action-icon {
+      font-size: 1.9rem;
+    }
+
+    .action-title {
+      font-size: 0.76rem;
+    }
+  }
+
+  .calendar-section .month-title {
+    font-size: 1rem;
+    padding-left: 4px;
+  }
+
+  .calendar-grid .day-number {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ♿ Accesibilidad */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

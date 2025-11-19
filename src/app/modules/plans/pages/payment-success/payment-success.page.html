@@ -1,0 +1,149 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goToPlans()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Confirmación de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Confirmando tu pago...</p>
+      <p class="loading-subtitle">Estamos asignando tus créditos</p>
+    </div>
+  }
+
+  <!-- Success Content -->
+  @if (!loading && payment && plan) {
+    <div class="success-container">
+
+      <!-- Header de Éxito -->
+      <div class="success-header">
+        <div class="success-icon">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+        <h1>¡Pago Exitoso!</h1>
+        <p class="success-message">Tu compra ha sido procesada correctamente</p>
+      </div>
+
+      <!-- Resumen de la Compra -->
+      <ion-card class="purchase-summary">
+        <ion-card-header>
+          <ion-card-title>Resumen de tu Compra</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item>
+              <ion-label>Plan Adquirido</ion-label>
+              <ion-text slot="end" color="primary">{{ plan.name }}</ion-text>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Créditos Obtenidos</ion-label>
+              <ion-text slot="end" color="success">{{ plan.creditsTotal }} créditos</ion-text>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Monto Pagado</ion-label>
+              <ion-text slot="end" class="amount">{{ formatPrice(payment.amount) }}</ion-text>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Fecha y Hora</ion-label>
+              <ion-text slot="end">{{ formatDate(payment.createdAt) }}</ion-text>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Referencia</ion-label>
+              <ion-text slot="end" class="reference">{{ payment.wompiReference || payment.id }}</ion-text>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Beneficios del Plan -->
+      <ion-card class="benefits-card">
+        <ion-card-header>
+          <ion-card-title>🎉 ¡Ya tienes acceso a:</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item>
+              <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+              <ion-label>{{ plan.creditsTotal }} créditos para reservas</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+              <ion-label>Acceso a todas las clases disponibles</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+              <ion-label>Instructores certificados</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+              <ion-label>Soporte prioritario 24/7</ion-label>
+            </ion-item>
+            @if (plan.creditsTotal >= 50) {
+              <ion-item>
+                <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+                <ion-label>Acceso a áreas premium</ion-label>
+              </ion-item>
+            }
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Acciones Rápidas -->
+      <ion-card class="actions-card">
+        <ion-card-header>
+          <ion-card-title>Acciones Disponibles</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="action-buttons">
+            <ion-button expand="block" fill="outline" (click)="downloadReceipt()">
+              <ion-icon name="download" slot="start"></ion-icon>
+              Descargar Recibo
+            </ion-button>
+
+            <ion-button expand="block" fill="outline" (click)="shareSuccess()">
+              <ion-icon name="share-social" slot="start"></ion-icon>
+              Compartir
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Botón Principal -->
+      <div class="main-action">
+        <ion-button expand="block" size="large" (click)="goToPlans()" class="continue-button">
+          <ion-icon name="card" slot="start"></ion-icon>
+          Continuar Explorando Planes
+        </ion-button>
+
+        <p class="help-text">
+          ¿Necesitas ayuda? <a href="/support">Contáctanos aquí</a>
+        </p>
+      </div>
+
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!loading && (!payment || !plan)) {
+    <div class="error-container">
+      <ion-icon name="alert-circle"></ion-icon>
+      <h3>No se pudo cargar la información</h3>
+      <p>Hubo un problema al cargar los datos de tu pago.</p>
+      <ion-button expand="block" (click)="goToPlans()">
+        Volver a Planes
+      </ion-button>
+    </div>
+  }
+</ion-content>

@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { antiAuthGuard, authGuard } from './modules/core/guards/auth.guard';
 import { roleGuard } from './modules/core/guards/role.guard';
@@ -28,7 +27,6 @@ export const routes: Routes = [
           import('./modules/home/home.routes').then((m) => m.default),
       },
 
-      // Reservations (roles se validan dentro del feature)
       {
         path: 'reservations',
         canActivate: [authGuard],
@@ -38,7 +36,14 @@ export const routes: Routes = [
           ),
       },
 
-      // Admin (área completa solo admin)
+      // 👉 NUEVA RUTA: Planes para clientes
+      {
+        path: 'plans',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./modules/plans/plans.routes').then((m) => m.routes),
+      },
+
       {
         path: 'admin',
         canActivate: [authGuard, roleGuard([RoleEnum.ADMIN])],
@@ -51,8 +56,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./modules/reports/reports.routes').then((m) => m.default),
       },
-
-      // ✅ NOTIFICATIONS como FEATURE (auth en base; admin se valida adentro)
       {
         path: 'notifications',
         canActivate: [authGuard],
@@ -61,14 +64,20 @@ export const routes: Routes = [
             (m) => m.default
           ),
       },
-
-      // Chatbot
       {
         path: 'chatbot',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./modules/chatbot/chatbot.page').then((m) => m.ChatbotPage),
       },
+      // NUEVA RUTA DEL PERFIL
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./modules/profile/profile.routes').then((m) => m.profileRoutes),
+      },
+
 
       { path: '', pathMatch: 'full', redirectTo: 'home' },
     ],

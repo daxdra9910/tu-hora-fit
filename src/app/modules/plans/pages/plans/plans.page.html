@@ -1,0 +1,99 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Planes Disponibles</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <ion-list>
+      @for (n of [0,1,2]; track n) {
+        <ion-item lines="full">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="auto" class="icon-col">
+                <ion-skeleton-text animated style="width:48px;height:48px;border-radius:12px;"></ion-skeleton-text>
+              </ion-col>
+              <ion-col>
+                <ion-skeleton-text animated style="width:60%;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width:90%;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width:70%;"></ion-skeleton-text>
+              </ion-col>
+              <ion-col size="auto" class="price-col">
+                <ion-skeleton-text animated style="width:80px;height:24px;"></ion-skeleton-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      }
+    </ion-list>
+  } @else if (plans.length === 0) {
+    <div class="empty">
+      <ion-icon name="card-outline"></ion-icon>
+      <h4>No hay planes disponibles</h4>
+      <p>Próximamente tendremos nuevos planes para ti.</p>
+    </div>
+  } @else {
+    <ion-list class="ion-padding-horizontal">
+      @for (plan of plans; track plan.id) {
+        <!-- Card deslizable -->
+        <ion-item-sliding #sliding class="plan-card-wrap">
+          <ion-item lines="none" class="plan-card" [class.selected]="selectedPlan?.id === plan.id"
+                   (click)="selectPlan(plan); openSlide(sliding)">
+            <ion-grid class="ion-no-padding">
+              <ion-row class="ion-align-items-center">
+
+                <!-- Ícono del plan -->
+                <ion-col size="auto" class="icon-col">
+                  <div class="plan-icon" [class]="getPlanColor(plan)">
+                    <ion-icon [name]="getPlanIcon(plan)"></ion-icon>
+                  </div>
+                </ion-col>
+
+                <!-- Información del plan -->
+                <ion-col class="info">
+                  <h3 class="title">{{ plan.name }}</h3>
+                  <div class="details">
+                    <div class="credits">
+                      <strong>{{ plan.creditsTotal }} créditos</strong>
+                    </div>
+                    <div class="description" *ngIf="plan.description">
+                      {{ plan.description }}
+                    </div>
+                  </div>
+                </ion-col>
+
+                <!-- Precio -->
+                <ion-col size="auto" class="price-col">
+                  <div class="price">
+                    ${{ plan.price | number }}
+                  </div>
+                </ion-col>
+
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+
+          <!-- Slide: botón Comprar -->
+          <ion-item-options side="end" class="slide-actions">
+            <ion-item-option
+              class="slide-buy"
+              (click)="proceedToPayment(plan)"
+              aria-label="Comprar plan"
+            >
+              <ion-icon name="arrow-forward" slot="start"></ion-icon>
+              <span class="slide-btn-label">Comprar</span>
+            </ion-item-option>
+          </ion-item-options>
+
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <!-- pista “desliza” -->
+  <div class="swipe-hint">
+    <ion-icon name="swap-horizontal-outline"></ion-icon>
+    Desliza para comprar
+  </div>
+</ion-content>

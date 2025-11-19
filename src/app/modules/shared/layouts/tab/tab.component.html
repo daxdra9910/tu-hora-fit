@@ -1,5 +1,3 @@
-<!-- src/app/modules/shared/layouts/tab/tab.component.html -->
-
 <ion-menu side="end" menuId="optionsMenu" contentId="tabs-content">
   <ion-header>
     <ion-toolbar>
@@ -126,6 +124,18 @@
       <div class="section-title">Mi cuenta</div>
 
       <ion-list lines="none" class="menu-list">
+        <!-- 👉 NUEVO: Perfil del Cliente -->
+        <ion-menu-toggle auto-hide="true">
+          <ion-item
+            button
+            (click)="navigateTo('/profile')"
+            [class.active]="isActivePrefix('/profile')"
+          >
+            <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+            <ion-label>Mi Perfil</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
         <!-- Clases (Browse) -->
         <ion-menu-toggle auto-hide="true">
           <ion-item
@@ -147,6 +157,18 @@
           >
             <ion-icon slot="start" name="ticket-outline"></ion-icon>
             <ion-label>Reservas</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <!-- 👉 NUEVO: Planes (Cliente) -->
+        <ion-menu-toggle auto-hide="true">
+          <ion-item
+            button
+            (click)="navigateTo('/plans')"
+            [class.active]="isActivePrefix('/plans')"
+          >
+            <ion-icon slot="start" name="card-outline"></ion-icon>
+            <ion-label>Planes</ion-label>
           </ion-item>
         </ion-menu-toggle>
 
