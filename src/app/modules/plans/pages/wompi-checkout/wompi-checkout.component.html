@@ -52,6 +52,7 @@
                     type="text"
                     placeholder="MM"
                     [(ngModel)]="cardData.exp_month"
+                    (ionInput)="formatExpMonth($event)"
                     maxlength="2"
                     [disabled]="processing"
                   ></ion-input>
@@ -60,6 +61,7 @@
                     type="text"
                     placeholder="AA"
                     [(ngModel)]="cardData.exp_year"
+                    (ionInput)="formatExpYear($event)"
                     maxlength="2"
                     [disabled]="processing"
                   ></ion-input>
@@ -76,6 +78,7 @@
                   type="password"
                   placeholder="123"
                   [(ngModel)]="cardData.cvc"
+                  (ionInput)="formatCvc($event)"
                   maxlength="4"
                   [disabled]="processing"
                 ></ion-input>
@@ -155,9 +158,9 @@
     <!-- Logos de Seguridad -->
     <div class="security-logos">
       <div class="logos-container">
-        <img src="/assets/images/visa-secure.png" alt="Visa Secure" class="security-logo">
-        <img src="/assets/images/mastercard-securecode.png" alt="Mastercard SecureCode" class="security-logo">
-        <img src="/assets/images/pci-dss.png" alt="PCI DSS Compliant" class="security-logo">
+        <div class="security-logo">💳</div>
+        <div class="security-logo">🔒</div>
+        <div class="security-logo">🛡️</div>
       </div>
       <p class="security-text">Transacción protegida por Wompi</p>
     </div>
