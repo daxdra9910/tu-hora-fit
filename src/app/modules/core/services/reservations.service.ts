@@ -92,7 +92,7 @@ export class ReservationService {
 
     const parsed = timeStr.includes('M')
       ? DateTime.fromFormat(timeStr, 'h:mm a', { zone: TZ, locale: LOCALE })
-      : DateTime.fromFormat(timeStr, 'HH:mm',   { zone: TZ, locale: LOCALE });
+      : DateTime.fromFormat(timeStr, 'HH:mm', { zone: TZ, locale: LOCALE });
 
     if (!parsed.isValid) return undefined;
 
@@ -340,12 +340,12 @@ export class ReservationService {
     const scheduleIds = [...new Set(reservations.map(r => r.scheduleId))];
     const schedules = await this.getSchedulesByIds(scheduleIds);
     const scheduleMap: Record<string, ScheduleMinimal> = {};
-    schedules.forEach(s => scheduleMap[s.id] = s);
+    schedules.forEach(s => (scheduleMap[s.id] = s));
 
     const classIds = [...new Set(schedules.map(s => s.idClass))];
     const classes = await this.getClassesByIds(classIds);
     const classMap: Record<string, ClassModelMin> = {};
-    classes.forEach(c => classMap[c.id] = c);
+    classes.forEach(c => (classMap[c.id] = c));
 
     const rows: DetailedUserReservation[] = reservations
       .map(r => {
@@ -353,14 +353,16 @@ export class ReservationService {
         if (!s) return null;
         const startISO = s.start;
         const endISO = s.end;
-        const cls = classMap[s.id] ?? classMap[s.idClass] ?? { id: s.idClass, name: 'Clase' };
+
+        // ✅ Mapeo correcto por idClass
+        const cls = classMap[s.idClass] ?? { id: s.idClass, name: 'Clase' };
 
         return {
           reservation: r,
           schedule: { id: s.id, idClass: s.idClass, start: startISO, end: endISO },
           class: {
             id: cls.id,
-            name: cls.name,
+            name: cls.name || 'Clase',
             description: cls.description ?? '',
             imageURL: (cls as any).imageURL ?? 'assets/placeholder-class.jpg'
           },

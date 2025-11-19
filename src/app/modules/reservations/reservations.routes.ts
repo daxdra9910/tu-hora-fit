@@ -11,7 +11,6 @@ const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'browse' },
 
       // Cliente: explorar clases (solo CLIENT)
-      // 👉 Página de explorar clases (actual)
       {
         path: 'browse',
         canActivate: [clientOnlyGuard],
@@ -30,7 +29,6 @@ const routes: Routes = [
       },
 
       // Cliente: mis reservas (solo CLIENT)
-      // 👉 NUEVA página: Mis reservas (MinePage)
       {
         path: 'mine',
         canActivate: [clientOnlyGuard],
