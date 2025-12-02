@@ -8,6 +8,10 @@ export interface PlanBase {
   price: number;
   description?: string;
   state: StateEnum;
+
+  // 👇 AGREGA ESTOS CAMPOS
+  fecha?: string;
+  hora?: string;
 }
 
 /** Para crear */

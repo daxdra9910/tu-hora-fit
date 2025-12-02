@@ -1,4 +1,4 @@
-/** Respuesta de Wompi al crear una transacción */
+// 📄 shared/models/wompi-transaction.model.ts - VERSIÓN CORREGIDA
 export interface WompiTransactionResponse {
   data: {
     id: string;
@@ -13,12 +13,7 @@ export interface WompiTransactionResponse {
       type: string;
       extra?: any;
     };
-    status:
-      | 'PENDING'      // Pendiente
-      | 'APPROVED'     // Aprobado
-      | 'DECLINED'     // Rechazado
-      | 'VOIDED'       // Anulado
-      | 'ERROR';       // Error
+    status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'VOIDED' | 'ERROR';
     status_message?: string;
     shipping_address?: any;
     payment_link_id?: string;
@@ -37,7 +32,6 @@ export interface WompiTransactionResponse {
   };
 }
 
-/** Request para crear transacción en Wompi */
 export interface WompiTransactionRequest {
   amount_in_cents: number;
   currency: string;
@@ -55,9 +49,9 @@ export interface WompiTransactionRequest {
   };
   payment_source_id?: number;
   redirect_url?: string;
+  acceptance_token: string;
 }
 
-/** Respuesta de Wompi para generar token de tarjeta */
 export interface WompiTokenResponse {
   data: {
     id: string;
@@ -74,16 +68,15 @@ export interface WompiTokenResponse {
   };
 }
 
-/** Datos de la tarjeta para tokenización */
 export interface WompiCardData {
-  number: string;        // Número de tarjeta
-  cvc: string;          // Código de seguridad
-  exp_month: string;    // Mes expiración (01-12)
-  exp_year: string;     // Año expiración (YYYY)
-  card_holder: string;  // Nombre en tarjeta
+  number: string;
+  cvc: string;
+  exp_month: string;
+  exp_year: string;
+  card_holder: string;
+  installments?: number;
 }
 
-/** Webhook de Wompi */
 export interface WompiWebhookPayload {
   event: 'transaction.updated';
   data: {
