@@ -54,14 +54,28 @@
               <ion-text slot="end" class="amount">{{ formatPrice(payment.amount) }}</ion-text>
             </ion-item>
 
+            <!-- Fecha y hora separadas -->
             <ion-item>
               <ion-label>Fecha y Hora</ion-label>
-              <ion-text slot="end">{{ formatDate(payment.createdAt) }}</ion-text>
+              <div slot="end" class="date-time-container">
+                <span class="date-part">{{ formatDateOnly(payment.createdAt) }}</span>
+                <span class="time-part">{{ formatTimeOnly(payment.createdAt) }}</span>
+              </div>
             </ion-item>
 
+            <!-- Referencia de pago -->
             <ion-item>
-              <ion-label>Referencia</ion-label>
+              <ion-label>Referencia de Pago</ion-label>
               <ion-text slot="end" class="reference">{{ payment.wompiReference || payment.id }}</ion-text>
+            </ion-item>
+
+            <!-- Estado del pago -->
+            <ion-item>
+              <ion-label>Estado</ion-label>
+              <ion-text slot="end" color="success">
+                <ion-icon name="checkmark-circle" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+                Completado
+              </ion-text>
             </ion-item>
           </ion-list>
         </ion-card-content>
@@ -100,35 +114,17 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- Acciones Rápidas -->
-      <ion-card class="actions-card">
-        <ion-card-header>
-          <ion-card-title>Acciones Disponibles</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="action-buttons">
-            <ion-button expand="block" fill="outline" (click)="downloadReceipt()">
-              <ion-icon name="download" slot="start"></ion-icon>
-              Descargar Recibo
-            </ion-button>
-
-            <ion-button expand="block" fill="outline" (click)="shareSuccess()">
-              <ion-icon name="share-social" slot="start"></ion-icon>
-              Compartir
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-
       <!-- Botón Principal -->
       <div class="main-action">
         <ion-button expand="block" size="large" (click)="goToPlans()" class="continue-button">
-          <ion-icon name="card" slot="start"></ion-icon>
-          Continuar Explorando Planes
+          <ion-icon name="home" slot="start"></ion-icon>
+          Continuar
         </ion-button>
 
         <p class="help-text">
-          ¿Necesitas ayuda? <a href="/support">Contáctanos aquí</a>
+          ¿Necesitas ayuda o tienes preguntas sobre tu compra?
+          <br>
+          <a href="/support">Contáctanos aquí</a>
         </p>
       </div>
 
