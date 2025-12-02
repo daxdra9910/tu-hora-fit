@@ -13,12 +13,7 @@ export interface WompiTransactionResponse {
       type: string;
       extra?: any;
     };
-    status:
-      | 'PENDING'      // Pendiente
-      | 'APPROVED'     // Aprobado
-      | 'DECLINED'     // Rechazado
-      | 'VOIDED'       // Anulado
-      | 'ERROR';       // Error
+    status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'VOIDED' | 'ERROR';
     status_message?: string;
     shipping_address?: any;
     payment_link_id?: string;
@@ -55,6 +50,7 @@ export interface WompiTransactionRequest {
   };
   payment_source_id?: number;
   redirect_url?: string;
+  acceptance_token: string;
 }
 
 /** Respuesta de Wompi para generar token de tarjeta */
@@ -81,6 +77,7 @@ export interface WompiCardData {
   exp_month: string;    // Mes expiración (01-12)
   exp_year: string;     // Año expiración (YYYY)
   card_holder: string;  // Nombre en tarjeta
+  installments?: number;
 }
 
 /** Webhook de Wompi */

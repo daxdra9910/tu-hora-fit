@@ -1,0 +1,6 @@
+﻿{
+  "functions": {
+    "runtime": "nodejs20", 
+    "predeploy": []
+  }
+}

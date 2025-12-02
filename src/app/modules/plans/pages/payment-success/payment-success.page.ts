@@ -8,7 +8,7 @@ import {
   IonList, IonButtons, IonText
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { checkmarkCircle, arrowBack, card, download, shareSocial } from 'ionicons/icons';
+import { checkmarkCircle, arrowBack, card, download, shareSocial, calendar, home } from 'ionicons/icons';
 
 import { PaymentsService } from '../../../core/services/payments.service';
 import { PlansService } from '../../../core/services/plans.service';
@@ -48,7 +48,7 @@ export class PaymentSuccessPage implements OnInit {
   };
 
   constructor() {
-    addIcons({ checkmarkCircle, arrowBack, card, download, shareSocial });
+    addIcons({ checkmarkCircle, arrowBack, card, download, shareSocial, calendar, home });
   }
 
   async ngOnInit() {
@@ -121,6 +121,65 @@ export class PaymentSuccessPage implements OnInit {
     }).format(price);
   }
 
+  // Formato compacto para fecha completa
+  formatDateCompact(timestamp: any): string {
+    if (!timestamp) return 'Fecha no disponible';
+
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return new Intl.DateTimeFormat('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  // Método para solo la fecha
+  formatDateOnly(timestamp: any): string {
+    if (!timestamp) return 'Fecha no disponible';
+
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return new Intl.DateTimeFormat('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(date);
+  }
+
+  // Método para solo la hora
+  formatTimeOnly(timestamp: any): string {
+    if (!timestamp) return 'Hora no disponible';
+
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return new Intl.DateTimeFormat('es-CO', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  // Método para nombre del método de pago
+  getPaymentMethodName(method: string | undefined): string {
+    if (!method) return 'No especificado';
+
+    const methods: { [key: string]: string } = {
+      'credit_card': 'Tarjeta de Crédito',
+      'debit_card': 'Tarjeta de Débito',
+      'pse': 'PSE',
+      'cash': 'Efectivo',
+      'transfer': 'Transferencia Bancaria',
+      'nequi': 'Nequi',
+      'daviplata': 'Daviplata',
+      'card': 'Tarjeta',
+      'CARD': 'Tarjeta',
+      'PSE': 'PSE',
+      'BANK_TRANSFER': 'Transferencia Bancaria'
+    };
+
+    return methods[method] || method;
+  }
+
+  // Método original que ya tenías
   formatDate(timestamp: any): string {
     if (!timestamp) return 'Fecha no disponible';
 
