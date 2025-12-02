@@ -152,6 +152,27 @@
   }
 }
 
+.actions-card {
+  margin-bottom: 24px;
+  border-radius: 16px;
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    ion-button {
+      --border-radius: 12px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+
+      ion-icon {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
 .main-action {
   margin-top: 24px;
 
@@ -257,5 +278,13 @@
   .success-container {
     max-width: 500px;
     padding: 32px;
+  }
+
+  .actions-card .action-buttons {
+    flex-direction: row;
+
+    ion-button {
+      flex: 1;
+    }
   }
 }

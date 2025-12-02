@@ -114,6 +114,26 @@
         </ion-card-content>
       </ion-card>
 
+      <!-- Acciones Rápidas -->
+      <ion-card class="actions-card">
+        <ion-card-header>
+          <ion-card-title>Acciones Disponibles</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="action-buttons">
+            <ion-button expand="block" fill="outline" (click)="downloadReceipt()">
+              <ion-icon name="download" slot="start"></ion-icon>
+              Descargar Recibo
+            </ion-button>
+
+            <ion-button expand="block" fill="outline" (click)="shareSuccess()">
+              <ion-icon name="share-social" slot="start"></ion-icon>
+              Compartir
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
       <!-- Botón Principal -->
       <div class="main-action">
         <ion-button expand="block" size="large" (click)="goToPlans()" class="continue-button">
