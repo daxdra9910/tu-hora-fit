@@ -1,4 +1,3 @@
-// src/app/modules/shared/layouts/tab/tab.component.ts
 import { Component, inject } from '@angular/core';
 import {
   IonButton,
@@ -16,8 +15,7 @@ import {
   IonLabel,
   IonMenuToggle,
   MenuController,
-  NavController,
-  IonRouterOutlet
+  NavController
 } from '@ionic/angular/standalone';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -42,14 +40,86 @@ export class TabComponent {
   private readonly navCtrl = inject(NavController);
   private readonly router = inject(Router);
 
-  /** Usuario (para foto/nombre en el header) */
   user$ = this.authService.authState$;
 
-  /** Rol (usa helpers del AuthService) */
   get isAdmin(): boolean  { return this.authService.hasRole('admin'); }
   get isClient(): boolean { return this.authService.hasRole('client'); }
 
-  /** Marca activo comparando por prefijo (tolerante a subrutas y querystrings) */
+  // Navegación para CLIENTES
+  navigateClient(path: string) {
+    switch(path) {
+      case 'home':
+        if (this.isClient) this.navCtrl.navigateRoot('/home/client');
+        break;
+      case 'reservations':
+        if (this.isClient) this.navCtrl.navigateRoot('/reservations/mine');
+        break;
+      case 'notifications':
+        if (this.isClient) this.navCtrl.navigateRoot('/notifications/mine');
+        break;
+    }
+  }
+
+  // Navegación para ADMINISTRADORES
+  navigateAdmin(path: string) {
+    switch(path) {
+      case 'home':
+        this.navCtrl.navigateRoot('/home');
+        break;
+      case 'users':
+        this.navCtrl.navigateRoot('/admin/customers');
+        break;
+      case 'schedule':
+        this.navCtrl.navigateRoot('/admin/schedule');
+        break;
+      case 'payments':
+        this.navCtrl.navigateRoot('/admin/plans');
+        break;
+    }
+  }
+
+  // Verificar ruta activa para CLIENTE
+  isActiveClient(path: string): boolean {
+    if (!this.isClient) return false;
+
+    const currentUrl = this.router.url.split('?')[0];
+    const clientRoutes: Record<string, string[]> = {
+      'home': ['/home/client'],
+      'reservations': ['/reservations/mine'],
+      'notifications': ['/notifications/mine']
+    };
+
+    if (clientRoutes[path]) {
+      return clientRoutes[path].some(route =>
+        currentUrl === route || currentUrl.startsWith(route + '/')
+      );
+    }
+
+    return false;
+  }
+
+  // Verificar ruta activa para ADMIN
+  isActiveAdmin(path: string): boolean {
+    if (!this.isAdmin) return false;
+
+    const currentUrl = this.router.url.split('?')[0];
+    const adminRoutes: Record<string, string[]> = {
+      'home': ['/home'],
+      'users': ['/admin/customers'],
+      'schedule': ['/admin/schedule'],
+      'payments': ['/admin/plans']
+    };
+
+    if (adminRoutes[path]) {
+      return adminRoutes[path].some(route =>
+        currentUrl === route || currentUrl.startsWith(route + '/')
+      );
+    }
+
+    return false;
+  }
+
+  // Para menú lateral
   isActivePrefix(prefix: string): boolean {
     const url = (this.router.url || '').split('?')[0];
     return url === prefix || url.startsWith(prefix + '/');

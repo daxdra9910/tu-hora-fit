@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export default [
   {
-    path: 'inventory',
+    path: '',
     loadComponent: () =>
       import('./pages/inventory/inventory.page').then((m) => m.InventoryPage)
   }

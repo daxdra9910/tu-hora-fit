@@ -1,95 +1,152 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Home</ion-title>
+    <ion-title>Dashboard Administrador</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+
+<ion-content class="ion-padding">
+
+  <!-- Banner -->
+  <app-banner></app-banner>
+
+  <!-- Resumen de estadísticas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen General</ion-card-title>
+      <ion-card-subtitle>Datos actualizados en tiempo real</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list lines="none">
+
+        <!-- Usuarios activos -->
+        <ion-item button detail="true" (click)="goToCustomers()">
+          <ion-icon name="people-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>Usuarios activos</h3>
+            <p>2 clientes registrados</p>
+          </ion-label>
+          <ion-text slot="end" color="primary">
+            <h2>2</h2>
+          </ion-text>
+        </ion-item>
+
+        <!-- Clases hoy -->
+        <ion-item button detail="true" (click)="goToClasses()">
+          <ion-icon name="calendar-outline" slot="start" color="success"></ion-icon>
+          <ion-label>
+            <h3>Clases hoy</h3>
+            <p>2 clases programadas</p>
+          </ion-label>
+          <ion-text slot="end" color="success">
+            <h2>2</h2>
+          </ion-text>
+        </ion-item>
+
+        <!-- Reservas activas -->
+        <ion-item button detail="true" (click)="goToReservations()">
+          <ion-icon name="checkmark-outline" slot="start" color="warning"></ion-icon>
+          <ion-label>
+            <h3>Reservas activas</h3>
+            <p>2 reservas confirmadas</p>
+          </ion-label>
+          <ion-text slot="end" color="warning">
+            <h2>2</h2>
+          </ion-text>
+        </ion-item>
+
+        <!-- Ingresos mes -->
+        <ion-item button detail="true" (click)="goToRevenue()">
+          <ion-icon name="cash-outline" slot="start" color="danger"></ion-icon>
+          <ion-label>
+            <h3>Ingresos del mes</h3>
+            <p>Total acumulado</p>
+          </ion-label>
+          <ion-text slot="end" color="danger">
+            <h2>$1.200.000</h2>
+          </ion-text>
+        </ion-item>
+
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Acciones rápidas -->
   <ion-grid>
+
     <ion-row>
-      <ion-col>
-        <app-banner></app-banner>
+      <ion-col size="12">
+        <h2 class="section-title">Acciones Rápidas</h2>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-col>
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Resumen</ion-card-title>
-          </ion-card-header>
+
+      <!-- RESERVAS - VERIFICA QUE TENGA (click)="goToReservationsPage()" -->
+      <ion-col size="6">
+        <ion-card color="warning" button (click)="goToReservationsPage()" class="action-card">
+          <!-- ^^^ AQUÍ DEBE ESTAR goToReservationsPage() ^^^ -->
           <ion-card-content>
-            <ion-list lines="none">
-              <ion-item>
-                <ion-icon name="people-outline" slot="start"></ion-icon>
-                <ion-text><b>Usuarios activos:</b> 2</ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="calendar-outline" slot="start"></ion-icon>
-                <ion-text><b>Clases hoy:</b> 2</ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-                <ion-text><b>Reservas activas:</b> 2</ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="card-outline" slot="start"></ion-icon>
-                <ion-text><b>Ingresos mes:</b> $1.200.000</ion-text>
-              </ion-item>
-            </ion-list>
+            <div class="card-content">
+              <!-- Icono de ticket -->
+              <ion-icon name="ticket-outline" size="large"></ion-icon>
+              <div class="text-content">
+                <!-- Texto "Reservas" -->
+                <h3>Reservas</h3>
+              </div>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-card color="warning">
+
+      <!-- Crear cliente -->
+      <ion-col size="6">
+        <ion-card color="primary" button (click)="goToCreateCustomer()" class="action-card">
           <ion-card-content>
-            <ion-row class="ion-align-items-center">
-              <ion-icon name="calendar-outline" size="large"></ion-icon>
-              <ion-text class="ion-padding-start">
-                <h2>Crear clase</h2>
-              </ion-text>
-            </ion-row>
+            <div class="card-content">
+              <ion-icon name="person-add-outline" size="large"></ion-icon>
+              <div class="text-content">
+                <h3>Crear cliente</h3>
+              </div>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
-      <ion-col>
-        <ion-card color="primary">
-          <ion-card-content>
-            <ion-row class="ion-align-items-center">
-              <ion-icon name="person-outline" size="large"></ion-icon>
-              <ion-text class="ion-padding-start">
-                <h2>Crear cliente</h2>
-              </ion-text>
-            </ion-row>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+
     </ion-row>
+
     <ion-row>
-      <ion-col>
-        <ion-card color="secondary">
+
+      <!-- Reportes -->
+      <ion-col size="6">
+        <ion-card color="secondary" button (click)="goToReports()" class="action-card">
           <ion-card-content>
-            <ion-row class="ion-align-items-center">
+            <div class="card-content">
               <ion-icon name="bar-chart-outline" size="large"></ion-icon>
-              <ion-text class="ion-padding-start">
-                <h2>Reportes</h2>
-              </ion-text>
-            </ion-row>
+              <div class="text-content">
+                <h3>Reportes</h3>
+              </div>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
-      <ion-col>
-        <ion-card color="tertiary">
+
+      <!-- Pagos -->
+      <ion-col size="6">
+        <ion-card color="tertiary" button (click)="goToPayments()" class="action-card">
           <ion-card-content>
-            <ion-row class="ion-align-items-center">
+            <div class="card-content">
               <ion-icon name="cash-outline" size="large"></ion-icon>
-              <ion-text class="ion-padding-start">
-                <h2>Pagos</h2>
-              </ion-text>
-            </ion-row>
+              <div class="text-content">
+                <h3>Pagos</h3>
+              </div>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
+
     </ion-row>
+
   </ion-grid>
+
 </ion-content>
