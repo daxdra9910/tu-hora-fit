@@ -4,7 +4,6 @@
   max-width: 100%;
   margin: 0 auto;
   background: linear-gradient(135deg, var(--ion-color-light) 0%, #f8f9fa 100%);
-  /* REMOVED: min-height: 100%; - Esto bloqueaba el scroll */
 }
 
 /* Loading State Elegante */
@@ -13,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vh; /* Reducido para permitir scroll */
+  height: 50vh;
   text-align: center;
 
   ion-spinner {
@@ -240,6 +239,96 @@
   }
 }
 
+/* NUEVO: Card de pago real */
+.real-payment-card {
+  margin: 24px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, #4caf50 100%);
+  box-shadow: 0 8px 32px rgba(92, 213, 136, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+  }
+
+  ion-card-header {
+    padding: 20px 20px 12px;
+    background: transparent;
+  }
+
+  ion-card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    margin: 0;
+
+    ion-icon {
+      margin-right: 10px;
+      font-size: 1.4rem;
+    }
+  }
+
+  ion-card-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    margin-top: 6px;
+    font-weight: 500;
+
+    strong {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin: 0 4px;
+    }
+  }
+
+  ion-card-content {
+    padding: 16px 20px 20px;
+  }
+
+  .pay-button {
+    --border-radius: 16px;
+    --padding-top: 22px;
+    --padding-bottom: 22px;
+    --background: white;
+    --background-hover: #f8f9fa;
+    --background-activated: #f1f3f4;
+    --color: var(--ion-color-primary);
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    height: 60px;
+
+    &:not([disabled]):active {
+      transform: scale(0.98);
+    }
+
+    ion-icon {
+      font-size: 1.4rem;
+      margin-right: 10px;
+      color: var(--ion-color-primary);
+    }
+
+    ion-spinner {
+      margin-right: 10px;
+      --color: var(--ion-color-primary);
+    }
+  }
+}
+
 /* Action Buttons - Premium */
 .action-buttons {
   display: flex;
@@ -247,7 +336,7 @@
   gap: 16px;
   margin-top: 16px;
   padding: 0 8px;
-  margin-bottom: 40px; /* Espacio para scroll */
+  margin-bottom: 40px;
 
   .pay-button {
     --border-radius: 16px;
@@ -304,7 +393,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 60vh; /* Reducido para permitir scroll */
+  height: 60vh;
   padding: 0 32px;
   text-align: center;
   background: linear-gradient(135deg, #ffe6e6 0%, #ffcccc 100%);
@@ -360,6 +449,20 @@ ion-card {
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/* Micro-interacciones */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(92, 213, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(92, 213, 136, 0.8);
+  }
+}
+
+.real-payment-card .pay-button:not([disabled]) {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
   .payment-container {
@@ -396,30 +499,173 @@ ion-card {
   .benefits-card {
     background: linear-gradient(145deg, var(--ion-color-step-100) 0%, var(--ion-color-step-150) 100%);
     border-color: var(--ion-color-step-200);
+
+    .plan-title {
+      background: linear-gradient(135deg, var(--ion-color-light) 0%, var(--ion-color-medium) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 
-  .benefits-card ion-item {
-    background: var(--ion-color-step-150);
-    border-color: var(--ion-color-step-200);
+  .benefits-card {
+    ion-item {
+      background: var(--ion-color-step-150);
+      border-color: var(--ion-color-step-200);
+
+      ion-label {
+        color: var(--ion-color-light);
+      }
+    }
   }
 
   .payment-info {
     background: linear-gradient(135deg, #332900 0%, #4d3800 100%);
+
+    ion-card-title {
+      color: #ffd54f;
+
+      ion-icon {
+        color: #ffd54f;
+      }
+    }
+
+    .security-notice p {
+      color: #ffd54f;
+    }
+
+    .small-text {
+      color: #ffc107;
+    }
+  }
+
+  .real-payment-card {
+    background: linear-gradient(135deg, var(--ion-color-primary-shade) 0%, #3d8b40 100%);
+
+    .pay-button {
+      --background: var(--ion-color-step-50);
+      --color: var(--ion-color-primary);
+      --background-hover: var(--ion-color-step-100);
+      --background-activated: var(--ion-color-step-150);
+    }
   }
 }
 
-/* Micro-interacciones */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(92, 213, 136, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(92, 213, 136, 0.8);
+/* Alertas personalizadas */
+ion-alert {
+  .alert-wrapper {
+    border-radius: 20px;
+    max-width: 90%;
+
+    .alert-head {
+      padding: 24px 24px 16px;
+
+      .alert-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--ion-color-primary);
+      }
+    }
+
+    .alert-message {
+      padding: 0 24px 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--ion-color-dark);
+      white-space: pre-line;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .alert-button-group {
+      padding: 0 24px 20px;
+
+      .alert-button {
+        border-radius: 12px;
+        font-weight: 600;
+        margin: 0;
+
+        &:first-child {
+          margin-right: 8px;
+        }
+      }
+    }
   }
 }
 
-.pay-button:not([disabled]) {
-  animation: pulse-glow 2s ease-in-out infinite;
+/* Ajustes para mejor scroll */
+ion-content {
+  --background: linear-gradient(135deg, var(--ion-color-light) 0%, #f8f9fa 100%);
+
+  &.ios {
+    --background: var(--ion-background-color);
+  }
 }
 
-/* REMOVIDO: perspective y efectos que podían interferir con scroll */
+/* Asegurar que el contenido tenga suficiente espacio */
+.payment-container {
+  padding-bottom: 100px;
+}
+
+/* Estilos específicos para iOS */
+.ios {
+  .pay-button {
+    --border-radius: 18px;
+  }
+
+  .action-buttons {
+    gap: 20px;
+  }
+}
+
+/* Estilos específicos para Android */
+.md {
+  .pay-button {
+    --border-radius: 14px;
+  }
+
+  ion-button {
+    text-transform: none;
+  }
+}
+
+/* Soporte para dispositivos muy pequeños */
+@media (max-width: 360px) {
+  .plan-summary {
+    .price-section {
+      .amount {
+        font-size: 2.4rem;
+      }
+    }
+  }
+
+  .action-buttons {
+    .pay-button {
+      --padding-top: 20px;
+      --padding-bottom: 20px;
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Mejorar la legibilidad en modo claro/oscuro automático */
+:root {
+  .payment-info {
+    @media (prefers-color-scheme: dark) {
+      background: linear-gradient(135deg, #332900 0%, #4d3800 100%);
+    }
+  }
+}
+
+/* Efecto de hover solo en dispositivos con hover */
+@media (hover: hover) {
+  .pay-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(92, 213, 136, 0.6) !important;
+  }
+
+  .benefits-card ion-item:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
