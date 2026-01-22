@@ -23,5 +23,5 @@ export const environment = {
     currency: 'COP'
   },
 
-  geminiApiKey: 'AIzaSyAk6C41Phc8-8I67KT-NaC46OBp4XX-iqI'
+  geminiApiKey: ''
 };
