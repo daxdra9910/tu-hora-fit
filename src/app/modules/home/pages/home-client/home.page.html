@@ -8,10 +8,12 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding home-content">
-  <!-- 👋 Sección de Bienvenida -->
+
+  <!-- 👋 Bienvenida -->
   <div class="welcome-section">
     <h1 class="welcome-title">
-      {{ obtenerSaludo() }}, <span class="user-name">{{ nombreUsuario | uppercase }}</span>!
+      {{ obtenerSaludo() }},
+      <span class="user-name">{{ nombreUsuario | uppercase }}</span>!
     </h1>
   </div>
 
@@ -45,43 +47,64 @@
   <ion-card class="reservations-card" (click)="irAMisReservas()" button>
     <ion-card-header class="reservations-header">
       <ion-icon name="ticket-outline" class="title-icon"></ion-icon>
+
       <div class="reservations-info">
         <h3 class="reservations-title">Mis Reservas</h3>
+
         <p class="reservations-text" *ngIf="reservasPendientes > 0">
           {{ reservasPendientes }} activa{{ reservasPendientes > 1 ? 's' : '' }}
         </p>
-        <p class="reservations-text" *ngIf="reservasPendientes === 0">Sin reservas activas</p>
+
+        <p class="reservations-text" *ngIf="reservasPendientes === 0">
+          Sin reservas activas
+        </p>
       </div>
-      <ion-badge color="primary" *ngIf="reservasPendientes > 0">{{ reservasPendientes }}</ion-badge>
+
+      <ion-badge color="primary" *ngIf="reservasPendientes > 0">
+        {{ reservasPendientes }}
+      </ion-badge>
     </ion-card-header>
   </ion-card>
 
   <!-- 📆 Calendario -->
   <div class="calendar-section">
     <h2 class="month-title">{{ mesActual }}</h2>
+
     <ion-card class="calendar-card">
       <ion-card-content class="calendar-content">
         <ion-grid class="calendar-grid">
+
+          <!-- Días de la semana -->
           <ion-row class="week-days-row">
-            <ion-col *ngFor="let dia of diasSemana" class="week-day-col">
-              <span class="week-day">{{ dia }}</span>
+            <ion-col
+              *ngFor="let dia of diasSemana"
+              class="week-day-col"
+            >
+              {{ dia }}
             </ion-col>
           </ion-row>
 
+          <!-- Días del mes -->
           <ion-row class="month-days-row">
-            <ion-col
+            <div
+              class="month-day-cell"
               *ngFor="let dia of diasMes"
-              class="month-day-col"
-              [class.current-day]="esHoy(dia)"
-              [class.selected-day]="esSeleccionado(dia)"
             >
-              <div class="day-number" (click)="seleccionarDia(dia)">
+              <div
+                class="day-number"
+                [class.empty-day]="dia === null"
+                [class.current-day]="dia !== null && esHoy(dia)"
+                [class.selected-day]="dia !== null && esSeleccionado(dia)"
+                (click)="dia !== null && seleccionarDia(dia)"
+              >
                 {{ dia }}
               </div>
-            </ion-col>
+            </div>
           </ion-row>
+
         </ion-grid>
       </ion-card-content>
     </ion-card>
   </div>
+
 </ion-content>

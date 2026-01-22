@@ -2,7 +2,6 @@
   <ion-toolbar>
     <ion-title>Mi Perfil</ion-title>
     <ion-buttons slot="end">
-      <!-- Botón de editar solo con icono -->
       <ion-button (click)="editProfile()" fill="clear">
         <ion-icon name="pencil" slot="icon-only"></ion-icon>
       </ion-button>
@@ -12,42 +11,46 @@
 
 <ion-content>
   <div class="profile-container">
+
     <!-- Loading -->
     <div *ngIf="loading" class="loading-container">
       <p>Cargando perfil...</p>
     </div>
 
-    <!-- Tarjeta de perfil -->
+    <!-- Perfil -->
     <div class="profile-card" *ngIf="!loading && user">
-      <!-- Header compacto -->
+
+      <!-- HEADER -->
       <div class="profile-header-card">
-        <!-- Avatar y nombre juntos -->
         <div class="profile-main-info">
+
           <ion-avatar class="profile-avatar">
-            <!-- Si hay photoURL, mostrar imagen -->
             <ion-img
               *ngIf="user?.photoURL"
               [src]="user.photoURL"
               alt="Foto de perfil"
               class="avatar-image">
             </ion-img>
-            <!-- Si NO hay photoURL, mostrar icono predeterminado -->
+
             <div *ngIf="!user?.photoURL" class="default-avatar">
               <ion-icon name="person" class="default-icon"></ion-icon>
             </div>
           </ion-avatar>
 
           <div class="profile-name-section">
-            <h1 class="greeting">HOLA, {{ user?.displayName?.toUpperCase() || 'USUARIO' }}</h1>
+            <h1 class="greeting">
+              HOLA, {{ user?.displayName?.toUpperCase() || 'USUARIO' }}
+            </h1>
             <div class="user-role">{{ getRoleText(user?.role) }}</div>
           </div>
+
         </div>
       </div>
 
-      <!-- Información Personal -->
+      <!-- INFORMACIÓN PERSONAL -->
       <div class="info-section">
         <h3 class="info-title">
-          <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+          <ion-icon name="person-circle-outline"></ion-icon>
           Información Personal
         </h3>
 
@@ -57,7 +60,9 @@
           </div>
           <div class="info-content">
             <span class="label">Fecha de Nacimiento</span>
-            <span class="value">{{ user?.birthdate ? formatDate(user.birthdate) : 'No especificada' }}</span>
+            <span class="value">
+              {{ user?.birthdate ? formatDate(user.birthdate) : 'No especificada' }}
+            </span>
           </div>
         </div>
 
@@ -82,10 +87,10 @@
         </div>
       </div>
 
-      <!-- Datos de Membresía -->
+      <!-- MEMBRESÍA -->
       <div class="info-section">
         <h3 class="info-title">
-          <ion-icon name="card-outline" slot="start"></ion-icon>
+          <ion-icon name="card-outline"></ion-icon>
           Membresía
         </h3>
 
@@ -105,9 +110,10 @@
           </div>
           <div class="info-content">
             <span class="label">Estado</span>
-            <span class="value status" [class.active]="user?.state === StateEnum.ACTIVE"
-                                  [class.inactive]="user?.state === StateEnum.INACTIVE">
-              {{ getStateText(user?.state) }}
+            <span
+              class="value status"
+              [ngClass]="getMembershipState().css">
+              {{ getMembershipState().text }}
             </span>
           </div>
         </div>
@@ -122,12 +128,14 @@
           </div>
         </div>
       </div>
+
     </div>
 
-    <!-- Mensaje si no hay usuario -->
+    <!-- Sin usuario -->
     <div *ngIf="!loading && !user" class="no-user">
       <ion-icon name="person-outline" class="no-user-icon"></ion-icon>
       <p>No se encontró información del usuario</p>
     </div>
+
   </div>
 </ion-content>

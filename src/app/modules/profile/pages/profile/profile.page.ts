@@ -4,14 +4,13 @@ import {
   IonButton, IonIcon, IonAvatar, IonImg, IonButtons
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { UserService } from '../../../core/services/user.service';
-import { UserModel } from '../../../shared/models/user.model';
 import { UtilsService } from '../../../shared/services/utils.service';
 import { RoleEnum } from '../../../shared/enums/role.enum';
 import { StateEnum } from '../../../shared/enums/state.enum';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { COLLECTIONS } from '../../../shared/constants/firebase.constant';
+import { CreditsService, UserCredits } from '../../../core/services/credits.service';
 import { addIcons } from 'ionicons';
 import {
   pencil,
@@ -25,6 +24,7 @@ import {
   timeOutline,
   starOutline
 } from 'ionicons/icons';
+import { UserModel } from '../../../shared/models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -38,15 +38,17 @@ import {
   ]
 })
 export class ProfilePage implements OnInit {
-  private userService = inject(UserService);
-  private utilsService = inject(UtilsService);
+
   private authService = inject(AuthService);
   private firestore = inject(Firestore);
+  private utilsService = inject(UtilsService);
+  private creditsService = inject(CreditsService);
 
   user: UserModel | null = null;
+  userCredits: UserCredits | null = null;
   loading = true;
 
-  // Exponer los enums al template
+  // enums para template
   readonly StateEnum = StateEnum;
 
   constructor() {
@@ -70,44 +72,33 @@ export class ProfilePage implements OnInit {
 
   async loadUserProfile() {
     try {
-      // Obtener el usuario actual de Firebase Auth
       const firebaseUser = await this.getCurrentFirebaseUser();
 
-      if (firebaseUser) {
-        // Obtener los datos completos del usuario desde Firestore
-        const userRef = doc(this.firestore, COLLECTIONS.USERS, firebaseUser.uid);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          this.user = {
-            ...userData,
-            uid: userDoc.id
-          } as UserModel;
-          console.log('Usuario cargado:', this.user);
-          console.log('PhotoURL:', this.user.photoURL);
-        } else {
-          console.error('No se encontraron datos del usuario en Firestore');
-          this.utilsService.presentToast({
-            message: 'No se encontró información del perfil',
-            duration: 2500,
-            color: 'warning'
-          });
-        }
-      } else {
-        console.error('No hay usuario autenticado');
-        this.utilsService.presentToast({
-          message: 'No hay usuario autenticado',
-          duration: 2500,
-          color: 'danger'
-        });
+      if (!firebaseUser) {
+        throw new Error('No hay usuario autenticado');
       }
+
+      // Datos del usuario
+      const userRef = doc(this.firestore, COLLECTIONS.USERS, firebaseUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        throw new Error('Usuario no encontrado');
+      }
+
+      this.user = {
+        ...userDoc.data(),
+        uid: userDoc.id
+      } as UserModel;
+
+      // Créditos / Membresía (puede ser null y está bien)
+      this.userCredits = await this.creditsService.getUserCredits(firebaseUser.uid);
 
     } catch (error) {
       console.error('Error loading profile:', error);
       this.utilsService.presentToast({
         message: 'Error al cargar el perfil',
-        duration: 2500,
+        duration: 3000,
         color: 'danger'
       });
     } finally {
@@ -116,51 +107,54 @@ export class ProfilePage implements OnInit {
   }
 
   private getCurrentFirebaseUser(): Promise<any> {
-    return new Promise((resolve) => {
-      const subscription = this.authService.authState$.subscribe({
-        next: (user) => {
-          subscription.unsubscribe();
-          console.log('Usuario Firebase:', user);
-          resolve(user);
-        },
-        error: (error) => {
-          subscription.unsubscribe();
-          console.error('Error getting current user:', error);
-          resolve(null);
-        }
+    return new Promise(resolve => {
+      const sub = this.authService.authState$.subscribe(user => {
+        sub.unsubscribe();
+        resolve(user);
       });
     });
+  }
+
+  // =====================
+  // HELPERS MEMBRESÍA
+  // =====================
+
+  getExpirationDate(): string {
+    if (!this.userCredits?.planExpiryDate) return '—';
+    return this.userCredits.planExpiryDate.toLocaleDateString('es-ES');
+  }
+
+  getPlanText(): string {
+    return this.userCredits?.planName || 'Sin plan activo';
+  }
+
+  getMembershipState(): { text: string; css: string } {
+    if (!this.userCredits) {
+      return { text: 'Sin plan', css: 'inactive' };
+    }
+
+    if (this.userCredits.isExpired) {
+      return { text: 'Expirada', css: 'inactive' };
+    }
+
+    return { text: 'Activa', css: 'active' };
+  }
+
+  // =====================
+  // OTROS HELPERS
+  // =====================
+
+  getRoleText(role?: RoleEnum): string {
+    switch (role) {
+      case RoleEnum.ADMIN: return 'Administrador';
+      case RoleEnum.CLIENT: return 'Cliente';
+      default: return 'Usuario';
+    }
   }
 
   formatDate(dateString: string): string {
     if (!dateString) return 'No especificada';
     return new Date(dateString).toLocaleDateString('es-ES');
-  }
-
-  // Métodos para la información de membresía
-  getExpirationDate(): string {
-    return '30/01/2025';
-  }
-
-  getPlanText(): string {
-    return 'Básico';
-  }
-
-  getStateText(state: StateEnum | undefined): string {
-    switch (state) {
-      case StateEnum.ACTIVE: return 'Activa';
-      case StateEnum.INACTIVE: return 'Inactiva';
-      default: return 'No especificado';
-    }
-  }
-
-  // MÉTODO AGREGADO PARA EL ROL
-  getRoleText(role: RoleEnum | undefined): string {
-    switch (role) {
-      case RoleEnum.CLIENT: return 'Cliente';
-      case RoleEnum.ADMIN: return 'Administrador';
-      default: return 'Usuario';
-    }
   }
 
   editProfile() {

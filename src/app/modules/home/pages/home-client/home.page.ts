@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardHeader, IonCardContent,
-  IonGrid, IonRow, IonCol, IonIcon, IonBadge, IonButton // ← Agregar IonButton aquí
+  IonGrid, IonRow, IonCol, IonIcon, IonBadge
 } from '@ionic/angular/standalone';
 import { BannerComponent } from '../../components/banner/banner.component';
 import { AuthService } from '../../../../modules/auth/services/auth.service';
@@ -26,25 +26,25 @@ import { DateTime } from 'luxon';
   ]
 })
 export class HomeClientPage implements OnInit {
-  // ... el resto de tu código se mantiene igual ...
+
   private authService = inject(AuthService);
   private reservationService = inject(ReservationService);
   private scheduleService = inject(ScheduleService);
   private router = inject(Router);
 
   // Datos del usuario
-  nombreUsuario: string = '';
-  userEmail: string = '';
+  nombreUsuario = '';
+  userEmail = '';
 
   // Reservas
-  reservasPendientes: number = 0;
+  reservasPendientes = 0;
 
   // Calendario
-  mesActual: string = '';
-  anioActual: number = 0;
-  mesActualNumero: number = 0;
+  mesActual = '';
+  anioActual = 0;
+  mesActualNumero = 0;
   diasSemana: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  diasMes: number[] = [];
+  diasMes: (number | null)[] = [];
   diaSeleccionado: number | null = null;
 
   // Configuración de tiempo
@@ -57,16 +57,18 @@ export class HomeClientPage implements OnInit {
     this.inicializarCalendario();
   }
 
-  // ... el resto de tus métodos se mantiene igual ...
+  // =====================
+  // USUARIO
+  // =====================
   private async cargarDatosUsuario(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.authService.authState$.subscribe((user: any) => {
         if (user) {
-          this.nombreUsuario = user.displayName ||
-                              user.email?.split('@')[0] ||
-                              'Usuario';
+          this.nombreUsuario =
+            user.displayName ||
+            user.email?.split('@')[0] ||
+            'Usuario';
           this.userEmail = user.email || '';
-          console.log('Usuario cargado:', this.nombreUsuario, this.userEmail);
         } else {
           this.nombreUsuario = 'Invitado';
           this.userEmail = '';
@@ -79,105 +81,108 @@ export class HomeClientPage implements OnInit {
   private async cargarReservasPendientes(): Promise<void> {
     try {
       const user = await this.getCurrentUser();
-
-      if (user && user.uid) {
-        console.log('Cargando reservas para usuario:', user.uid);
-
-        const reservasDetalladas = await this.reservationService.listUserActiveReservationsDetailed(user.uid);
-        this.reservasPendientes = reservasDetalladas?.length || 0;
-
-        console.log('Reservas encontradas:', reservasDetalladas);
-        console.log('Total reservas pendientes:', this.reservasPendientes);
-      } else {
-        console.log('No hay usuario autenticado');
+      if (!user?.uid) {
         this.reservasPendientes = 0;
+        return;
       }
-    } catch (error) {
-      console.error('Error cargando reservas pendientes:', error);
+
+      const reservas = await this.reservationService
+        .listUserActiveReservationsDetailed(user.uid);
+
+      this.reservasPendientes = reservas?.length || 0;
+    } catch {
       this.reservasPendientes = 0;
     }
   }
 
   private getCurrentUser(): Promise<any> {
-    return new Promise((resolve) => {
-      this.authService.authState$.subscribe((user: any) => {
-        resolve(user);
-      });
+    return new Promise(resolve => {
+      this.authService.authState$.subscribe(user => resolve(user));
     });
   }
 
+  // =====================
+  // CALENDARIO
+  // =====================
   private inicializarCalendario(): void {
-    const ahora = DateTime.now().setZone(this.TZ).setLocale(this.LOCALE);
-    this.mesActual = ahora.toFormat('LLLL yyyy');
+    const ahora = DateTime.now()
+      .setZone(this.TZ)
+      .setLocale(this.LOCALE);
+
+    this.mesActual = this.capitalizar(
+      ahora.toFormat('LLLL yyyy')
+    );
     this.anioActual = ahora.year;
     this.mesActualNumero = ahora.month;
 
-    const ultimoDia = ahora.endOf('month');
-    const totalDias = ultimoDia.day;
+    const primerDiaMes = DateTime.fromObject(
+      { year: this.anioActual, month: this.mesActualNumero, day: 1 },
+      { zone: this.TZ, locale: this.LOCALE }
+    );
 
-    this.diasMes = Array.from({ length: totalDias }, (_, i) => i + 1);
+    const offset = primerDiaMes.weekday - 1;
+    const totalDias = ahora.endOf('month').day;
+
+    this.diasMes = [
+      ...Array(offset).fill(null),
+      ...Array.from({ length: totalDias }, (_, i) => i + 1)
+    ];
+
     this.diaSeleccionado = ahora.day;
-
-    console.log('Calendario inicializado:', {
-      mes: this.mesActual,
-      totalDias: totalDias,
-      diaSeleccionado: this.diaSeleccionado
-    });
   }
 
-  esHoy(dia: number): boolean {
-    const hoy = DateTime.now().setZone(this.TZ).setLocale(this.LOCALE);
-    return dia === hoy.day &&
-           this.mesActualNumero === hoy.month &&
-           this.anioActual === hoy.year;
+  esHoy(dia: number | null): boolean {
+    if (dia === null) return false;
+
+    const hoy = DateTime.now().setZone(this.TZ);
+    return (
+      dia === hoy.day &&
+      this.mesActualNumero === hoy.month &&
+      this.anioActual === hoy.year
+    );
   }
 
-  esSeleccionado(dia: number): boolean {
-    return dia === this.diaSeleccionado;
+  esSeleccionado(dia: number | null): boolean {
+    return dia !== null && dia === this.diaSeleccionado;
   }
 
-  async seleccionarDia(dia: number): Promise<void> {
+  async seleccionarDia(dia: number | null): Promise<void> {
+    if (dia === null) return;
+
     this.diaSeleccionado = dia;
 
-    const fechaSeleccionada = DateTime.fromObject({
-      year: this.anioActual,
-      month: this.mesActualNumero,
-      day: dia
-    }, { zone: this.TZ, locale: this.LOCALE });
-
-    const fechaISO = fechaSeleccionada.toISODate();
-
-    console.log('Navegando a clases del día:', {
-      dia: dia,
-      fecha: fechaISO,
-      mes: this.mesActual,
-      anio: this.anioActual
-    });
+    const fechaISO = DateTime.fromObject(
+      {
+        year: this.anioActual,
+        month: this.mesActualNumero,
+        day: dia
+      },
+      { zone: this.TZ }
+    ).toISODate();
 
     this.router.navigate(['/reservations/browse'], {
       queryParams: {
         fecha: fechaISO,
-        dia: dia,
+        dia,
         mes: this.mesActualNumero,
         anio: this.anioActual
       }
     });
   }
 
+  // =====================
+  // NAVEGACIÓN
+  // =====================
   goTo(path: string): void {
-    console.log('Navegando a:', path);
     this.router.navigateByUrl(path);
   }
 
   irAClasesDelDia(): void {
-    const hoy = DateTime.now().setZone(this.TZ).setLocale(this.LOCALE);
-    const fechaHoy = hoy.toISODate();
-
-    console.log('Navegando a clases de hoy:', fechaHoy);
+    const hoy = DateTime.now().setZone(this.TZ);
 
     this.router.navigate(['/reservations/browse'], {
       queryParams: {
-        fecha: fechaHoy,
+        fecha: hoy.toISODate(),
         dia: hoy.day,
         mes: hoy.month,
         anio: hoy.year
@@ -186,34 +191,32 @@ export class HomeClientPage implements OnInit {
   }
 
   irAEnergIA(): void {
-    console.log('Abriendo chatbot de EnergIA');
     this.router.navigate(['/chatbot']);
   }
 
   irAMisReservas(): void {
-    console.log('Navegando a mis reservas');
     this.router.navigate(['/reservations/mine']);
   }
 
   irACalendarioCompleto(): void {
-    console.log('Navegando a calendario completo');
     this.router.navigate(['/reservations/browse']);
   }
 
   obtenerSaludo(): string {
     const hora = DateTime.now().setZone(this.TZ).hour;
-
-    if (hora >= 5 && hora < 12) {
-      return '¡Buenos días';
-    } else if (hora >= 12 && hora < 18) {
-      return '¡Buenas tardes';
-    } else {
-      return '¡Buenas noches';
-    }
+    if (hora < 12) return '¡Buenos días';
+    if (hora < 18) return '¡Buenas tardes';
+    return '¡Buenas noches';
   }
 
   async recargarReservas(): Promise<void> {
-    console.log('Recargando reservas manualmente...');
     await this.cargarReservasPendientes();
+  }
+
+  // =====================
+  // HELPERS
+  // =====================
+  private capitalizar(texto: string): string {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 }
