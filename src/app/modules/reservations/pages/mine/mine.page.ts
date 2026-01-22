@@ -12,6 +12,8 @@ import { ClassService } from '../../../core/services/class.service';
 import { ScheduleService } from '../../../core/services/schedule.service';
 import { ReservationService, ReservationModel } from '../../../core/services/reservations.service';
 import type { ClassModelWithIdAndImage } from '../../../shared/models/class.model';
+import { AuthService } from '../../../auth/services/auth.service';
+
 
 const TZ = 'America/Bogota';
 const LOCALE = 'es';
@@ -50,6 +52,8 @@ export class MinePage implements OnInit {
   private readonly classesSrv = inject(ClassService);
   private readonly scheduleSrv = inject(ScheduleService);
   private readonly reservationSrv = inject(ReservationService);
+  private readonly authSrv = inject(AuthService);
+
 
   @ViewChildren(IonItemSliding) slidings!: QueryList<IonItemSliding>;
 
@@ -58,11 +62,24 @@ export class MinePage implements OnInit {
   cancelBusy: Record<string, boolean> = {};
 
   // TODO: reemplazar por el UID real (igual que en BrowsePage)
-  currentUserId = 'system';
+  currentUserId: string | null = null;
 
-  async ngOnInit() {
+async ngOnInit() {
+
+  this.authSrv.authState$.subscribe(async user => {
+    if (!user) {
+      console.warn('[MinePage] Usuario no autenticado');
+      return;
+    }
+
+    this.currentUserId = user.uid;
+    console.log('[MinePage] UID autenticado:', this.currentUserId);
+
+    // 👇 AHORA sí, cargar reservas
     await this.load();
-  }
+  });
+
+}
 
   private fmtDate(iso?: string) {
     if (!iso) return '';

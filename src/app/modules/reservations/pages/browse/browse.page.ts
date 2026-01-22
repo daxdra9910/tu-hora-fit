@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChildren, QueryList, inject } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router'; // 👈 AÑADIR ESTO
+import { AuthService } from '../../../auth/services/auth.service';
 
 import {
   IonButton, IonButtons, IonChip, IonCol, IonContent, IonGrid,
@@ -69,6 +70,7 @@ export class BrowsePage implements OnInit {
   private readonly scheduleSrv = inject(ScheduleService);
   private readonly reservationSrv = inject(ReservationService);
   private readonly route = inject(ActivatedRoute); // 👈 AÑADIR ESTO
+  private readonly authSrv = inject(AuthService);
 
   @ViewChildren(IonItemSliding) slidings!: QueryList<IonItemSliding>;
 
@@ -83,7 +85,8 @@ export class BrowsePage implements OnInit {
   loadingList = false;
 
   // TODO: reemplazar por el UID real del usuario autenticado
-  currentUserId = 'system';
+  currentUserId: string | null = null;
+
 
   // 👉 Schedules ya reservados por el usuario (para bloquear UI)
   private reservedScheduleIds = new Set<string>();
@@ -95,24 +98,39 @@ export class BrowsePage implements OnInit {
       .toFormat("cccc d 'de' LLLL 'de' yyyy");
   }
 
-  async ngOnInit() {
-    // 👇 PRIMERO: Leer parámetros de la URL antes de cargar datos
-    this.route.queryParams.subscribe(params => {
-      if (params['fecha']) {
-        // Si viene una fecha específica desde el home, usarla
-        const fechaDesdeHome = DateTime.fromISO(params['fecha'], { zone: TZ, locale: LOCALE });
-        if (fechaDesdeHome.isValid) {
-          this.selected = fechaDesdeHome.startOf('day');
-          console.log('Fecha recibida desde home:', this.selected.toISODate());
-        }
-      }
-    });
+async ngOnInit() {
 
-    await this.bootstrap();
+  // 1️⃣ Escuchar authState (solo asigna UID)
+  this.authSrv.authState$.subscribe(async user => {
+    if (!user) {
+      console.warn('[BrowsePage] Usuario no autenticado');
+      return;
+    }
+
+    this.currentUserId = user.uid;
+    console.log('[BrowsePage] UID autenticado:', this.currentUserId);
+
+    // 👇 SOLO lo que depende del usuario
     await this.refreshUserReserved();
-    this.buildChipDays();
-    await this.loadDay(this.selected);
-  }
+  });
+
+  // 2️⃣ Leer parámetros de la URL (fecha)
+  this.route.queryParams.subscribe(params => {
+    if (params['fecha']) {
+      const fechaDesdeHome = DateTime.fromISO(params['fecha'], { zone: TZ, locale: LOCALE });
+      if (fechaDesdeHome.isValid) {
+        this.selected = fechaDesdeHome.startOf('day');
+      }
+    }
+  });
+
+  // 3️⃣ ⚠️ ESTO ES LO QUE FALTABA (Y ROMPIÓ EL FRONT)
+  await this.bootstrap();        // 🔥 SIN ESTO NO HAY CLASES
+  this.buildChipDays();
+  await this.loadDay(this.selected);
+}
+
+
 
   private async refreshUserReserved() {
     try {
