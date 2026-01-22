@@ -2,37 +2,41 @@ import * as functions from "firebase-functions";
 import * as CryptoJS from "crypto-js";
 import { Request, Response } from "express";
 
-const integrityKey = process.env.INTEGRITY_KEY!;
-
 export const generateIntegritySignature = functions.https.onRequest(
   async (req: Request, res: Response): Promise<void> => {
+
+    // CORS
     res.set("Access-Control-Allow-Origin", "*");
     res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
 
     if (req.method === "OPTIONS") {
       res.status(200).send();
       return;
     }
 
-    console.log("🔐 ===== SOLICITUD DE FIRMA =====");
-    console.log("Body recibido:", req.body);
+    const integrityKey = functions.config().wompi?.integrity_key;
 
-    const reference = req.body.reference;
-    const amountInCents = String(req.body.amountInCents);
-    const currency = req.body.currency;
+    if (!integrityKey) {
+      console.error("❌ INTEGRITY_KEY no configurada");
+      res.status(500).json({ error: "Integrity key not configured" });
+      return;
+    }
+
+    const { reference, amountInCents, currency } = req.body;
 
     if (!reference || !amountInCents || !currency) {
-      console.error("❌ Campos faltantes");
       res.status(400).json({ error: "Missing fields" });
       return;
     }
 
-    const plain = reference + amountInCents + currency + integrityKey;
-    console.log("📝 Cadena para firma:", plain);
+    // 🔴 NORMALIZACIÓN CRÍTICA
+    const normalizedAmount = String(amountInCents);
 
+    const plain = `${reference}${normalizedAmount}${currency}${integrityKey}`;
     const signature = CryptoJS.SHA256(plain).toString();
-    console.log("✅ Firma generada:", signature);
+
+    console.log("📝 Firma generada correctamente");
 
     res.json({ signature });
   }
