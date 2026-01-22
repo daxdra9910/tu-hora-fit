@@ -60,22 +60,6 @@ ion-chip[color="primary"] {
   overflow: hidden;
 }
 
-/* Ribbon SIN CUPO */
-.ribbon {
-  position: absolute;
-  top: 8px; right: -32px;
-  background: #b71c1c;
-  color: #fff;
-  font-size: var(--text-xs);
-  font-weight: 900;
-  letter-spacing: .4px;
-  text-transform: uppercase;
-  padding: 4px 40px;
-  transform: rotate(35deg);
-  box-shadow: 0 6px 16px -8px rgba(183, 28, 28, .8);
-  z-index: 1;
-}
-
 /* Cols */
 .thumb { padding: 10px 8px 10px 12px; }
 .thumb ion-img {

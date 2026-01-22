@@ -98,23 +98,8 @@ export class BrowsePage implements OnInit {
       .toFormat("cccc d 'de' LLLL 'de' yyyy");
   }
 
-async ngOnInit() {
-
-  // 1️⃣ Escuchar authState (solo asigna UID)
-  this.authSrv.authState$.subscribe(async user => {
-    if (!user) {
-      console.warn('[BrowsePage] Usuario no autenticado');
-      return;
-    }
-
-    this.currentUserId = user.uid;
-    console.log('[BrowsePage] UID autenticado:', this.currentUserId);
-
-    // 👇 SOLO lo que depende del usuario
-    await this.refreshUserReserved();
-  });
-
-  // 2️⃣ Leer parámetros de la URL (fecha)
+ngOnInit(): void {
+  // Inicialización base (una sola vez)
   this.route.queryParams.subscribe(params => {
     if (params['fecha']) {
       const fechaDesdeHome = DateTime.fromISO(params['fecha'], { zone: TZ, locale: LOCALE });
@@ -123,12 +108,29 @@ async ngOnInit() {
       }
     }
   });
+}
 
-  // 3️⃣ ⚠️ ESTO ES LO QUE FALTABA (Y ROMPIÓ EL FRONT)
-  await this.bootstrap();        // 🔥 SIN ESTO NO HAY CLASES
+async ionViewWillEnter(): Promise<void> {
+  // 🔄 Usuario
+  const user = await new Promise<any>(resolve =>
+    this.authSrv.authState$.subscribe(u => resolve(u))
+  );
+
+  if (!user) return;
+
+  this.currentUserId = user.uid;
+
+  // 🔄 Reservas del usuario
+  await this.refreshUserReserved();
+
+  // 🔄 Datos base
+  await this.bootstrap();
+
+  // 🔄 UI
   this.buildChipDays();
   await this.loadDay(this.selected);
 }
+
 
 
 

@@ -64,9 +64,6 @@
         <!-- Card deslizable -->
         <ion-item-sliding #sliding class="class-card-wrap">
           <ion-item lines="none" class="class-card" (click)="openSlide(sliding)">
-            <!-- cintas -->
-            @if (v.past) { <div class="ribbon ribbon-gray">FINALIZADA</div> }
-            @else if (v.free === 0) { <div class="ribbon">SIN CUPO</div> }
 
             <ion-grid class="ion-no-padding">
               <ion-row class="ion-align-items-center">
