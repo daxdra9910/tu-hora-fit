@@ -2,6 +2,10 @@ import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core'
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { GeminiService } from '../core/services/gemini.service';
+import { AuthService } from '../auth/services/auth.service';
+import { CreditsService } from '../core/services/credits.service';
+
+
 import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent,
   IonItem, IonInput, IonAvatar, IonBackButton, IonFooter
@@ -44,6 +48,12 @@ interface GeminiResponse {
 export class ChatbotPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly geminiService = inject(GeminiService);
+  private readonly authSrv = inject(AuthService);
+  private readonly creditsSrv = inject(CreditsService);
+
+hasActivePlan = false;
+currentUserId: string | null = null;
+
 
   @ViewChild('content', { static: false }) content!: IonContent;
   @ViewChild('messageInput') messageInput!: ElementRef;
@@ -64,10 +74,41 @@ export class ChatbotPage implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.initializeForm();
+ ngOnInit(): void {
+  this.initializeForm();
+
+  this.authSrv.authState$.subscribe(async user => {
+    // 🔄 Siempre reiniciamos el chat al entrar
+    this.messages = [];
+    this.hasActivePlan = false;
+
+    // 🔒 No autenticado
+    if (!user) {
+      this.addBotMessage(
+        'Debes iniciar sesión y tener un plan activo para usar EnergIA.'
+      );
+      return;
+    }
+
+    this.currentUserId = user.uid;
+
+    // 🔎 Validar plan activo
+    const credits = await this.creditsSrv.getValidCredits(user.uid);
+    this.hasActivePlan = credits?.hasActivePlan === true;
+
+    // 🎯 Decisión ÚNICA
+    if (!this.hasActivePlan) {
+      this.addBotMessage(
+        'Necesitas tener un plan activo para poder usar EnergIA 💪'
+      );
+      return;
+    }
+
+    // ✅ Solo aquí se permite el chatbot
     this.welcomeMessage();
-  }
+  });
+}
+
 
   private initializeForm(): void {
     this.chatForm = this.fb.group({
@@ -89,40 +130,52 @@ export class ChatbotPage implements OnInit {
     );
   }
 
-  async sendMessage(): Promise<void> {
-    const input = this.chatForm.get('message')?.value.trim();
-    if (!input || this.loading) return;
+ async sendMessage(): Promise<void> {
+  if (!this.hasActivePlan) return; // 🔒 BLOQUEO DEFINITIVO
 
-    this.addUserMessage(input);
-    this.chatForm.reset();
-    this.loading = true;
-    this.scrollToBottom();
+  const input = this.chatForm.get('message')?.value.trim();
+  if (!input || this.loading) return;
 
-    try {
-      const response = await this.geminiService.askGemini(input).toPromise() as GeminiResponse;
-      const reply = response?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        'No pude entender tu solicitud. ¿Podrías reformularla?';
+  this.addUserMessage(input);
+  this.chatForm.reset();
+  this.loading = true;
+  this.scrollToBottom();
 
-      await this.typeBotMessage(reply);
-    } catch (error) {
-      console.error('Error calling Gemini:', error);
-      this.addBotMessage('¡Vaya! Algo salió mal. Por favor, inténtalo de nuevo más tarde.');
-    } finally {
-      this.loading = false;
-      setTimeout(() => this.scrollToBottom(), 100);
-      this.setFocusOnInput();
-    }
+  try {
+    const response = await this.geminiService.askGemini(input).toPromise() as GeminiResponse;
+    const reply = response?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      'No pude entender tu solicitud. ¿Podrías reformularla?';
+
+    await this.typeBotMessage(reply);
+  } catch (error) {
+    console.error('Error calling Gemini:', error);
+    this.addBotMessage('¡Vaya! Algo salió mal. Por favor, inténtalo de nuevo más tarde.');
+  } finally {
+    this.loading = false;
+    setTimeout(() => this.scrollToBottom(), 100);
+    this.setFocusOnInput();
   }
+}
+
 
   sendQuickReply(reply: string): void {
     this.chatForm.get('message')?.setValue(reply);
     this.sendMessage();
   }
 
-  clearChat(): void {
-    this.messages = [];
-    this.welcomeMessage();
+ clearChat(): void {
+  this.messages = [];
+
+  if (!this.hasActivePlan) {
+    this.addBotMessage(
+      'Necesitas tener un plan activo para poder usar EnergIA 💪'
+    );
+    return;
   }
+
+  this.welcomeMessage();
+}
+
 
   private addUserMessage(text: string): void {
     this.messages.push({
