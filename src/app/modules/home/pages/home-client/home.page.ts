@@ -51,11 +51,11 @@ export class HomeClientPage implements OnInit {
   private readonly TZ = 'America/Bogota';
   private readonly LOCALE = 'es';
 
-  async ngOnInit() {
-    await this.cargarDatosUsuario();
-    await this.cargarReservasPendientes();
-    this.inicializarCalendario();
-  }
+  ngOnInit(): void {
+  this.inicializarCalendario();
+}
+
+
 
   // =====================
   // USUARIO
