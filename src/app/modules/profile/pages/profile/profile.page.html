@@ -25,17 +25,23 @@
         <div class="profile-main-info">
 
           <ion-avatar class="profile-avatar">
-            <ion-img
-              *ngIf="user?.photoURL"
-              [src]="user.photoURL"
-              alt="Foto de perfil"
-              class="avatar-image">
-            </ion-img>
 
-            <div *ngIf="!user?.photoURL" class="default-avatar">
-              <ion-icon name="person" class="default-icon"></ion-icon>
-            </div>
-          </ion-avatar>
+  <ion-img
+    *ngIf="user?.photoURL; else defaultAvatar"
+    [src]="user.photoURL"
+    alt="Foto de perfil"
+    class="avatar-image">
+  </ion-img>
+
+  <ng-template #defaultAvatar>
+    <div class="default-avatar">
+      <ion-icon name="person" class="default-icon"></ion-icon>
+    </div>
+  </ng-template>
+
+</ion-avatar>
+
+
 
           <div class="profile-name-section">
             <h1 class="greeting">
@@ -110,9 +116,7 @@
           </div>
           <div class="info-content">
             <span class="label">Estado</span>
-            <span
-              class="value status"
-              [ngClass]="getMembershipState().css">
+            <span class="value status" [ngClass]="getMembershipState().css">
               {{ getMembershipState().text }}
             </span>
           </div>

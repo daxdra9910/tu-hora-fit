@@ -12,6 +12,10 @@ import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { COLLECTIONS } from '../../../shared/constants/firebase.constant';
 import { CreditsService, UserCredits } from '../../../core/services/credits.service';
 import { addIcons } from 'ionicons';
+import { ModalController } from '@ionic/angular/standalone';
+import { EditProfileModalPage } from '../edit-profile-modal/edit-profile-modal.page';
+
+
 import {
   pencil,
   person,
@@ -22,8 +26,7 @@ import {
   cardOutline,
   calendarNumberOutline,
   timeOutline,
-  starOutline
-} from 'ionicons/icons';
+  starOutline, personOutline } from 'ionicons/icons';
 import { UserModel } from '../../../shared/models/user.model';
 
 @Component({
@@ -33,8 +36,8 @@ import { UserModel } from '../../../shared/models/user.model';
   standalone: true,
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent,
-    IonButton, IonIcon, IonAvatar, IonImg, IonButtons,
-    CommonModule
+    IonButton, IonIcon, IonAvatar,IonButtons,
+    CommonModule, IonImg,
   ]
 })
 export class ProfilePage implements OnInit {
@@ -43,6 +46,9 @@ export class ProfilePage implements OnInit {
   private firestore = inject(Firestore);
   private utilsService = inject(UtilsService);
   private creditsService = inject(CreditsService);
+  private modalCtrl = inject(ModalController);
+
+
 
   user: UserModel | null = null;
   userCredits: UserCredits | null = null;
@@ -52,23 +58,15 @@ export class ProfilePage implements OnInit {
   readonly StateEnum = StateEnum;
 
   constructor() {
-    addIcons({
-      pencil,
-      person,
-      personCircleOutline,
-      calendarOutline,
-      callOutline,
-      mailOutline,
-      cardOutline,
-      calendarNumberOutline,
-      timeOutline,
-      starOutline
-    });
+    addIcons({pencil,person,personCircleOutline,calendarOutline,callOutline,mailOutline,cardOutline,calendarNumberOutline,timeOutline,starOutline,personOutline});
   }
 
   async ngOnInit() {
     await this.loadUserProfile();
   }
+
+
+
 
   async loadUserProfile() {
     try {
@@ -90,6 +88,7 @@ export class ProfilePage implements OnInit {
         ...userDoc.data(),
         uid: userDoc.id
       } as UserModel;
+
 
       // Créditos / Membresía (puede ser null y está bien)
       this.userCredits = await this.creditsService.getUserCredits(firebaseUser.uid);
@@ -154,14 +153,41 @@ export class ProfilePage implements OnInit {
 
   formatDate(dateString: string): string {
     if (!dateString) return 'No especificada';
-    return new Date(dateString).toLocaleDateString('es-ES');
+
+    const [year, month, day] = dateString.split('-');
+
+    const meses = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+
+    return `${Number(day)} ${meses[Number(month) - 1]} ${year}`;
   }
 
-  editProfile() {
-    this.utilsService.presentToast({
-      message: 'Funcionalidad de edición en desarrollo',
-      duration: 2000,
-      color: 'warning'
+
+  async editProfile() {
+    if (!this.user) return;
+
+    const modal = await this.modalCtrl.create({
+      component: EditProfileModalPage,
+      componentProps: {
+        user: this.user
+      }
     });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
+
+    if (data?.updated && data.user) {
+      this.user = data.user;
+
+      this.utilsService.presentToast({
+        message: 'Perfil actualizado',
+        duration: 2000,
+        color: 'success'
+      });
+    }
   }
+
 }
