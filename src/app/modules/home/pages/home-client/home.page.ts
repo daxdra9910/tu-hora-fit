@@ -12,6 +12,7 @@ import { ReservationService } from '../../../core/services/reservations.service'
 import { ScheduleService } from '../../../core/services/schedule.service';
 import { DateTime } from 'luxon';
 
+
 @Component({
   selector: 'app-home-client',
   templateUrl: './home.page.html',
@@ -21,10 +22,11 @@ import { DateTime } from 'luxon';
     CommonModule,
     IonHeader, IonToolbar, IonTitle, IonContent,
     IonCard, IonCardHeader, IonCardContent,
-    IonGrid, IonRow, IonCol, IonIcon, IonBadge,
+    IonGrid, IonRow, IonCol, IonIcon,
     BannerComponent
   ]
 })
+
 export class HomeClientPage implements OnInit {
 
   private authService = inject(AuthService);
@@ -51,9 +53,17 @@ export class HomeClientPage implements OnInit {
   private readonly TZ = 'America/Bogota';
   private readonly LOCALE = 'es';
 
-  ngOnInit(): void {
+async ngOnInit(): Promise<void> {
   this.inicializarCalendario();
+
 }
+
+async ionViewWillEnter(): Promise<void> {
+  await this.cargarDatosUsuario();
+  await this.cargarReservasPendientes();
+}
+
+
 
 
 
