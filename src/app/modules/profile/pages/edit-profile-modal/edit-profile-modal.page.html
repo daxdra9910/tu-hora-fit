@@ -1,0 +1,144 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()" fill="clear">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Editar Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="loading || !hasChanges()" fill="clear">
+        <ion-icon name="save" slot="start" *ngIf="!loading"></ion-icon>
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        {{ loading ? 'Guardando...' : 'Guardar' }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="edit-profile-container" *ngIf="user">
+
+    <!-- Foto de perfil -->
+    <div class="profile-image-section">
+      <ion-avatar class="profile-avatar-large">
+  <img
+    *ngIf="imagePreviewUrl || user.photoURL"
+    [src]="imagePreviewUrl || user.photoURL"
+    alt="Foto de perfil"
+    class="avatar-image"
+  />
+
+  <div *ngIf="!(imagePreviewUrl || user.photoURL)" class="default-avatar-large">
+    <ion-icon name="person-outline" class="default-icon-large"></ion-icon>
+  </div>
+</ion-avatar>
+
+
+      <div class="image-actions">
+        <input type="file" id="profileImageInput" accept="image/*" (change)="onFileSelected($event)" hidden>
+        <ion-button fill="clear" size="small" (click)="triggerFileInput()" [disabled]="uploadingImage">
+          <ion-icon name="camera" slot="start"></ion-icon>
+          {{ uploadingImage ? 'Subiendo...' : 'Cambiar foto' }}
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <ion-card>
+      <ion-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+          <!-- Nombre -->
+          <ion-item>
+            <ion-label position="stacked">
+              <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+              Nombre completo *
+            </ion-label>
+            <ion-input type="text" formControlName="displayName" placeholder="Ingresa tu nombre"
+              [class.invalid]="form.get('displayName')?.invalid && form.get('displayName')?.touched"></ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('displayName')?.invalid && form.get('displayName')?.touched">
+            <small *ngIf="form.get('displayName')?.errors?.['required']">
+              El nombre es requerido
+            </small>
+            <small *ngIf="form.get('displayName')?.errors?.['minlength']">
+              Mínimo 2 caracteres
+            </small>
+          </ion-text>
+
+          <!-- Teléfono -->
+          <ion-item>
+            <ion-label position="stacked">
+              <ion-icon name="call-outline" slot="start"></ion-icon>
+              Teléfono *
+            </ion-label>
+            <ion-input type="tel" formControlName="phoneNumber" placeholder="Ej: 123456789"
+              [class.invalid]="form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched"></ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched">
+            <small *ngIf="form.get('phoneNumber')?.errors?.['required']">
+              El teléfono es requerido
+            </small>
+            <small *ngIf="form.get('phoneNumber')?.errors?.['pattern']">
+              Formato inválido (8-20 dígitos)
+            </small>
+          </ion-text>
+
+          <!-- Fecha de nacimiento -->
+          <ion-item>
+            <ion-label position="stacked">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              Fecha de nacimiento *
+            </ion-label>
+            <ion-datetime-button datetime="birthdatePicker"></ion-datetime-button>
+
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="birthdatePicker" presentation="date" timeZone="utc" [value]="selectedDate"
+                  (ionChange)="onDateChange($event)" locale="es-ES" [max]="maxDate" [showDefaultButtons]="true"
+                  doneText="Seleccionar" cancelText="Cancelar">
+
+
+                  <span slot="title">Selecciona tu fecha de nacimiento</span>
+                </ion-datetime>
+              </ng-template>
+            </ion-modal>
+
+            <div class="selected-date" *ngIf="form.value.birthdate">
+              {{ formatDate(form.value.birthdate) }}
+            </div>
+          </ion-item>
+          <ion-text color="danger" *ngIf="form.get('birthdate')?.invalid && form.get('birthdate')?.touched">
+            <small>La fecha de nacimiento es requerida</small>
+          </ion-text>
+
+          <!-- Email (solo lectura) -->
+          <ion-item>
+            <ion-label position="stacked">
+              <ion-icon name="mail-outline" slot="start"></ion-icon>
+              Correo electrónico
+            </ion-label>
+            <ion-input type="email" [value]="user.email" readonly disabled></ion-input>
+            <small class="readonly-note">El email no se puede modificar</small>
+          </ion-item>
+
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <ion-button expand="block" color="light" (click)="closeModal()">
+        Cancelar
+      </ion-button>
+      <ion-button expand="block" color="primary" (click)="onSubmit()"
+        [disabled]="form.invalid || loading || !hasChanges()">
+        <ion-icon name="save" slot="start" *ngIf="!loading"></ion-icon>
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

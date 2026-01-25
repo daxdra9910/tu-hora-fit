@@ -1,0 +1,110 @@
+.edit-profile-container {
+  padding-bottom: 20px;
+
+  .profile-image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 12px;
+
+      .avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--ion-color-primary);
+      }
+
+      .default-avatar-large {
+        width: 100%;
+        height: 100%;
+        background: var(--ion-color-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--ion-color-medium);
+
+        .default-icon-large {
+          font-size: 48px;
+          color: var(--ion-color-medium);
+        }
+      }
+    }
+
+    .image-actions {
+      display: flex;
+      gap: 8px;
+
+      ion-button {
+        margin: 0;
+      }
+    }
+  }
+
+  ion-card {
+    margin: 0 0 24px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    ion-item {
+      --padding-start: 0;
+      --inner-padding-end: 0;
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      ion-label[position="stacked"] {
+        font-weight: 500;
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .selected-date {
+        margin-top: 6px;
+        color: var(--ion-color-medium);
+        font-size: 14px;
+        font-style: italic;
+      }
+    }
+
+    .readonly-note {
+      color: var(--ion-color-medium);
+      font-size: 12px;
+      margin-top: 4px;
+      display: block;
+      font-style: italic;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    ion-button {
+      margin: 0;
+      height: 48px;
+      font-weight: 500;
+
+      &[color="light"] {
+        --background: var(--ion-color-light);
+        --color: var(--ion-color-medium);
+      }
+    }
+  }
+}
+
+ion-input.invalid {
+  --border-color: var(--ion-color-danger) !important;
+}
