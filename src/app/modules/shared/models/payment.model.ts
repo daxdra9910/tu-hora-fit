@@ -60,6 +60,7 @@ export type PaymentStatus =
 export interface PaymentModel extends AuditModel {
   id: string;
   planId: string;
+  planName?: string;
   userId: string;
   userEmail: string;
   userFullName?: string;
@@ -113,6 +114,7 @@ export interface CashPaymentCreateDTO {
   notes?: string;
   userEmail: string;
   userFullName?: string;
+
 }
 
 /** DTO específico para cambio de plan */
