@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { antiAuthGuard, authGuard } from './modules/core/guards/auth.guard';
 import { roleGuard } from './modules/core/guards/role.guard';
 import { RoleEnum } from './modules/shared/enums/role.enum';
+import { PaymentsHistoryPage } from './modules/plans/pages/payments-history/payments-history.page';
+
 
 export const routes: Routes = [
   // Auth fuera del layout
@@ -76,6 +78,10 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadChildren: () =>
           import('./modules/profile/profile.routes').then((m) => m.profileRoutes),
+      },
+      {
+        path: 'payments-history',
+        component: PaymentsHistoryPage
       },
 
 

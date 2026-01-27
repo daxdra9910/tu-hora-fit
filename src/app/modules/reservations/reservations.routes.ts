@@ -35,6 +35,13 @@ const routes: Routes = [
         loadComponent: () =>
           import('./pages/mine/mine.page').then((m) => m.MinePage),
       },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./pages/reservations-history/reservations-history.page')
+            .then(m => m.ReservationsHistoryPage)
+      }
+
     ],
   },
 ];
