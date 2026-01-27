@@ -29,6 +29,8 @@ import { DateTime } from 'luxon';
 
 export class HomeClientPage implements OnInit {
 
+  private calendarReady = false;
+
   private authService = inject(AuthService);
   private reservationService = inject(ReservationService);
   private scheduleService = inject(ScheduleService);
@@ -61,6 +63,9 @@ async ngOnInit(): Promise<void> {
 async ionViewWillEnter(): Promise<void> {
   await this.cargarDatosUsuario();
   await this.cargarReservasPendientes();
+
+  // 🔓 habilita navegación SOLO después de cargar la vista
+  this.calendarReady = true;
 }
 
 
@@ -157,28 +162,32 @@ async ionViewWillEnter(): Promise<void> {
   }
 
   async seleccionarDia(dia: number | null): Promise<void> {
-    if (dia === null) return;
+  if (dia === null) return;
 
-    this.diaSeleccionado = dia;
+  // ⛔ evita navegación automática al cargar el calendario
+  if (!this.calendarReady) return;
 
-    const fechaISO = DateTime.fromObject(
-      {
-        year: this.anioActual,
-        month: this.mesActualNumero,
-        day: dia
-      },
-      { zone: this.TZ }
-    ).toISODate();
+  this.diaSeleccionado = dia;
 
-    this.router.navigate(['/reservations/browse'], {
-      queryParams: {
-        fecha: fechaISO,
-        dia,
-        mes: this.mesActualNumero,
-        anio: this.anioActual
-      }
-    });
-  }
+  const fechaISO = DateTime.fromObject(
+    {
+      year: this.anioActual,
+      month: this.mesActualNumero,
+      day: dia
+    },
+    { zone: this.TZ }
+  ).toISODate();
+
+  this.router.navigate(['/reservations/browse'], {
+    queryParams: {
+      fecha: fechaISO,
+      dia,
+      mes: this.mesActualNumero,
+      anio: this.anioActual
+    }
+  });
+}
+
 
   // =====================
   // NAVEGACIÓN
