@@ -1,0 +1,121 @@
+/* ===============================
+   CONTENEDORES GENERALES
+================================ */
+
+.loading-container,
+.empty-container {
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--ion-color-medium);
+  padding: 16px;
+}
+
+.loading-container ion-spinner {
+  margin-bottom: 12px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: var(--ion-color-medium);
+}
+
+/* ===============================
+   LISTA DE PAGOS
+================================ */
+
+ion-list {
+  padding: 8px 0;
+}
+
+ion-item {
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --inner-padding-end: 10px;
+  --min-height: 80px;
+}
+
+ion-item ion-icon[slot="start"] {
+  font-size: 22px;
+  color: var(--ion-color-primary);
+}
+
+/* ===============================
+   TEXTO DEL PAGO
+================================ */
+
+ion-label h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+ion-label p {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ===============================
+   META (MONTO + ESTADO)
+================================ */
+
+.payment-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 90px;
+}
+
+.payment-meta .amount {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+/* ===============================
+   BADGES DE ESTADO
+================================ */
+
+ion-badge {
+  text-transform: capitalize;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* ===============================
+   COLORES DE ESTADO (OPCIONAL)
+================================ */
+
+/* approved → verde */
+ion-badge[color="success"] {
+  background: var(--ion-color-success);
+}
+
+/* pending / processing → naranja */
+ion-badge[color="warning"] {
+  background: var(--ion-color-warning);
+}
+
+/* rejected / cancelled / error → rojo */
+ion-badge[color="danger"] {
+  background: var(--ion-color-danger);
+}
+
+/* ===============================
+   RESPONSIVE (TABLET+)
+================================ */
+
+@media (min-width: 768px) {
+  ion-content {
+    --padding-start: 20%;
+    --padding-end: 20%;
+  }
+}

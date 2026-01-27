@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Historial de pagos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- LOADING -->
+  <div class="loading-container" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando pagos...</p>
+  </div>
+
+  <!-- SIN PAGOS -->
+  <div class="empty-container" *ngIf="!loading && payments.length === 0">
+    <ion-icon name="receipt-outline" class="empty-icon"></ion-icon>
+    <p>No tienes pagos registrados</p>
+  </div>
+
+  <!-- LISTA DE PAGOS -->
+  <ion-list *ngIf="!loading && payments.length > 0">
+
+    <ion-item *ngFor="let payment of payments">
+      <ion-icon name="card-outline" slot="start"></ion-icon>
+
+      <ion-label>
+        <h2>{{ payment.planName || 'Plan' }}</h2>
+
+        <p>
+          <ion-icon name="calendar-outline"></ion-icon>
+          {{ formatDate(payment.createdAt) }}
+        </p>
+
+        <p>
+          Método:
+          <strong>{{ payment.paymentMethod | uppercase }}</strong>
+        </p>
+
+        <p *ngIf="payment.isPlanChange">
+          🔄 Cambio de plan
+        </p>
+      </ion-label>
+
+      <div slot="end" class="payment-meta">
+        <strong class="amount">
+          {{ formatCurrency(payment.amount) }}
+        </strong>
+
+        <ion-badge [color]="getStatusColor(payment.status)">
+          {{ getStatusText(payment.status) }}
+        </ion-badge>
+      </div>
+    </ion-item>
+
+  </ion-list>
+
+</ion-content>
