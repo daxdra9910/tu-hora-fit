@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Historial de reservas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando reservas…</p>
+  </div>
+
+  <!-- SIN RESERVAS -->
+  <div *ngIf="!loading && reservations.length === 0" class="empty-state">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <p>No tienes reservas registradas</p>
+  </div>
+
+  <!-- LISTADO -->
+  <ion-list *ngIf="!loading && reservations.length > 0">
+    <ion-item *ngFor="let r of reservations" lines="full">
+      <ion-label>
+        <h2>{{ r.class.name }}</h2>
+
+        <p>
+          <ion-icon name="calendar-outline"></ion-icon>
+          {{ r.startLocal }}
+        </p>
+
+        <p *ngIf="r.endLocal">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ r.endLocal }}
+        </p>
+
+        <p>
+          <strong>Estado:</strong>
+          <ion-badge [color]="getReservationStatus(r).color">
+            {{ getReservationStatus(r).text }}
+          </ion-badge>
+
+        </p>
+
+        <p *ngIf="r.reservation.active && !r.canCancel" class="warning">
+          ⏰ Ya no se puede cancelar
+        </p>
+
+        <p *ngIf="r.reservation.active && r.canCancel" class="ok">
+          ✅ Puedes cancelar esta reserva
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

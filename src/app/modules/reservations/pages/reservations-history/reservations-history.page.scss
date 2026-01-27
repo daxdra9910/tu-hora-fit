@@ -1,0 +1,32 @@
+.loading-container,
+.empty-state {
+  text-align: center;
+  margin-top: 3rem;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+ion-item h2 {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+ion-item p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.warning {
+  color: var(--ion-color-warning);
+}
+
+.ok {
+  color: var(--ion-color-success);
+}
