@@ -22,6 +22,9 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
 import { switchMap, of } from 'rxjs';
 import { Firestore, doc, docData } from '@angular/fire/firestore';
+import { ViewChild } from '@angular/core';
+
+
 
 
 @Component({
@@ -101,6 +104,8 @@ export class TabComponent {
     }
   }
 
+
+
   // Verificar ruta activa para CLIENTE
   isActiveClient(path: string): boolean {
     if (!this.isClient) return false;
@@ -151,7 +156,8 @@ export class TabComponent {
   async onLogout() {
     await this.authService.logout();
     await this.menuCtrl.close('optionsMenu');
-    await this.navCtrl.navigateBack('/auth/login');
+    await this.navCtrl.navigateRoot('/auth/login');
+
   }
 
   navigateTo(path: string) {
@@ -162,4 +168,20 @@ export class TabComponent {
   async openOptionsMenu() {
     await this.menuCtrl.open('optionsMenu');
   }
+
+  ionViewWillEnter() {
+  const url = this.router.url;
+
+  // ⛔ Si ya estás en home o subrutas, no hagas nada
+  if (url.startsWith('/home')) {
+    return;
+  }
+
+  // ✅ Forzar home correcto según rol
+  if (this.isAdmin) {
+    this.navCtrl.navigateRoot('/home');
+  } else if (this.isClient) {
+    this.navCtrl.navigateRoot('/home/client');
+  }
+}
 }
