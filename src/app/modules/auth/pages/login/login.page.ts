@@ -1,7 +1,7 @@
-import {CommonModule} from '@angular/common';
-import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NavigationStart, Router, RouterModule} from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
 import {
   IonButton,
   IonContent,
@@ -13,9 +13,9 @@ import {
   IonText,
   NavController, IonInputPasswordToggle
 } from '@ionic/angular/standalone';
-import {filter, Subscription} from 'rxjs';
-import {AuthService} from '../../services/auth.service';
-import {UtilsService} from 'src/app/modules/shared/services/utils.service';
+import { filter, Subscription } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
+import { UtilsService } from 'src/app/modules/shared/services/utils.service';
 
 
 @Component({
@@ -32,7 +32,7 @@ export class LoginPage implements OnInit, OnDestroy {
   private readonly utilsService = inject(UtilsService);
   private readonly navCtrl = inject(NavController)
 
-  @ViewChild('modal', {static: false}) modal!: IonModal;
+  @ViewChild('modal', { static: false }) modal!: IonModal;
 
   form!: FormGroup;
   subscriptions = new Subscription();
@@ -65,23 +65,46 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   async onSubmit() {
-    if (this.form.valid) {
-      const loading = await this.utilsService.loading();
-      await loading.present();
-
-      this.authService.singIn(this.form.value['email'], this.form.value['password'])
-        .then(() => this.navCtrl.navigateForward('/home'))
-        .catch(error => this.utilsService.presentToast({
-          message: error.message,
-          duration: 2500,
-          color: 'danger',
-          position: 'bottom',
-          icon: 'alert-circle-outline'
-        }))
-        .finally(() => loading.dismiss());
-    } else {
-      this.form.markAllAsTouched();
-    }
+  if (!this.form.valid) {
+    this.form.markAllAsTouched();
+    return;
   }
+
+  const loading = await this.utilsService.loading();
+  await loading.present();
+
+  try {
+    await this.authService.singIn(
+      this.form.value.email,
+      this.form.value.password
+    );
+
+    await loading.dismiss();
+
+    const role = this.authService.currentRole;
+
+    if (role === 'admin') {
+      this.navCtrl.navigateRoot('/home');
+    } else {
+      this.navCtrl.navigateRoot('/home/client');
+    }
+
+  } catch (error: any) {
+    console.log('ERROR FIREBASE 👉', error);
+
+    await loading.dismiss();
+
+    const code = error?.code || error?.error?.code;
+    const message = this.utilsService.getFirebaseAuthErrorMessage(code);
+
+    await this.utilsService.presentToast({
+      message,
+      duration: 2500,
+      color: 'danger',
+      position: 'bottom',
+      icon: 'alert-circle-outline'
+    });
+  }
+}
 
 }
