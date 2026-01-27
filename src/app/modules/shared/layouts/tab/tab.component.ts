@@ -20,6 +20,9 @@ import {
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
+import { switchMap, of } from 'rxjs';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
+
 
 @Component({
   selector: 'app-tab',
@@ -39,11 +42,31 @@ export class TabComponent {
   private readonly authService = inject(AuthService);
   private readonly navCtrl = inject(NavController);
   private readonly router = inject(Router);
+  private readonly firestore = inject(Firestore);
 
-  user$ = this.authService.authState$;
+  user$ = this.authService.authState$.pipe(
+  switchMap(user => {
+    if (!user) return of(null);
+    const ref = doc(this.firestore, 'users', user.uid);
+    return docData(ref, { idField: 'uid' });
+  })
+);
+
 
   get isAdmin(): boolean  { return this.authService.hasRole('admin'); }
   get isClient(): boolean { return this.authService.hasRole('client'); }
+
+  getUserInitial(user: any): string {
+    const source =
+      user?.displayName ||
+      user?.name ||
+      user?.email ||
+      '';
+
+    if (!source) return 'U';
+
+    return source.trim().charAt(0).toUpperCase();
+  }
 
   // Navegación para CLIENTES
   navigateClient(path: string) {

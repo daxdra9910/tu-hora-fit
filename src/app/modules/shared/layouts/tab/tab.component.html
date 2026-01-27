@@ -9,16 +9,23 @@
   <ion-content class="ion-padding">
     <!-- Header con foto/Inicial y nombre -->
     <div class="menu-header" *ngIf="user$ | async as user">
-      <div class="avatar" [class.has-img]="!!user?.photoURL">
-        <img *ngIf="user?.photoURL" [src]="user.photoURL!" alt="Foto de perfil" />
-        <span *ngIf="!user?.photoURL">
-          {{ (user?.displayName || user?.email || 'U')[0] }}
+      <div class="avatar" [class.has-img]="!!user?.['photoURL']">
+
+        <img *ngIf="user?.['photoURL']" [src]="user?.['photoURL']" alt="Foto de perfil" />
+
+        <span *ngIf="!user?.['photoURL']">
+          {{ getUserInitial(user) }}
         </span>
+
       </div>
+
+
+
       <div class="meta">
         <div class="title">
-          {{ user?.displayName || user?.email || 'Bienvenido' }}
+          {{ user?.['displayName'] || user?.['email'] || 'Bienvenido' }}
         </div>
+
         <div class="role">{{ isAdmin ? 'Administrador' : 'Cliente' }}</div>
       </div>
     </div>
@@ -58,7 +65,8 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/reservations/admin-browse')" [class.active]="isActivePrefix('/reservations/admin-browse')">
+          <ion-item button (click)="navigateTo('/reservations/admin-browse')"
+            [class.active]="isActivePrefix('/reservations/admin-browse')">
             <ion-icon slot="start" name="ticket-outline"></ion-icon>
             <ion-label>Reservas</ion-label>
           </ion-item>
@@ -70,7 +78,8 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/notifications/admin')" [class.active]="isActivePrefix('/notifications/admin')">
+          <ion-item button (click)="navigateTo('/notifications/admin')"
+            [class.active]="isActivePrefix('/notifications/admin')">
             <ion-icon slot="start" name="megaphone-outline"></ion-icon>
             <ion-label>Notificaciones</ion-label>
           </ion-item>
@@ -89,13 +98,15 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/reservations/browse')" [class.active]="isActivePrefix('/reservations/browse')">
+          <ion-item button (click)="navigateTo('/reservations/browse')"
+            [class.active]="isActivePrefix('/reservations/browse')">
             <ion-icon slot="start" name="calendar-outline"></ion-icon>
             <ion-label>Clases</ion-label>
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/reservations/mine')" [class.active]="isActivePrefix('/reservations/mine')">
+          <ion-item button (click)="navigateTo('/reservations/mine')"
+            [class.active]="isActivePrefix('/reservations/mine')">
             <ion-icon slot="start" name="ticket-outline"></ion-icon>
             <ion-label>Reservas</ion-label>
           </ion-item>
@@ -107,7 +118,8 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="true">
-          <ion-item button (click)="navigateTo('/notifications/mine')" [class.active]="isActivePrefix('/notifications/mine')">
+          <ion-item button (click)="navigateTo('/notifications/mine')"
+            [class.active]="isActivePrefix('/notifications/mine')">
             <ion-icon slot="start" name="notifications-outline"></ion-icon>
             <ion-label>Notificaciones</ion-label>
           </ion-item>
