@@ -196,6 +196,15 @@
     width: 70px;
     height: 70px;
   }
+.profile-list ion-item {
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+}
+
+.profile-list ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-primary);
+}
 
   .greeting {
     font-size: 1.2rem;
@@ -208,4 +217,53 @@
   .info-section {
     padding: 16px 12px;
   }
+}
+/* ===============================
+   LISTA DE PERFIL (Pagos / Reservas)
+================================ */
+
+.profile-list {
+  padding: 0;
+}
+
+.profile-list ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --min-height: auto;
+
+  display: flex;
+  align-items: center;
+}
+
+/* ÍCONOS alineados como info-item */
+.profile-list ion-icon[slot="start"] {
+  margin-left: 0;
+  margin-right: 12px;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+/* Texto alineado igual */
+.profile-list ion-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Línea separadora suave */
+.profile-list ion-item::part(native) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Quitar borde al último */
+.profile-list ion-item:last-child::part(native) {
+  border-bottom: none;
+}
+
+.profile-list ion-icon[slot="end"] {
+  font-size: 18px;
+  color: #b0b0b0;
 }

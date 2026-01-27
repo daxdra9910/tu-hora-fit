@@ -12,12 +12,12 @@
 <ion-content>
   <div class="profile-container">
 
-    <!-- Loading -->
+    <!-- LOADING -->
     <div *ngIf="loading" class="loading-container">
       <p>Cargando perfil...</p>
     </div>
 
-    <!-- Perfil -->
+    <!-- PERFIL -->
     <div class="profile-card" *ngIf="!loading && user">
 
       <!-- HEADER -->
@@ -25,29 +25,27 @@
         <div class="profile-main-info">
 
           <ion-avatar class="profile-avatar">
+            <ion-img
+              *ngIf="user?.photoURL; else defaultAvatar"
+              [src]="user.photoURL"
+              alt="Foto de perfil"
+              class="avatar-image">
+            </ion-img>
 
-  <ion-img
-    *ngIf="user?.photoURL; else defaultAvatar"
-    [src]="user.photoURL"
-    alt="Foto de perfil"
-    class="avatar-image">
-  </ion-img>
-
-  <ng-template #defaultAvatar>
-    <div class="default-avatar">
-      <ion-icon name="person" class="default-icon"></ion-icon>
-    </div>
-  </ng-template>
-
-</ion-avatar>
-
-
+            <ng-template #defaultAvatar>
+              <div class="default-avatar">
+                <ion-icon name="person" class="default-icon"></ion-icon>
+              </div>
+            </ng-template>
+          </ion-avatar>
 
           <div class="profile-name-section">
             <h1 class="greeting">
               HOLA, {{ user?.displayName?.toUpperCase() || 'USUARIO' }}
             </h1>
-            <div class="user-role">{{ getRoleText(user?.role) }}</div>
+            <div class="user-role">
+              {{ getRoleText(user?.role) }}
+            </div>
           </div>
 
         </div>
@@ -78,7 +76,9 @@
           </div>
           <div class="info-content">
             <span class="label">Teléfono</span>
-            <span class="value">{{ user?.phoneNumber || 'No especificado' }}</span>
+            <span class="value">
+              {{ user?.phoneNumber || 'No especificado' }}
+            </span>
           </div>
         </div>
 
@@ -88,7 +88,9 @@
           </div>
           <div class="info-content">
             <span class="label">Correo Electrónico</span>
-            <span class="value">{{ user?.email }}</span>
+            <span class="value">
+              {{ user?.email }}
+            </span>
           </div>
         </div>
       </div>
@@ -106,7 +108,9 @@
           </div>
           <div class="info-content">
             <span class="label">Fecha de Expiración</span>
-            <span class="value">{{ getExpirationDate() }}</span>
+            <span class="value">
+              {{ getExpirationDate() }}
+            </span>
           </div>
         </div>
 
@@ -116,7 +120,9 @@
           </div>
           <div class="info-content">
             <span class="label">Estado</span>
-            <span class="value status" [ngClass]="getMembershipState().css">
+            <span
+              class="value status"
+              [ngClass]="getMembershipState().css">
               {{ getMembershipState().text }}
             </span>
           </div>
@@ -128,14 +134,65 @@
           </div>
           <div class="info-content">
             <span class="label">Plan</span>
-            <span class="value">{{ getPlanText() }}</span>
+            <span class="value">
+              {{ getPlanText() }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="fitness-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <span class="label">Créditos</span>
+            <span class="value">
+              {{
+                userCredits?.planCredits
+                  ? userCredits.planCredits
+                  : (userCredits?.balance || 0) + (userCredits?.totalUsed || 0)
+              }}
+              /
+              {{ userCredits?.balance || 0 }}
+            </span>
           </div>
         </div>
       </div>
 
+      <!-- PAGOS Y RESERVAS -->
+      <div class="info-section">
+        <h3 class="info-title">
+          <ion-icon name="receipt-outline"></ion-icon>
+          Historial
+        </h3>
+
+        <ion-list lines="full" class="profile-list">
+
+          <ion-item
+  button
+  routerLink="/payments-history">
+  <ion-icon slot="start" name="receipt-outline"></ion-icon>
+  <ion-label>Historial de pagos</ion-label>
+  <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+
+</ion-item>
+
+
+          <ion-item
+            button
+            routerLink="/reservations/history">
+            <ion-icon slot="start" name="calendar-outline"></ion-icon>
+            <ion-label>Historial de reservas</ion-label>
+            <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+
+          </ion-item>
+
+        </ion-list>
+      </div>
+
     </div>
 
-    <!-- Sin usuario -->
+    <!-- SIN USUARIO -->
     <div *ngIf="!loading && !user" class="no-user">
       <ion-icon name="person-outline" class="no-user-icon"></ion-icon>
       <p>No se encontró información del usuario</p>

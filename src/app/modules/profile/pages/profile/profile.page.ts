@@ -1,8 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent,
-  IonButton, IonIcon, IonAvatar, IonImg, IonButtons
-} from '@ionic/angular/standalone';
+  IonButton, IonIcon, IonAvatar, IonImg, IonButtons, IonItem, IonLabel, IonList } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { UtilsService } from '../../../shared/services/utils.service';
 import { RoleEnum } from '../../../shared/enums/role.enum';
@@ -14,6 +13,9 @@ import { CreditsService, UserCredits } from '../../../core/services/credits.serv
 import { addIcons } from 'ionicons';
 import { ModalController } from '@ionic/angular/standalone';
 import { EditProfileModalPage } from '../edit-profile-modal/edit-profile-modal.page';
+import { RouterLink } from '@angular/router';
+
+
 
 
 import {
@@ -26,7 +28,7 @@ import {
   cardOutline,
   calendarNumberOutline,
   timeOutline,
-  starOutline, personOutline } from 'ionicons/icons';
+  starOutline, personOutline, receiptOutline, fitnessOutline, chevronForwardOutline } from 'ionicons/icons';
 import { UserModel } from '../../../shared/models/user.model';
 
 @Component({
@@ -34,10 +36,10 @@ import { UserModel } from '../../../shared/models/user.model';
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonList, IonLabel, IonItem,
     IonHeader, IonToolbar, IonTitle, IonContent,
     IonButton, IonIcon, IonAvatar,IonButtons,
-    CommonModule, IonImg,
+    CommonModule, IonImg,  RouterLink
   ]
 })
 export class ProfilePage implements OnInit {
@@ -58,7 +60,7 @@ export class ProfilePage implements OnInit {
   readonly StateEnum = StateEnum;
 
   constructor() {
-    addIcons({pencil,person,personCircleOutline,calendarOutline,callOutline,mailOutline,cardOutline,calendarNumberOutline,timeOutline,starOutline,personOutline});
+    addIcons({pencil,person,personCircleOutline,calendarOutline,callOutline,mailOutline,cardOutline,calendarNumberOutline,timeOutline,starOutline,fitnessOutline,receiptOutline,chevronForwardOutline,personOutline});
   }
 
   async ngOnInit() {
