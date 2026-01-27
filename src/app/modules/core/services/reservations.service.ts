@@ -113,12 +113,12 @@ export class ReservationService {
 
     const startISO: string =
       d.start
-        ?? this.composeISO(d.date, d.start_time)
-        ?? this.toDT(d.date).toISO();
+      ?? this.composeISO(d.date, d.start_time)
+      ?? this.toDT(d.date).toISO();
 
     const endISO: string | undefined =
       d.end
-        ?? this.composeISO(d.date, d.end_time);
+      ?? this.composeISO(d.date, d.end_time);
 
     return {
       id,
@@ -161,134 +161,134 @@ export class ReservationService {
   }
 
   /* ==================== RESERVAR (TX) ==================== */
-async reserve(scheduleId: string, userId: string): Promise<{ id: string }> {
-  // 🔐 1. Validar créditos ANTES
-  const creditState = await this.creditsService.getValidCredits(userId);
+  async reserve(scheduleId: string, userId: string): Promise<{ id: string }> {
+    // 🔐 1. Validar créditos ANTES
+    const creditState = await this.creditsService.getValidCredits(userId);
 
-  if (!creditState.hasActivePlan) {
-    throw new Error('No tienes un plan activo.');
-  }
-
-  if (creditState.availableBalance < 1) {
-    throw new Error('No tienes créditos suficientes.');
-  }
-
-  const scheduleRef = doc(this.firestore, this.schedulesCol, scheduleId);
-
-  // Idempotencia
-  const existing = await this.findActiveReservationByUser(scheduleId, userId);
-  if (existing) return { id: existing.id };
-
-  const reservationId = crypto.randomUUID();
-  const reservationRef = doc(this.firestore, this.reservationsCol, reservationId);
-
-  // 2️⃣ Transacción de reserva
-  await runTransaction(this.firestore, async (tx) => {
-    const schedSnap = await tx.get(scheduleRef);
-    if (!schedSnap.exists()) throw new Error('El horario no existe.');
-    const s = schedSnap.data() as any;
-
-    if (s.active === false) throw new Error('Este horario no está activo.');
-
-    const startISO =
-      s.start ?? this.composeISO(s.date, s.start_time) ?? this.toDT(s.date).toISO();
-
-    const start = DateTime.fromISO(String(startISO), { zone: TZ });
-    const now = DateTime.now().setZone(TZ);
-
-    if (start <= now) throw new Error('Este horario ya no está disponible.');
-
-    const capacity = Number(s.capacity ?? s.max_capacity ?? 0);
-    const booked = Number(s.booked ?? 0);
-
-    if (booked >= capacity) {
-      throw new Error('No hay cupos disponibles.');
+    if (!creditState.hasActivePlan) {
+      throw new Error('No tienes un plan activo.');
     }
 
-    tx.update(scheduleRef, {
-      booked: booked + 1,
-      updatedAt: new Date().toISOString(),
-      updatedBy: userId
+    if (creditState.availableBalance < 1) {
+      throw new Error('No tienes créditos suficientes.');
+    }
+
+    const scheduleRef = doc(this.firestore, this.schedulesCol, scheduleId);
+
+    // Idempotencia
+    const existing = await this.findActiveReservationByUser(scheduleId, userId);
+    if (existing) return { id: existing.id };
+
+    const reservationId = crypto.randomUUID();
+    const reservationRef = doc(this.firestore, this.reservationsCol, reservationId);
+
+    // 2️⃣ Transacción de reserva
+    await runTransaction(this.firestore, async (tx) => {
+      const schedSnap = await tx.get(scheduleRef);
+      if (!schedSnap.exists()) throw new Error('El horario no existe.');
+      const s = schedSnap.data() as any;
+
+      if (s.active === false) throw new Error('Este horario no está activo.');
+
+      const startISO =
+        s.start ?? this.composeISO(s.date, s.start_time) ?? this.toDT(s.date).toISO();
+
+      const start = DateTime.fromISO(String(startISO), { zone: TZ });
+      const now = DateTime.now().setZone(TZ);
+
+      if (start <= now) throw new Error('Este horario ya no está disponible.');
+
+      const capacity = Number(s.capacity ?? s.max_capacity ?? 0);
+      const booked = Number(s.booked ?? 0);
+
+      if (booked >= capacity) {
+        throw new Error('No hay cupos disponibles.');
+      }
+
+      tx.update(scheduleRef, {
+        booked: booked + 1,
+        updatedAt: new Date().toISOString(),
+        updatedBy: userId
+      });
+
+      tx.set(reservationRef, {
+        id: reservationId,
+        scheduleId,
+        userId,
+        createdAt: serverTimestamp(),
+        active: true
+      });
     });
 
-    tx.set(reservationRef, {
-      id: reservationId,
-      scheduleId,
+    // 3️⃣ Descontar crédito (fuera de la TX)
+    await this.creditsService.useCredits(
       userId,
-      createdAt: serverTimestamp(),
-      active: true
-    });
-  });
+      1,
+      'Reserva de clase',
+      reservationId
+    );
 
-  // 3️⃣ Descontar crédito (fuera de la TX)
-  await this.creditsService.useCredits(
-    userId,
-    1,
-    'Reserva de clase',
-    reservationId
-  );
-
-  return { id: reservationId };
-}
+    return { id: reservationId };
+  }
 
 
   /* ==================== CANCELAR (TX, 60 min) ==================== */
- async cancel(
-  reservationId: string,
-  userId: string,
-  bypassUserCheck = false
-): Promise<void> {
-  const reservationRef = doc(this.firestore, this.reservationsCol, reservationId);
-  let reservationUserId = userId;
+  async cancel(
+    reservationId: string,
+    userId: string,
+    bypassUserCheck = false
+  ): Promise<void> {
+    const reservationRef = doc(this.firestore, this.reservationsCol, reservationId);
+    let reservationUserId = userId;
 
-  // 1️⃣ Transacción de cancelación
-  await runTransaction(this.firestore, async (tx) => {
-    const rSnap = await tx.get(reservationRef);
-    if (!rSnap.exists()) throw new Error('La reserva no existe.');
-    const r = rSnap.data() as ReservationModel;
-    if (!r.active) return;
+    // 1️⃣ Transacción de cancelación
+    await runTransaction(this.firestore, async (tx) => {
+      const rSnap = await tx.get(reservationRef);
+      if (!rSnap.exists()) throw new Error('La reserva no existe.');
+      const r = rSnap.data() as ReservationModel;
+      if (!r.active) return;
 
-    reservationUserId = r.userId;
+      reservationUserId = r.userId;
 
-    if (!bypassUserCheck && r.userId !== userId) {
-      throw new Error('No puedes cancelar esta reserva.');
-    }
+      if (!bypassUserCheck && r.userId !== userId) {
+        throw new Error('No puedes cancelar esta reserva.');
+      }
 
-    const scheduleRef = doc(this.firestore, this.schedulesCol, r.scheduleId);
-    const sSnap = await tx.get(scheduleRef);
-    if (!sSnap.exists()) throw new Error('El horario no existe.');
-    const s = sSnap.data() as any;
+      const scheduleRef = doc(this.firestore, this.schedulesCol, r.scheduleId);
+      const sSnap = await tx.get(scheduleRef);
+      if (!sSnap.exists()) throw new Error('El horario no existe.');
+      const s = sSnap.data() as any;
 
-    const startISO =
-      s.start ?? this.composeISO(s.date, s.start_time) ?? this.toDT(s.date).toISO();
+      const startISO =
+        s.start ?? this.composeISO(s.date, s.start_time) ?? this.toDT(s.date).toISO();
 
-    const start = DateTime.fromISO(String(startISO), { zone: TZ });
-    const now = DateTime.now().setZone(TZ);
+      const start = DateTime.fromISO(String(startISO), { zone: TZ });
+      const now = DateTime.now().setZone(TZ);
 
-    if (Math.floor(start.diff(now, 'minutes').minutes) < 60) {
-      throw new Error('Solo puedes cancelar hasta 60 minutos antes.');
-    }
+      if (Math.floor(start.diff(now, 'minutes').minutes) < 60) {
+        throw new Error('Solo puedes cancelar hasta 60 minutos antes.');
+      }
 
-    tx.update(reservationRef, {
-      active: false,
-      cancelledAt: serverTimestamp()
+      tx.update(reservationRef, {
+        active: false,
+        cancelledAt: serverTimestamp()
+      });
+
+      tx.update(scheduleRef, {
+        booked: Math.max(0, Number(s.booked ?? 0) - 1),
+        updatedAt: new Date().toISOString(),
+        updatedBy: userId
+      });
     });
 
-    tx.update(scheduleRef, {
-      booked: Math.max(0, Number(s.booked ?? 0) - 1),
-      updatedAt: new Date().toISOString(),
-      updatedBy: userId
-    });
-  });
-
-  // 2️⃣ Devolver crédito (fuera de la TX)
-  await this.creditsService.refundCredits(
-    reservationUserId,
-    1,
-    'Cancelación de reserva',
-    reservationId
-  );
-}
+    // 2️⃣ Devolver crédito (fuera de la TX)
+    await this.creditsService.refundCredits(
+      reservationUserId,
+      1,
+      'Cancelación de reserva',
+      reservationId
+    );
+  }
 
 
   /* ==================== QUERIES BÁSICAS ==================== */
@@ -380,11 +380,21 @@ async reserve(scheduleId: string, userId: string): Promise<{ id: string }> {
         const startISO = s.start;
         const endISO = s.end;
 
+        const now = DateTime.now().setZone(TZ);
+        const startDT = DateTime.fromISO(startISO, { zone: TZ });
+
+        // 👉 si la clase ya pasó
+        const isPast = startDT <= now;
+
+
         // ✅ Mapeo correcto por idClass
         const cls = classMap[s.idClass] ?? { id: s.idClass, name: 'Clase' };
 
         return {
-          reservation: r,
+          reservation: {
+            ...r,
+            active: r.active && !isPast   // 👈 CLAVE
+          },
           schedule: { id: s.id, idClass: s.idClass, start: startISO, end: endISO },
           class: {
             id: cls.id,
@@ -395,8 +405,9 @@ async reserve(scheduleId: string, userId: string): Promise<{ id: string }> {
           startLocal: this.fmtLocal(startISO),
           endLocal: this.fmtLocal(endISO),
           minutesLeft: this.minsLeft(startISO),
-          canCancel: this.canCancelAt(startISO),
+          canCancel: !isPast && this.canCancelAt(startISO),
         };
+        ;
       })
       .filter(Boolean) as DetailedUserReservation[];
 

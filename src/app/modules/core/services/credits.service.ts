@@ -42,6 +42,7 @@ export interface UserCredits {
   planStartDate?: Date;
   planExpiryDate?: Date;
   creditsExpiryDate?: Date;
+  planCredits?: number;
 
   paymentMethod?: 'wompi' | 'cash_admin' | 'wallet' | 'transfer' | 'admin';
   previousPlanId?: string;
@@ -126,6 +127,7 @@ export class CreditsService {
       const updateData: any = {
         userId,
         balance: newBalance,
+        planCredits: creditsAmount,
         lastUpdated: serverTimestamp(),
         totalEarned: newTotalEarned,
         totalUsed: currentTotalUsed,
@@ -250,6 +252,7 @@ export class CreditsService {
   async assignCreditsForPlanChange(
     userId: string,
     paymentId: string,
+
     newPlanName: string,
     newCreditsAmount: number,
     transferableCredits: number,
@@ -282,6 +285,7 @@ export class CreditsService {
           : 0,
         activePlanId: planId || paymentId,
         planName: newPlanName,
+        planCredits: newCreditsAmount,
         planStartDate: serverTimestamp(),
         planExpiryDate: expiresAt,
         creditsExpiryDate: expiresAt,
@@ -486,49 +490,49 @@ export class CreditsService {
 
   // ==================== CONSULTAS ====================
   async getValidCredits(userId: string): Promise<{
-  availableBalance: number;
-  hasActivePlan: boolean;
-  planExpiryDate?: Date;
-  daysRemaining: number;
-}> {
-  try {
-    const userCredits = await this.getUserCredits(userId);
+    availableBalance: number;
+    hasActivePlan: boolean;
+    planExpiryDate?: Date;
+    daysRemaining: number;
+  }> {
+    try {
+      const userCredits = await this.getUserCredits(userId);
 
-    if (!userCredits) {
-      return { availableBalance: 0, hasActivePlan: false, daysRemaining: 0 };
-    }
-
-    const now = new Date();
-    let daysRemaining = 0;
-
-    if (userCredits.planExpiryDate) {
-      const expiryDate =
-        userCredits.planExpiryDate instanceof Date
-          ? userCredits.planExpiryDate
-          : new Date(userCredits.planExpiryDate);
-
-      daysRemaining = Math.ceil(
-        (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      if (daysRemaining <= 0) {
-        await this.expireCreditsIfNeeded(userId);
+      if (!userCredits) {
         return { availableBalance: 0, hasActivePlan: false, daysRemaining: 0 };
       }
+
+      const now = new Date();
+      let daysRemaining = 0;
+
+      if (userCredits.planExpiryDate) {
+        const expiryDate =
+          userCredits.planExpiryDate instanceof Date
+            ? userCredits.planExpiryDate
+            : new Date(userCredits.planExpiryDate);
+
+        daysRemaining = Math.ceil(
+          (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        if (daysRemaining <= 0) {
+          await this.expireCreditsIfNeeded(userId);
+          return { availableBalance: 0, hasActivePlan: false, daysRemaining: 0 };
+        }
+      }
+
+      return {
+        availableBalance: userCredits.balance, // 🔥 CLAVE
+        hasActivePlan: userCredits.balance > 0,
+        planExpiryDate: userCredits.planExpiryDate,
+        daysRemaining: Math.max(0, daysRemaining)
+      };
+
+    } catch (error) {
+      console.error('Error getting valid credits:', error);
+      return { availableBalance: 0, hasActivePlan: false, daysRemaining: 0 };
     }
-
-    return {
-      availableBalance: userCredits.balance, // 🔥 CLAVE
-      hasActivePlan: userCredits.balance > 0,
-      planExpiryDate: userCredits.planExpiryDate,
-      daysRemaining: Math.max(0, daysRemaining)
-    };
-
-  } catch (error) {
-    console.error('Error getting valid credits:', error);
-    return { availableBalance: 0, hasActivePlan: false, daysRemaining: 0 };
   }
-}
 
   async getUserCredits(userId: string): Promise<UserCredits | null> {
     try {
@@ -553,15 +557,23 @@ export class CreditsService {
         lastUpdated: data['lastUpdated'],
         totalEarned: Number(data['totalEarned']) || 0,
         totalUsed: Number(data['totalUsed']) || 0,
+
         activePlanId: data['activePlanId'],
         planName: data['planName'],
+
+        // ✅ ESTA LÍNEA ES LA CLAVE DEL PROBLEMA
+        planCredits: Number(data['planCredits']) || 0,
+
         planStartDate,
         planExpiryDate,
         creditsExpiryDate,
+
         paymentMethod: data['paymentMethod'],
         previousPlanId: data['previousPlanId'],
         isExpired
       };
+
+
     } catch (error) {
       console.error('Error getting user credits:', error);
       return null;

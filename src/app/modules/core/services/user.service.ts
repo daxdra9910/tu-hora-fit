@@ -77,11 +77,18 @@ export class UserService {
     return Array.from(uniqueUsersMap.values());
   }
 
-  async updateUser(user: UserModel): Promise<void> {
-    const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);
-    const { uid, ...userData } = user;
-    await updateDoc(userRef, userData);
-  }
+  updateUser(user: UserModel) {
+  const ref = doc(this.firestore, 'users', user.uid);
+  return updateDoc(ref, {
+    displayName: user.displayName,
+    phoneNumber: user.phoneNumber,
+    birthdate: user.birthdate,
+    photoURL: user.photoURL ?? null, // ✅ ESTA LÍNEA ES LA CLAVE
+    updatedAt: user.updatedAt,
+    updatedBy: user.updatedBy
+  });
+}
+
 
   async deleteUser(user: UserModel): Promise<void> {
     const userRef = doc(this.firestore, COLLECTIONS.USERS, user.uid);

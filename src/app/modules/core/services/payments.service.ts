@@ -492,6 +492,7 @@ export class PaymentsService {
     return {
       id,
       planId: extractString(data['planId']),
+      planName: extractString(data['planName']),
       userId: extractString(data['userId']),
       userEmail: extractString(data['userEmail']),
       userFullName: extractString(data['userFullName']),
@@ -555,4 +556,6 @@ export class PaymentsService {
       return false;
     }
   }
+
+
 }
