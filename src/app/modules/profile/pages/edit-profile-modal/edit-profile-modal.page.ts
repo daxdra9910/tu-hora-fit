@@ -270,10 +270,12 @@ export class EditProfileModalPage implements OnInit, OnDestroy {
       // =====================
       // ACTUALIZAR USUARIO
       // =====================
+      const phoneNumber = String(this.form.value.phoneNumber ?? '').trim();
+
       const updatedUser: UserModel = {
         ...this.user,
-        displayName: this.form.value.displayName.trim(),
-        phoneNumber: this.form.value.phoneNumber.trim(),
+        displayName: String(this.form.value.displayName ?? '').trim(),
+        phoneNumber,
         birthdate: this.form.value.birthdate,
         photoURL,
         updatedAt: new Date().toISOString(),
