@@ -25,10 +25,7 @@
         <div class="profile-main-info">
 
           <ion-avatar class="profile-avatar">
-            <ion-img
-              *ngIf="user?.photoURL; else defaultAvatar"
-              [src]="user.photoURL"
-              alt="Foto de perfil"
+            <ion-img *ngIf="user?.photoURL; else defaultAvatar" [src]="user.photoURL" alt="Foto de perfil"
               class="avatar-image">
             </ion-img>
 
@@ -120,9 +117,7 @@
           </div>
           <div class="info-content">
             <span class="label">Estado</span>
-            <span
-              class="value status"
-              [ngClass]="getMembershipState().css">
+            <span class="value status" [ngClass]="getMembershipState().css">
               {{ getMembershipState().text }}
             </span>
           </div>
@@ -148,9 +143,9 @@
             <span class="label">Créditos</span>
             <span class="value">
               {{
-                userCredits?.planCredits
-                  ? userCredits.planCredits
-                  : (userCredits?.balance || 0) + (userCredits?.totalUsed || 0)
+              userCredits?.planCredits
+              ? userCredits.planCredits
+              : (userCredits?.balance || 0) + (userCredits?.totalUsed || 0)
               }}
               /
               {{ userCredits?.balance || 0 }}
@@ -168,19 +163,15 @@
 
         <ion-list lines="full" class="profile-list">
 
-          <ion-item
-  button
-  routerLink="/payments-history">
-  <ion-icon slot="start" name="receipt-outline"></ion-icon>
-  <ion-label>Historial de pagos</ion-label>
-  <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+          <ion-item button routerLink="/payments-history">
+            <ion-icon slot="start" name="receipt-outline"></ion-icon>
+            <ion-label>Historial de pagos</ion-label>
+            <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
 
-</ion-item>
+          </ion-item>
 
 
-          <ion-item
-            button
-            routerLink="/reservations/history">
+          <ion-item button routerLink="/reservations/history">
             <ion-icon slot="start" name="calendar-outline"></ion-icon>
             <ion-label>Historial de reservas</ion-label>
             <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
